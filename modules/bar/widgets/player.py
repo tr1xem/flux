@@ -8,7 +8,7 @@ mpris = MprisService.get_default()
 
 class Player(widgets.Box):
     def __init__(self, player: MprisPlayer) -> None:
-        self.playerContainer = widgets.CenterBox(
+        self.playerContainer = widgets.Box(
             css_classes=["bar-player"],
         )
         super().__init__(
@@ -19,17 +19,22 @@ class Player(widgets.Box):
         self._player = player
         self.songName = widgets.Label(
             ellipsize="end",
+            halign="start",
+            css_classes=["media-title"],
             label=player.bind("title"),
-            max_width_chars=12,
+            max_width_chars=22,
         )
         self.songArtist = widgets.Label(
             ellipsize="end",
+            halign="start",
+            css_classes=["media-artist"],
             label=player.bind("artist"),
-            max_width_chars=8,
+            max_width_chars=25,
         )
         self.mediaDetails = widgets.Box(
             vertical=True,
             hexpand=True,
+            homogeneous=True,
             halign="start",
             child=[
                 self.songName,
@@ -37,31 +42,24 @@ class Player(widgets.Box):
             ],
         )
         self.albumArt = widgets.Picture(
+            css_classes=["media-album-art"],
             image=player.bind("art-url"),
         )
 
         self.control_buttons = widgets.Box(
             child=[
-                # widgets.Scale(
-                #     value=player.bind("position"),
-                #     max=player.bind("length"),
-                #     hexpand=True,
-                #     # css_classes=[self.get_css("media-scale")],
-                #     on_change=lambda x: asyncio.create_task(
-                #         self._player.set_position_async(x.value)
-                #     ),
-                #     visible=player.bind("position", lambda value: value != -1),
-                # ),
                 widgets.Button(
+                    css_classes=["media-controls"],
                     child=widgets.Icon(
                         image="media-skip-backward-symbolic",
-                        pixel_size=20,
+                        pixel_size=25,
                     ),
                     # css_classes=[self.get_css("media-skip-button")],
                     on_click=lambda x: asyncio.create_task(player.previous_async()),
                     visible=player.bind("can_go_previous"),
                 ),
                 widgets.Button(
+                    css_classes=["media-controls"],
                     child=widgets.Icon(
                         image=player.bind(
                             "playback_status",
@@ -69,38 +67,31 @@ class Player(widgets.Box):
                             if value == "Playing"
                             else "media-playback-start-symbolic",
                         ),
-                        pixel_size=18,
+                        pixel_size=25,
                     ),
                     on_click=lambda x: asyncio.create_task(player.play_pause_async()),
                     visible=player.bind("can_play"),
-                    css_classes=player.bind(
-                        "playback_status",
-                        lambda value: [
-                            "playing",
-                        ]
-                        if value == "Playing"
-                        else [
-                            "paused",
-                        ],
-                    ),
                 ),
                 widgets.Button(
+                    css_classes=["media-controls"],
                     child=widgets.Icon(
                         image="media-skip-forward-symbolic",
-                        pixel_size=20,
+                        pixel_size=25,
                     ),
                     # css_classes=[self.get_css("media-skip-button")],
                     on_click=lambda x: asyncio.create_task(player.next_async()),
                     visible=player.bind("can_go_next"),
                 ),
-            ]
+            ],
         )
 
-        self.playerContainer.start_widget = widgets.Box(
-            child=[self.albumArt, self.mediaDetails]
+        self.playerContainer.append(
+            widgets.Box(
+                hexpand=True,
+                child=[self.albumArt, self.mediaDetails, self.control_buttons],
+            )
         )
-
-        self.playerContainer.end_widget = self.control_buttons
+        # self.playerContainer.end_widget = self.control_buttons
 
     def destroy(self) -> None:
         self.get_parent().get_parent().switch_players(1)
@@ -117,7 +108,7 @@ class Media(widgets.EventBox):
             setup=lambda self: mpris.connect(
                 "player_added", lambda x, p: self.add_player(p)
             ),
-            css_classes=["player-container", "hidden-scrollbar"],
+            css_classes=["player-container"],
             on_scroll_down=lambda w: self.switch_players(1),
             on_scroll_up=lambda w: self.switch_players(-1),
         )
