@@ -44,4 +44,4 @@ htmlcov/
 .coverage.*
 .cache
 nosetests.
-Agents.md
+AGENTS.md
