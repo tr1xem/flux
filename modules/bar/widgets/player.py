@@ -1,6 +1,6 @@
 import asyncio
 
-from ignis import widgets
+from ignis import utils, widgets
 from ignis.services.mpris import MprisPlayer, MprisService
 
 mpris = MprisService.get_default()
@@ -15,6 +15,7 @@ class Player(widgets.Box):
             visible=True,
             child=[self.playerContainer],
         )
+        player.connect("closed", lambda x: self.destroy())
         self._player = player
         self.songName = widgets.Label(
             ellipsize="end",
@@ -98,76 +99,63 @@ class Player(widgets.Box):
         self.playerContainer.start_widget = widgets.Box(
             child=[self.albumArt, self.mediaDetails]
         )
-        # self.playerContainer.center_widget = self.mediaDetails
+
         self.playerContainer.end_widget = self.control_buttons
-        # self.playerContainer.append(widgets.Label(label="Player"))
-        # self.add_child(self.playerContainer)
+
+    def destroy(self) -> None:
+        self.get_parent().get_parent().switch_players(1)
+        self.get_parent().get_parent().remove_player(self.get_parent())
+        super().unparent()
 
 
 class Media(widgets.EventBox):
     def __init__(self):
-        self.players = dict()
-        self.current_player = 0
+        self.players = []
+        self.current = 0
 
-        self.player_count = 0
         super().__init__(
             setup=lambda self: mpris.connect(
-                "player_added", lambda x, player: self.__add_player(player)
+                "player_added", lambda x, p: self.add_player(p)
             ),
-            # vertical=True,
             css_classes=["player-container", "hidden-scrollbar"],
-            on_scroll_down=lambda widget: self._next_player(),
-            on_scroll_up=lambda widget: self._previous_player(),
+            on_scroll_down=lambda w: self.switch_players(1),
+            on_scroll_up=lambda w: self.switch_players(-1),
         )
 
-    def __add_player(self, obj: MprisPlayer) -> None:
-        player = Player(obj)
-        player_revealer = widgets.Revealer(
-            child=player,
-            reveal_child=self.player_count
-            == 0,  # Reveal only if this is the first player
-            # FIXME: Identify why other transitions are not working
+    def add_player(self, obj: MprisPlayer) -> None:
+        revealer = widgets.Revealer(
+            child=Player(obj),
+            reveal_child=False,
             transition_type="slide_right",
-            transition_duration=300,
+            transition_duration=250,
         )
-        self.players[self.player_count] = player_revealer
-        self.player_count += 1
+        revealer.mpris_player = obj
+        self.players.append(revealer)
+        self.append(revealer)
+        self.switch_to_player(len(self.players) - 1)
 
-        # # Set the child to the first player when it's added
-        # if self.player_count == 1:
-        #     self.child = player_revealer
-        #
-        self.append(player_revealer)
-        print(self.players)
+    @utils.debounce(100)  # delay for 500 ms (0.5 s)
+    def switch_players(self, direction=1):
+        if len(self.players) <= 1:
+            pass
+        self.players[self.current].reveal_child = False
+        self.current = (self.current + direction) % len(self.players)
+        self.players[self.current].reveal_child = True
 
-    def _next_player(self):
-        """Show next player on scroll down"""
-        if self.player_count <= 1:
-            return False
+    def switch_to_player(self, index):
+        if not (0 <= index < len(self.players)):
+            pass
+        if len(self.players) > 0 and 0 <= self.current < len(self.players):
+            self.players[self.current].reveal_child = False
+        self.current = index
+        self.players[self.current].reveal_child = True
 
-        # Hide current player
-        self.players[self.current_player].reveal_child = False
-
-        # Move to next player (wrap around to 0 if at end)
-        self.current_player = (self.current_player + 1) % self.player_count
-
-        # Show new current player
-        self.players[self.current_player].reveal_child = True
-
-        return True
-
-    def _previous_player(self):
-        """Show previous player on scroll up"""
-        if self.player_count <= 1:
-            return False
-
-        # Hide current player
-        self.players[self.current_player].reveal_child = False
-
-        # Move to previous player (wrap around to end if at beginning)
-        self.current_player = (self.current_player - 1) % self.player_count
-
-        # Show new current player
-        self.players[self.current_player].reveal_child = True
-
-        return True
+    def remove_player(self, revealer):
+        if revealer not in self.players:
+            return
+        if self.players.index(revealer) == self.current and len(self.players) > 1:
+            self.switch_players(1)
+        self.remove(revealer)
+        self.players.remove(revealer)
+        if self.current >= len(self.players):
+            self.current = max(0, len(self.players) - 1)

@@ -5,8 +5,11 @@ from .widgets.player import Media
 
 class CentreBar(widgets.Box):
     def __init__(self):
-        super().__init__()
-        # self.append(self.date)
+        super().__init__(
+            hexpand=True,
+            vexpand=True,
+            css_classes=["bar-center"],
+        )
         self.append(Media())
 
 
