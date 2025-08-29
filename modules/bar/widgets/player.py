@@ -6,21 +6,34 @@ from ignis.services.mpris import MprisPlayer, MprisService
 mpris = MprisService.get_default()
 
 
-class Player(widgets.Revealer):
+class Player(widgets.Box):
     def __init__(self, player: MprisPlayer) -> None:
-        self.playerContainer = widgets.Box(
+        self.playerContainer = widgets.CenterBox(
             css_classes=["bar-player"],
         )
         super().__init__(
-            reveal_child=True,
-            child=self.playerContainer,
+            visible=True,
+            child=[self.playerContainer],
         )
         self._player = player
-        self.mediaDetails = widgets.Box(vertical=True)
         self.songName = widgets.Label(
             ellipsize="end",
             label=player.bind("title"),
-            max_width_chars=30,
+            max_width_chars=12,
+        )
+        self.songArtist = widgets.Label(
+            ellipsize="end",
+            label=player.bind("artist"),
+            max_width_chars=8,
+        )
+        self.mediaDetails = widgets.Box(
+            vertical=True,
+            hexpand=True,
+            halign="start",
+            child=[
+                self.songName,
+                self.songArtist,
+            ],
         )
         self.albumArt = widgets.Picture(
             image=player.bind("art-url"),
@@ -82,24 +95,29 @@ class Player(widgets.Revealer):
             ]
         )
 
-        self.playerContainer.append(self.albumArt)
-        self.playerContainer.append(self.songName)
-        self.playerContainer.append(self.control_buttons)
+        self.playerContainer.start_widget = widgets.Box(
+            child=[self.albumArt, self.mediaDetails]
+        )
+        # self.playerContainer.center_widget = self.mediaDetails
+        self.playerContainer.end_widget = self.control_buttons
         # self.playerContainer.append(widgets.Label(label="Player"))
         # self.add_child(self.playerContainer)
 
 
-class Media(widgets.Box):
+class Media(widgets.Scroll):
     def __init__(self):
+        self.playerContainer = widgets.Box(vertical=True, hexpand=True, halign="center")
         super().__init__(
-            vertical=False,
             setup=lambda self: mpris.connect(
                 "player_added", lambda x, player: self.__add_player(player)
             ),
-            css_classes=["rec-unset"],
+            hscrollbar_policy="never",
+            vscrollbar_policy="external",
+            kinetic_scrolling=True,
+            css_classes=["player-container", "hidden-scrollbar"],
+            child=self.playerContainer,
         )
 
     def __add_player(self, obj: MprisPlayer) -> None:
         player = Player(obj)
-        self.append(player)
-        player.set_reveal_child(True)
+        self.playerContainer.append(player)

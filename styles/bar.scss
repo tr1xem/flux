@@ -1,12 +1,29 @@
+.bar-window {
+    // background-color: rgba(#00ffff, 0.1);
+    color: white;
+}
+
+.player-container {
+  min-height: 4rem;
+   background: unset;
+}
+
 .bar-player {
     background-color: rgba(#000000, 0.1);
     border-radius: 1rem;
     border: 1px solid rgba(#ffffff, 0.2);
-    min-height: 25px;
+  min-width: 25rem;
+    min-height: 3rem;
     padding: 0.2rem 1rem;
+    margin-bottom: 0.5rem;
     color: white;
 }
-.bar-window {
-    // background-color: rgba(#00ffff, 0.1);
+.bar-player:first-child {
+    background-color: rgba(#000000, 0.1);
+    border-radius: 1rem;
+    border: 1px solid rgba(#ffffff, 0.2);
+    min-height: 3rem;
+    padding: 0.2rem 1rem;
+    margin-top: 0.2rem;
     color: white;
 }
