@@ -1,4 +1,5 @@
 import asyncio
+import os
 
 from ignis import utils, widgets
 from ignis.services.mpris import MprisPlayer, MprisService
@@ -21,7 +22,7 @@ class Player(widgets.Box):
             ellipsize="end",
             halign="start",
             css_classes=["media-title"],
-            label=player.bind("title"),
+            label=player.bind("title", lambda x: x or "No Media Playing"),
             max_width_chars=22,
         )
         self.songArtist = widgets.Label(
@@ -43,7 +44,9 @@ class Player(widgets.Box):
         )
         self.albumArt = widgets.Picture(
             css_classes=["media-album-art"],
-            image=player.bind("art-url"),
+            image=player.bind(
+                "art-url", lambda x: x or "../../../assets/icons/images/player.png"
+            ),
         )
 
         self.control_buttons = widgets.Box(
@@ -99,10 +102,91 @@ class Player(widgets.Box):
         super().unparent()
 
 
+class NoMediaPlayer(widgets.Box):
+    def __init__(self):
+        self.playerContainer = widgets.Box(
+            css_classes=["bar-player"],
+        )
+        super().__init__(
+            visible=True,
+            child=[self.playerContainer],
+        )
+
+        self.songName = widgets.Label(
+            ellipsize="end",
+            halign="start",
+            css_classes=["media-title", "no-media-title"],
+            label="No Media Playing",
+            max_width_chars=22,
+        )
+        # self.songArtist = widgets.Label(
+        #     ellipsize="end",
+        #     halign="start",
+        #     css_classes=["media-artist"],
+        #     label="",
+        #     max_width_chars=25,
+        # )
+        self.mediaDetails = widgets.Box(
+            vertical=True,
+            hexpand=True,
+            homogeneous=True,
+            halign="start",
+            child=[
+                self.songName,
+                # self.songArtist,
+            ],
+        )
+        self.albumArt = widgets.Picture(
+            css_classes=["media-album-art"],
+            image=os.path.join(
+                os.path.dirname(__file__), "../../../assets/icons/images/player.png"
+            ),
+            # width=20,
+            # height=30,
+        )
+
+        # Empty control buttons container (no functional buttons for no media)
+        self.control_buttons = widgets.Box(
+            child=[
+                widgets.Button(
+                    css_classes=["media-controls"],
+                    child=widgets.Icon(
+                        image="rewind-symbolic",
+                        pixel_size=25,
+                    ),
+                    # css_classes=[self.get_css("media-skip-button")],
+                ),
+                widgets.Button(
+                    css_classes=["media-controls"],
+                    child=widgets.Icon(
+                        image="pause-symbolic",
+                        pixel_size=25,
+                    ),
+                ),
+                widgets.Button(
+                    css_classes=["media-controls"],
+                    child=widgets.Icon(
+                        image="fwd-symbolic",
+                        pixel_size=25,
+                    ),
+                    # css_classes=[self.get_css("media-skip-button")],
+                ),
+            ],
+        )
+
+        self.playerContainer.append(
+            widgets.Box(
+                hexpand=True,
+                child=[self.albumArt, self.mediaDetails, self.control_buttons],
+            )
+        )
+
+
 class Media(widgets.EventBox):
     def __init__(self):
         self.players = []
         self.current = 0
+        self.no_media_player = None
 
         super().__init__(
             setup=lambda self: mpris.connect(
@@ -112,6 +196,27 @@ class Media(widgets.EventBox):
             on_scroll_down=lambda w: self.switch_players(1),
             on_scroll_up=lambda w: self.switch_players(-1),
         )
+
+        # Initialize with no media player
+        self.show_no_media_player()
+
+    def show_no_media_player(self):
+        """Show the no media player when there are no active players"""
+        if self.no_media_player is None:
+            self.no_media_player = widgets.Revealer(
+                child=NoMediaPlayer(),
+                reveal_child=True,
+                transition_type="slide_right",
+                transition_duration=250,
+            )
+            self.append(self.no_media_player)
+
+    def hide_no_media_player(self):
+        """Hide the no media player when there are active players"""
+        if self.no_media_player is not None:
+            self.no_media_player.reveal_child = False
+            self.remove(self.no_media_player)
+            self.no_media_player = None
 
     def add_player(self, obj: MprisPlayer) -> None:
         revealer = widgets.Revealer(
@@ -123,19 +228,24 @@ class Media(widgets.EventBox):
         revealer.mpris_player = obj
         self.players.append(revealer)
         self.append(revealer)
+
+        # Hide no media player when we have real players
+        if len(self.players) == 1:
+            self.hide_no_media_player()
+
         self.switch_to_player(len(self.players) - 1)
 
-    @utils.debounce(100)  # delay for 500 ms (0.5 s)
+    @utils.debounce(100)  # delay for 100 ms
     def switch_players(self, direction=1):
         if len(self.players) <= 1:
-            pass
+            return
         self.players[self.current].reveal_child = False
         self.current = (self.current + direction) % len(self.players)
         self.players[self.current].reveal_child = True
 
     def switch_to_player(self, index):
         if not (0 <= index < len(self.players)):
-            pass
+            return
         if len(self.players) > 0 and 0 <= self.current < len(self.players):
             self.players[self.current].reveal_child = False
         self.current = index
@@ -150,3 +260,7 @@ class Media(widgets.EventBox):
         self.players.remove(revealer)
         if self.current >= len(self.players):
             self.current = max(0, len(self.players) - 1)
+
+        # Show no media player when we have no active players
+        if len(self.players) == 0:
+            self.show_no_media_player()
