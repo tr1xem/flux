@@ -210,8 +210,8 @@ class Media(widgets.EventBox):
         if self.no_media_player is None:
             self.no_media_player = widgets.Revealer(
                 child=NoMediaPlayer(),
+                transition_type="crossfade",
                 reveal_child=True,
-                transition_type="slide_up",
                 transition_duration=250,
             )
             self.append(self.no_media_player)
@@ -219,7 +219,9 @@ class Media(widgets.EventBox):
     def hide_no_media_player(self):
         """Hide the no media player when there are active players"""
         if self.no_media_player is not None:
+            self.no_media_player.transition_type = "crossfade"
             self.no_media_player.reveal_child = False
+
             self.remove(self.no_media_player)
             self.no_media_player = None
 
@@ -228,7 +230,7 @@ class Media(widgets.EventBox):
             child=Player(obj),
             reveal_child=False,
             transition_type="slide_up",
-            transition_duration=250,
+            transition_duration=500,
         )
         revealer.mpris_player = obj
         self.players.append(revealer)
@@ -264,17 +266,44 @@ class Media(widgets.EventBox):
         if len(self.players) > 0 and 0 <= self.current < len(self.players):
             self.players[self.current].reveal_child = False
         self.current = index
+        self.players[self.current].transition_type = "slide_up"
         self.players[self.current].reveal_child = True
 
     def remove_player(self, revealer):
         if revealer not in self.players:
             return
-        if self.players.index(revealer) == self.current and len(self.players) > 1:
-            self.switch_players(1)
-        self.players.remove(revealer)
-        if self.current >= len(self.players):
-            self.current = max(0, len(self.players) - 1)
 
-        # Show no media player when we have no active players
+        player_index = self.players.index(revealer)
+
+        # Hide the revealer first
+        revealer.reveal_child = False
+
+        # Remove from widget tree
+        # self.remove(revealer)
+
+        # Remove from players list
+        self.players.remove(revealer)
+
+        # Handle empty players list
         if len(self.players) == 0:
+            self.current = 0
             self.show_no_media_player()
+            return
+
+        # Adjust current index if needed
+        if player_index < self.current:
+            # Removed player was before current, adjust current index
+            self.current -= 1
+        elif player_index == self.current:
+            # Removed player was current, need to switch to another player
+            if self.current >= len(self.players):
+                # We were at the last player, go to the previous one
+                self.current = len(self.players) - 1
+            # If current is still valid, the next player will be shown
+
+        # Ensure current index is valid
+        self.current = max(0, min(self.current, len(self.players) - 1))
+
+        # Show the current player
+        if 0 <= self.current < len(self.players):
+            self.players[self.current].reveal_child = True
