@@ -3,12 +3,16 @@ import os
 # IGNIS IMPORTS
 from ignis import utils
 from ignis.css_manager import CssInfoPath, CssManager
+from ignis.icon_manager import IconManager
 from ignis.options import options
 from ignis.services.wallpaper import WallpaperService
 
 # CUSTOM MODULES
 from modules.bar.bar import Bar
 
+icon_manager = IconManager.get_default()
+
+icon_manager.add_icons(os.path.join(utils.get_current_dir(), "assets", "icons"))
 css_manager = CssManager.get_default()
 
 css_manager.apply_css(

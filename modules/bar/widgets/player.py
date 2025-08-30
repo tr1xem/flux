@@ -51,7 +51,7 @@ class Player(widgets.Box):
                 widgets.Button(
                     css_classes=["media-controls"],
                     child=widgets.Icon(
-                        image="media-skip-backward-symbolic",
+                        image="rewind-symbolic",
                         pixel_size=25,
                     ),
                     # css_classes=[self.get_css("media-skip-button")],
@@ -63,9 +63,9 @@ class Player(widgets.Box):
                     child=widgets.Icon(
                         image=player.bind(
                             "playback_status",
-                            lambda value: "media-playback-pause-symbolic"
+                            lambda value: "pause-symbolic"
                             if value == "Playing"
-                            else "media-playback-start-symbolic",
+                            else "play-symbolic",
                         ),
                         pixel_size=25,
                     ),
@@ -75,7 +75,7 @@ class Player(widgets.Box):
                 widgets.Button(
                     css_classes=["media-controls"],
                     child=widgets.Icon(
-                        image="media-skip-forward-symbolic",
+                        image="fwd-symbolic",
                         pixel_size=25,
                     ),
                     # css_classes=[self.get_css("media-skip-button")],
