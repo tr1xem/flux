@@ -1,5 +1,6 @@
 from ignis import widgets
 
+from .widgets.info import Info
 from .widgets.player import Media
 
 
@@ -9,6 +10,7 @@ class CentreBar(widgets.Box):
             css_classes=["bar-center"],
         )
         self.append(Media())
+        self.append(Info())
 
 
 class Bar(widgets.Window):
@@ -17,7 +19,7 @@ class Bar(widgets.Window):
             namespace="ignis_bar",
             monitor=monitor_id,
             css_classes=["bar-window"],
-            anchor=["top"],
+            anchor=["bottom"],
             exclusivity="exclusive",
             child=widgets.CenterBox(
                 start_widget=widgets.Box(

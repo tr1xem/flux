@@ -114,6 +114,19 @@ class Player(widgets.Box):
             )
         )
 
+    def get_icon(self):
+        if applications.search(applications.apps, query=self._player.desktop_entry):  # pyright: ignore[reportOptionalMemberAccess]
+            return applications.search(
+                applications.apps,
+                query=self._player.desktop_entry,  # pyright: ignore[reportOptionalMemberAccess]
+            )[0].icon
+        elif applications.search(applications.apps, query=self._player.identity):  # pyright: ignore[reportOptionalMemberAccess]
+            return applications.search(applications.apps, query=self._player.identity)[  # pyright: ignore[reportOptionalMemberAccess]
+                0
+            ].icon
+        else:
+            return "gnome-music"
+
     def _create_player_ui(self):
         """Create UI for when a media player is active"""
         if self._player is None:
@@ -143,12 +156,10 @@ class Player(widgets.Box):
                 self.songArtist,
             ],
         )
+        print(self._player.identity)
         self.icon = widgets.Icon(
             css_classes=["app-icon"],
-            image=applications.search(
-                applications.apps, query=self._player.desktop_entry
-            )[0].icon,
-            pixel_size=18,
+            image=self.get_icon(),
         )
         self.albumArt = widgets.Picture(
             css_classes=["media-album-art"],
