@@ -45,7 +45,11 @@ class Player(widgets.Box):
         self.albumArt = widgets.Picture(
             css_classes=["media-album-art"],
             image=player.bind(
-                "art-url", lambda x: x or "../../../assets/icons/images/player.png"
+                "art-url",
+                lambda x: x
+                or os.path.join(
+                    os.path.dirname(__file__), "../../../assets/icons/images/player.png"
+                ),
             ),
         )
 
@@ -97,7 +101,7 @@ class Player(widgets.Box):
         # self.playerContainer.end_widget = self.control_buttons
 
     def destroy(self) -> None:
-        self.get_parent().get_parent().switch_players(1)
+        # self.get_parent().get_parent().switch_players(-1)
         self.get_parent().get_parent().remove_player(self.get_parent())
         super().unparent()
 
@@ -192,6 +196,7 @@ class Media(widgets.EventBox):
             setup=lambda self: mpris.connect(
                 "player_added", lambda x, p: self.add_player(p)
             ),
+            vertical=True,
             css_classes=["player-container"],
             on_scroll_down=lambda w: self.switch_players(1),
             on_scroll_up=lambda w: self.switch_players(-1),
@@ -206,7 +211,7 @@ class Media(widgets.EventBox):
             self.no_media_player = widgets.Revealer(
                 child=NoMediaPlayer(),
                 reveal_child=True,
-                transition_type="slide_right",
+                transition_type="slide_up",
                 transition_duration=250,
             )
             self.append(self.no_media_player)
@@ -222,7 +227,7 @@ class Media(widgets.EventBox):
         revealer = widgets.Revealer(
             child=Player(obj),
             reveal_child=False,
-            transition_type="slide_right",
+            transition_type="slide_up",
             transition_duration=250,
         )
         revealer.mpris_player = obj
@@ -235,12 +240,22 @@ class Media(widgets.EventBox):
 
         self.switch_to_player(len(self.players) - 1)
 
-    @utils.debounce(100)  # delay for 100 ms
+    @utils.debounce(50)  # delay for 100 ms
     def switch_players(self, direction=1):
         if len(self.players) <= 1:
             return
+        if direction == 1:
+            self.players[self.current].transition_type = "slide_up"
+        else:
+            self.players[self.current].transition_type = "slide_down"
+        # self.players[self.current].transition_type = transition_type
         self.players[self.current].reveal_child = False
         self.current = (self.current + direction) % len(self.players)
+        if direction == 1:
+            self.players[self.current].transition_type = "slide_down"
+        else:
+            self.players[self.current].transition_type = "slide_up"
+        print(self.current)
         self.players[self.current].reveal_child = True
 
     def switch_to_player(self, index):
@@ -256,7 +271,6 @@ class Media(widgets.EventBox):
             return
         if self.players.index(revealer) == self.current and len(self.players) > 1:
             self.switch_players(1)
-        self.remove(revealer)
         self.players.remove(revealer)
         if self.current >= len(self.players):
             self.current = max(0, len(self.players) - 1)

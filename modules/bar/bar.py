@@ -6,8 +6,6 @@ from .widgets.player import Media
 class CentreBar(widgets.Box):
     def __init__(self):
         super().__init__(
-            hexpand=True,
-            vexpand=True,
             css_classes=["bar-center"],
         )
         self.append(Media())
@@ -19,7 +17,7 @@ class Bar(widgets.Window):
             namespace="ignis_bar",
             monitor=monitor_id,
             css_classes=["bar-window"],
-            anchor=["left", "top", "right"],
+            anchor=["top"],
             exclusivity="exclusive",
             child=widgets.CenterBox(
                 start_widget=widgets.Box(
