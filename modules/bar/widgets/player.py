@@ -115,11 +115,15 @@ class Player(widgets.Box):
         )
 
     def get_icon(self):
-        if applications.search(applications.apps, query=self._player.desktop_entry):  # pyright: ignore[reportOptionalMemberAccess]
-            return applications.search(
-                applications.apps,
-                query=self._player.desktop_entry,  # pyright: ignore[reportOptionalMemberAccess]
-            )[0].icon
+        if self._player.desktop_entry is not None:
+            if (
+                applications.search(applications.apps, query=self._player.desktop_entry)
+                is not None
+            ):  # pyright: ignore[reportOptionalMemberAccess]
+                return applications.search(
+                    applications.apps,
+                    query=self._player.desktop_entry,  # pyright: ignore[reportOptionalMemberAccess]
+                )[0].icon
         elif applications.search(applications.apps, query=self._player.identity):  # pyright: ignore[reportOptionalMemberAccess]
             return applications.search(applications.apps, query=self._player.identity)[  # pyright: ignore[reportOptionalMemberAccess]
                 0
@@ -170,6 +174,8 @@ class Player(widgets.Box):
                     os.path.dirname(__file__), "../../../assets/icons/images/player.png"
                 ),
             ),
+            width=40,
+            height=40,
         )
 
         self.mediaIcon = widgets.Overlay(
