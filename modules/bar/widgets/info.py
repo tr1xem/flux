@@ -30,6 +30,7 @@ class Info(widgets.CenterBox):
         self.ramUsage = widgets.Scale(
             css_classes=["usage-slider"],
             # value=fetch.bind("mem_used", lambda x: (x / fetch.mem_total) * 100),
+            sensitive=False,
             hexpand=True,
             min=0,
             max=100,
@@ -40,6 +41,7 @@ class Info(widgets.CenterBox):
             1000,
             lambda _: self.ramUsage.set_value(fetch.mem_used / fetch.mem_total * 100),
         )
+
         self.start_widget = widgets.Box(
             hexpand=True,
             vertical=False,

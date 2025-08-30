@@ -164,6 +164,7 @@ class Player(widgets.Box):
         self.icon = widgets.Icon(
             css_classes=["app-icon"],
             image=self.get_icon(),
+            pixel_size=18,
         )
         self.albumArt = widgets.Picture(
             css_classes=["media-album-art"],
@@ -183,6 +184,7 @@ class Player(widgets.Box):
             overlays=[self.icon],
         )
         self.control_buttons = widgets.Box(
+            spacing=3,
             child=[
                 widgets.Button(
                     css_classes=["media-controls"],

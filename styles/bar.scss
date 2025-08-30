@@ -2,15 +2,14 @@
     all: unset;
     background: unset;
 }
-.media-controls,
-.media-controls > * {
-    background: unset;
-    background-color: unset;
+.media-controls {
+    all: unset;
 }
 
 .bar-window {
+    // background-color: rgba(black, 0.5);
     .player-container {
-        min-height: 4.1rem;
+        min-height: 4.2rem;
         .bar-player {
             background-color: rgba(#000000, 0.1);
             border: 2px solid rgba(#ffffff, 0.2);
@@ -20,7 +19,10 @@
             padding: 0.5rem 0.5rem;
             color: white;
             .media-controls {
-                border: 2px solid rgba(#ffffff, 0.2);
+                opacity: 0.5;
+                &:hover {
+                    opacity: 1;
+                }
             }
 
             .media-title {
@@ -77,13 +79,23 @@
 //         all: unset;
 //     }
 // }
+#ramusage {
+}
+.usage-slider {
+    all: unset;
+    * {
+        all: unset;
+    }
+}
+
 .usage-slider trough {
     min-height: 0.7rem;
     min-width: 5rem;
+    background-color: rgba(white, 0.2);
     border-radius: 1rem;
 }
-.usage-slider trough,
 .usage-slider trough highlight {
-    min-height: 0.7rem;
-    background-color: red;
+    // min-height: 0.7rem;
+    border-radius: 1rem;
+    background-color: cyan;
 }

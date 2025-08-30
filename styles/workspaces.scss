@@ -3,21 +3,26 @@
 }
 .workspaces {
     border-radius: 1rem;
-    margin: 0 0.25rem;
-    min-width: 100rem;
+    padding: 0.2rem;
     background-color: rgba(#000000, 0.1);
-    min-height: 0.7rem;
+
+    min-height: 1.7rem;
+    border: 1px solid rgba(#ffffff, 0.2);
+    margin: 0 0.5rem;
+    margin-left: 0;
+}
+
+.workspace {
+    // @include hover($primaryContainer: blue);
+    background-color: rgba(white, 0.2);
+    border-radius: 1rem;
+    margin: 0 0.25rem;
+    min-width: 1.7rem;
+    min-height: 1.7rem;
     transition: 0.3s;
 
     &.active {
-        // @include hover($primary);
-        min-width: 2rem;
+        // @include hover($primary: blue);
+        background-color: rgba(red, 0.4);
     }
-}
-.active {
-    background-color: green;
-}
-.wokspace button {
-    background: white;
-    color: white;
 }

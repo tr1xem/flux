@@ -1,1 +1,6 @@
-@import "./styles/bar.scss";
+@use "./styles/bar.scss";
+@use "./styles/workspaces.scss";
+* {
+    all: unset;
+    background: unset;
+}

@@ -1,16 +1,13 @@
 from ignis import widgets
 
-from .widgets.info import Info
-from .widgets.player import Media
+from .widgets.workspaces import Workspaces
 
 
 class CentreBar(widgets.Box):
     def __init__(self):
-        super().__init__(
-            css_classes=["bar-center"],
-        )
-        self.append(Media())
-        self.append(Info())
+        super().__init__(css_classes=["bar-center"], hexpand=True)
+        # self.append(Media())
+        # self.append(Info())
 
 
 class Bar(widgets.Window):
@@ -19,18 +16,23 @@ class Bar(widgets.Window):
             namespace="ignis_bar",
             monitor=monitor_id,
             css_classes=["bar-window"],
-            anchor=["bottom"],
+            anchor=["top", "left", "right"],
             exclusivity="exclusive",
             child=widgets.CenterBox(
+                hexpand=True,
                 start_widget=widgets.Box(
                     css_classes=["bar-start"],
-                    child=[],
+                    hexpand=True,
+                    halign="start",
+                    child=[Workspaces()],
                 ),
                 center_widget=widgets.Box(
+                    hexpand=True,
                     css_classes=["bar-center"],
                     child=[CentreBar()],
                 ),
                 end_widget=widgets.Box(
+                    hexpand=True,
                     css_classes=["bar-end"],
                     child=[],
                 ),

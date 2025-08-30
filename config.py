@@ -20,8 +20,10 @@ css_manager.apply_css(
         name="main",
         compiler_function=lambda path: utils.sass_compile(path=path),
         path=os.path.join(utils.get_current_dir(), "main.scss"),
+        priority="user",
     )
 )
+css_manager.widgets_style_priority = "user"
 
 WallpaperService.get_default()
 options.wallpaper.set_wallpaper_path(
