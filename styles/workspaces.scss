@@ -4,7 +4,7 @@
 .workspaces {
     border-radius: 1rem;
     padding: 0.2rem;
-    background-color: rgba(#000000, 0.1);
+    background-color: rgba(#000000, 0.01);
 
     min-height: 1.7rem;
     border: 1px solid rgba(#ffffff, 0.2);
@@ -14,7 +14,7 @@
 
 .workspace {
     // @include hover($primaryContainer: blue);
-    background-color: rgba(white, 0.2);
+    background-color: rgba(white, 0.01);
     border-radius: 1rem;
     margin: 0 0.25rem;
     min-width: 1.7rem;
@@ -23,6 +23,9 @@
 
     &.active {
         // @include hover($primary: blue);
-        background-color: rgba(red, 0.4);
+        background-color: rgba(cyan, 0.5);
     }
+}
+.workspace:hover {
+    background-color: rgba(blue, 0.5);
 }
