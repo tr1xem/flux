@@ -1,5 +1,8 @@
-@use "./styles/bar.scss";
-@use "./styles/workspaces.scss";
+@import "styles/mixins/window.scss";
+@import "styles/mixins/hover.scss";
+@import "styles/bar.scss";
+@import "styles/workspaces.scss";
+@import "styles/notification.scss";
 * {
     all: unset;
     background: unset;

@@ -1,0 +1,23 @@
+.notification-popup {
+    @include window;
+    min-width: 25rem;
+
+    & .notification-close {
+        @include hover($bg: rgba(white, 0.1));
+        // background-color: rgba(white, 0.1);
+        border-radius: 50%;
+        padding: 0.2rem;
+        &:hover {
+            background-color: rgba(white, 0.2);
+        }
+    }
+
+    & .notification-action {
+        @include hover($bg: rgba(white, 0.1));
+        border-radius: 0.5rem;
+        background-color: rgba(white, 0.2);
+    }
+}
+.notification-icon {
+    border-radius: 50%;
+}

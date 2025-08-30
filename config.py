@@ -9,6 +9,7 @@ from ignis.services.wallpaper import WallpaperService
 
 # CUSTOM MODULES
 from modules.bar.bar import Bar
+from modules.notification_popup.notification import NotificationPopup
 
 icon_manager = IconManager.get_default()
 
@@ -34,3 +35,4 @@ options.wallpaper.set_wallpaper_path(
 
 
 Bar(0)
+NotificationPopup(0)
