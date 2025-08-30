@@ -1,0 +1,23 @@
+.unset {
+    all: unset;
+}
+.workspaces {
+    border-radius: 1rem;
+    margin: 0 0.25rem;
+    min-width: 100rem;
+    background-color: rgba(#000000, 0.1);
+    min-height: 0.7rem;
+    transition: 0.3s;
+
+    &.active {
+        // @include hover($primary);
+        min-width: 2rem;
+    }
+}
+.active {
+    background-color: green;
+}
+.wokspace button {
+    background: white;
+    color: white;
+}
