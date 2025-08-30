@@ -3,7 +3,10 @@ import os
 from typing import Optional
 
 from ignis import utils, widgets
+from ignis.services.applications import ApplicationsService
 from ignis.services.mpris import MprisPlayer, MprisService
+
+applications = ApplicationsService.get_default()
 
 mpris = MprisService.get_default()
 
@@ -29,6 +32,13 @@ class Player(widgets.Box):
             self._create_no_media_ui()
         else:
             self._create_player_ui()
+        # if player is not None:
+        #     print(
+        #         applications.search(applications.apps, query=player.desktop_entry)[
+        #             0
+        #         ].icon
+        #     )
+        #     print(self._player.desktop_entry)
 
     def _create_no_media_ui(self):
         """Create UI for when no media is playing"""
@@ -133,6 +143,13 @@ class Player(widgets.Box):
                 self.songArtist,
             ],
         )
+        self.icon = widgets.Icon(
+            css_classes=["app-icon"],
+            image=applications.search(
+                applications.apps, query=self._player.desktop_entry
+            )[0].icon,
+            pixel_size=18,
+        )
         self.albumArt = widgets.Picture(
             css_classes=["media-album-art"],
             image=self._player.bind(
@@ -144,6 +161,10 @@ class Player(widgets.Box):
             ),
         )
 
+        self.mediaIcon = widgets.Overlay(
+            child=self.albumArt,
+            overlays=[self.icon],
+        )
         self.control_buttons = widgets.Box(
             child=[
                 widgets.Button(
@@ -194,7 +215,11 @@ class Player(widgets.Box):
         self.playerContainer.append(
             widgets.Box(
                 hexpand=True,
-                child=[self.albumArt, self.mediaDetails, self.control_buttons],
+                child=[
+                    self.mediaIcon,
+                    self.mediaDetails,
+                    self.control_buttons,
+                ],
             )
         )
 
@@ -267,8 +292,6 @@ class Media(widgets.EventBox):
 
     @utils.debounce(50)  # delay for 100 ms
     def switch_players(self, direction=1):
-        print(self.players)
-
         next_index = (self.current + direction) % len(self.players)
         if self.players[next_index].is_no_media:
             return
@@ -285,7 +308,6 @@ class Media(widgets.EventBox):
             self.players[self.current].transition_type = "slide_up"
         else:
             self.players[self.current].transition_type = "slide_down"
-        print(self.current)
         self.players[self.current].reveal_child = True
 
     def switch_to_player(self, index):
@@ -313,7 +335,6 @@ class Media(widgets.EventBox):
                 self.players.remove(revealer)
                 self.remove(revealer)
             else:
-                print(self.current)
                 revealer.reveal_child = False
                 self.players.remove(revealer)
                 self.remove(revealer)
