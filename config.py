@@ -7,6 +7,7 @@ from ignis.icon_manager import IconManager
 from ignis.options import options
 from ignis.services.wallpaper import WallpaperService
 
+# CUSTOM WIDGETS
 # CUSTOM MODULES
 from modules.bar.bar import Bar
 from modules.notification_popup.notification import NotificationPopup

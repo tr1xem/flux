@@ -1,5 +1,6 @@
 from ignis import widgets
 
+from .widgets.tray import tray
 from .widgets.workspaces import Workspaces
 
 
@@ -34,7 +35,8 @@ class Bar(widgets.Window):
                 end_widget=widgets.Box(
                     hexpand=True,
                     css_classes=["bar-end"],
-                    child=[],
+                    halign="end",
+                    child=[tray()],
                 ),
             ),
         )
