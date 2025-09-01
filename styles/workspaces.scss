@@ -6,8 +6,8 @@
     @include border(#ffffff);
 }
 .workspace {
-    // @include hover($primaryContainer: blue);
-    background-color: rgba(white, 0.01);
+    @include hover($secondary_paletteKeyColor);
+    background-color: rgba($primaryContainer, 0.3);
     border-radius: 1rem;
     margin: 0 0.25rem;
     margin-top: 0.2rem;
@@ -17,10 +17,6 @@
     transition: 0.3s;
 
     &.active {
-        // @include hover($primary: blue);
-        background-color: rgba(cyan, 0.5);
+        background-color: rgba($primary, 0.5);
     }
-}
-.workspace:hover {
-    background-color: rgba(blue, 0.5);
 }
