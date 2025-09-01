@@ -1,4 +1,8 @@
 import os
+import sys
+
+# Add current directory to Python path for local imports
+sys.path.insert(0, os.path.dirname(__file__))
 
 # IGNIS IMPORTS
 from ignis import utils
@@ -8,10 +12,17 @@ from ignis.icon_manager import IconManager
 # CUSTOM WIDGETS
 from modules.bar.bar import Bar
 from modules.bar.widgets.player_expanded import ExpandedPlayerWindow
+from modules.osd.osd import osd_window
 
 # from modules.bar.widgets.player import
 from modules.notification_popup.notification import NotificationPopup
 from user_options import user_options
+
+# Import volume OSD service to start monitoring
+try:
+    from services.volume_osd import volume_osd_service
+except ImportError:
+    pass  # Service not available
 
 icon_manager = IconManager.get_default()
 
@@ -63,3 +74,6 @@ css_manager.widgets_style_priority = "user"  # pyright: ignore[reportAttributeAc
 ExpandedPlayerWindow()
 Bar(0)
 NotificationPopup(0)
+
+# Initialize OSD window (imported from modules.osd.osd)
+# Volume OSD service is automatically started via import

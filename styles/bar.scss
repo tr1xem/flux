@@ -7,7 +7,7 @@
 }
 
 .bar-window {
-    background-color: rgba(black, 0.5);
+    background-color: rgba($surface, 0.5);
     min-height: 2.2rem;
 }
 .app-icon {
@@ -66,8 +66,8 @@
     background-color: cyan;
 }
 .bar-player {
-    background-color: rgba(#000000, 0.1);
     @include border(#ffffff);
+    background-color: rgba($surface, 0.3);
 }
 .media-controls {
     opacity: 0.6;
@@ -77,6 +77,7 @@
 }
 .datetime {
     @include border(#ffffff);
+    background-color: rgba($surface, 0.3);
     .time-label {
         font-weight: bold;
     }

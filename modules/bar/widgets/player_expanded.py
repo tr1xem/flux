@@ -4,9 +4,13 @@ import os
 import ignis
 from ignis import utils, widgets
 from ignis.css_manager import CssInfoString, CssManager
+from ignis.services.applications import ApplicationsService
 from ignis.services.mpris import MprisPlayer, MprisService
 from ignis.window_manager import WindowManager
 from jinja2 import Template
+
+applications = ApplicationsService.get_default()
+
 
 window_manager = WindowManager.get_default()
 
@@ -181,16 +185,21 @@ class Player(widgets.Revealer):
             ),
         )
 
-    def get_player_icon(self) -> str:
-        if self._player.desktop_entry == "firefox":
-            return PLAYER_ICONS["firefox"]
-        elif self._player.desktop_entry == "spotify":
-            return PLAYER_ICONS["spotify"]
-        elif self._player.track_id is not None:
-            if "chromium" in self._player.track_id or "chrome" in self._player.track_id:
-                return PLAYER_ICONS["chrome"]
-
-        return PLAYER_ICONS[None]
+    def get_player_icon(self):
+        if (
+            applications.search(applications.apps, query=self.clean_desktop_entry())
+            is not None
+        ):  # pyright: ignore[reportOptionalMemberAccess]
+            return applications.search(
+                applications.apps,
+                query=self.clean_desktop_entry(),  # pyright: ignore[reportOptionalMemberAccess]
+            )[0].icon
+        elif applications.search(applications.apps, query=self._player.identity):  # pyright: ignore[reportOptionalMemberAccess]
+            return applications.search(applications.apps, query=self._player.identity)[  # pyright: ignore[reportOptionalMemberAccess]
+                0
+            ].icon
+        else:
+            return "folder-music-symbolic"
 
     def destroy(self) -> None:
         self.set_reveal_child(False)
@@ -213,11 +222,11 @@ class Player(widgets.Revealer):
             template_rendered = Template(file.read()).render(colors)
 
         if self._player.desktop_entry in css_manager.list_css_info_names():
-            css_manager.remove_css(self._player.desktop_entry)
+            css_manager.remove_css(self.get_clean_desktop_entry())
 
         css_manager.apply_css(
             CssInfoString(
-                name=self._player.desktop_entry,
+                name=self.clean_desktop_entry(),
                 compiler_function=lambda string: utils.sass_compile(string=string),
                 string=template_rendered,
                 priority="user",
@@ -225,7 +234,20 @@ class Player(widgets.Revealer):
         )
 
     def clean_desktop_entry(self) -> str:
-        return self._player.desktop_entry.replace(".", "-")
+        desktop_entry = self._player.desktop_entry
+
+        import os
+
+        filename = os.path.basename(desktop_entry)
+
+        # Remove .desktop extension if present
+        if filename.endswith(".desktop"):
+            filename = filename[:-8]
+
+        # Replace dots with dashes
+        result = filename.replace(".", "-")
+
+        return result
 
 
 class Media(widgets.Box):

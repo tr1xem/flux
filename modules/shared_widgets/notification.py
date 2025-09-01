@@ -66,12 +66,13 @@ class NormalLayout(widgets.Box):
             child=[
                 widgets.Box(
                     child=[
-                        widgets.Icon(
+                        widgets.Picture(
                             css_classes=["notification-icon"],
                             image=notification.icon
                             if notification.icon
                             else "dialog-information-symbolic",
-                            pixel_size=48,
+                            height=42,
+                            width=42,
                             halign="start",
                             valign="start",
                         ),

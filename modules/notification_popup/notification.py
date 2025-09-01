@@ -31,7 +31,7 @@ class Popup(widgets.Box):
             self._outer.reveal_child = False
             utils.Timeout(self._outer.transition_duration, box_destroy)
 
-        self._inner.transition_type = "crossfade"
+        self._inner.transition_type = "slide_right"
         self._inner.reveal_child = False
         utils.Timeout(self._outer.transition_duration, outer_close)
 

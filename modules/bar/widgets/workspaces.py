@@ -5,7 +5,9 @@ from ignis.services.niri import NiriService, NiriWorkspace
 hyprland = HyprlandService.get_default()
 niri = NiriService.get_default()
 
-PERSISTENT_WORKSPACES = [1, 2, 3, 4, 5]
+# PERSISTENT_WORKSPACES = [1, 2, 3, 4, 5]
+
+PERSISTENT_WORKSPACES = []
 
 # CUSTOM_LABELS = {
 #     1: "一",
