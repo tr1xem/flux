@@ -1,5 +1,5 @@
 import asyncio
-from typing import Optional
+from typing import Optional, List
 
 from ignis import widgets
 from ignis.services.mpris import MprisPlayer, MprisService
@@ -14,7 +14,8 @@ class Player(widgets.EventBox):
             spacing=8,
         )
 
-        self._player: Optional[MprisPlayer] = None
+        self._players: List[MprisPlayer] = []
+        self._current_player: Optional[MprisPlayer] = None
 
         self.title_label = widgets.Label(
             ellipsize="end",
@@ -34,23 +35,65 @@ class Player(widgets.EventBox):
             sensitive=False,
         )
 
-        self.append(self.title_label)
         self.append(self.play_pause_button)
+        self.append(self.title_label)
 
-        mpris.connect("player_added", lambda x, player: self._set_player(player))
+        mpris.connect("player_added", lambda x, player: self._add_player(player))
 
         # Check if there's already an active player
-        if mpris.players:
-            self._set_player(mpris.players[0])
+        for player in mpris.players:
+            self._add_player(player)
 
-    def _set_player(self, player: MprisPlayer) -> None:
-        if self._player:
-            return  # Already have a player
+    def _add_player(self, player: MprisPlayer) -> None:
+        if player in self._players:
+            return
 
-        self._player = player
+        self._players.append(player)
+        
+        # Listen for playback status changes
+        player.connect("notify::playback-status", lambda p, _: self._on_playback_changed(p))
+        
+        # Handle player removal when it closes
+        player.connect("closed", lambda p: self._remove_player(p))
 
-        # Update title binding
-        self.title_label.label = player.bind("title", lambda x: x or "Unknown Title")
+        # Switch to this player if it's currently playing or if we have no current player
+        if player.playback_status == "Playing" or self._current_player is None:
+            self._switch_to_player(player)
+
+    def _remove_player(self, player: MprisPlayer) -> None:
+        if player in self._players:
+            self._players.remove(player)
+            
+            if self._current_player == player:
+                # Find another playing player or fall back to any available player
+                next_player = self._find_playing_player() or (self._players[0] if self._players else None)
+                if next_player:
+                    self._switch_to_player(next_player)
+                else:
+                    self._clear_player()
+
+    def _on_playback_changed(self, player: MprisPlayer) -> None:
+        # Switch to this player if it just started playing
+        if player.playback_status == "Playing" and self._current_player != player:
+            self._switch_to_player(player)
+
+    def _find_playing_player(self) -> Optional[MprisPlayer]:
+        for player in self._players:
+            if player.playback_status == "Playing":
+                return player
+        return None
+
+    def _switch_to_player(self, player: MprisPlayer) -> None:
+        self._current_player = player
+
+        # Update title binding with artist
+        def format_label():
+            title = player.title or "Unknown Title"
+            artist = player.artist
+            return f"{title} • {artist}" if artist else title
+        
+        self.title_label.label = player.bind("title", lambda _: format_label())
+        player.connect("notify::artist", lambda *_: setattr(self.title_label, "label", format_label()))
 
         # Update play/pause button
         self.play_pause_button.child.image = player.bind(
@@ -59,15 +102,12 @@ class Player(widgets.EventBox):
         )
         self.play_pause_button.sensitive = True
 
-        # Handle player removal when it closes
-        player.connect("closed", lambda x: self._clear_player())
-
     def _clear_player(self) -> None:
-        self._player = None
+        self._current_player = None
         self.title_label.label = "No Media Playing"
         self.play_pause_button.child.image = "play-symbolic"
         self.play_pause_button.sensitive = False
 
     def _play_pause(self) -> None:
-        if self._player:
-            asyncio.create_task(self._player.play_pause_async())
+        if self._current_player:
+            asyncio.create_task(self._current_player.play_pause_async())
