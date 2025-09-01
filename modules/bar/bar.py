@@ -1,6 +1,7 @@
-from datetime import datetime
+import datetime
 
 from ignis import utils, widgets
+from ignis.variable import Variable
 
 from .widgets.player import Player
 from .widgets.tray import Tray
@@ -12,30 +13,17 @@ class Datetime(widgets.Box):
         super().__init__(
             css_classes=["datetime"],
         )
+        self.current_time = Variable(
+            value=utils.Poll(
+                1000,
+                lambda x: datetime.datetime.now().strftime("<b>%I:%M</b> • %A, %-d %b"),
+            ).bind("output")
+        )
         self.time = widgets.Label(
-            label=datetime.now().strftime("%I:%M %P"),
-            css_classes=["time-label"],
+            label=self.current_time.bind("value"),
+            use_markup=True,
         )
-        self.date = widgets.Label(
-            label=datetime.now().strftime(" • %A, %-d %b"),
-            css_classes=["date-label"],
-            halign="start",
-            hexpand=True,
-        )
-
-        utils.Poll(1000, lambda x: self.update_label(self.time))
-        utils.Poll(60000, lambda x: self.update_date(self.date))
-
         self.append(self.time)
-        self.append(self.date)
-
-    def update_label(self, widget: widgets.Label) -> None:
-        text = datetime.now().strftime("%I:%M %P")
-        widget.set_label(text)
-
-    def update_date(self, widget: widgets.Label) -> None:
-        text = datetime.now().strftime(" • %A, %-d %b")
-        widget.set_label(text)
 
 
 class CentreBar(widgets.Box):

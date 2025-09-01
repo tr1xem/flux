@@ -9,27 +9,6 @@
 .bar-window {
     background-color: rgba(black, 0.5);
     min-height: 2.2rem;
-    //     .player-container {
-    //         min-height: 4.2rem;
-    //
-    //             .media-title {
-    //                 font-size: 1rem;
-    //             }
-    //             .no-media-title {
-    //                 font-size: 1.1rem;
-    //                 margin-left: 0.5rem;
-    //             }
-    //             .media-artist {
-    //                 font-size: 0.8rem;
-    //                 color: rgba(white, 0.4);
-    //             }
-    //
-    //             .media-album-art {
-    //                 border-radius: 10%;
-    //                 margin-right: 0.5rem;
-    //             }
-    //         }
-    //     }
 }
 .app-icon {
     margin-bottom: -2rem;
@@ -105,14 +84,9 @@
 .tray {
     margin-right: 1rem;
 }
-$bg: #1a1112;
-$bg-light: #261d1e;
-$fg: #f0dedf;
-$active: #ffb2bc;
-$unactive: #d7c1c3;
 popover.menu {
     contents {
-        background-color: $bg;
+        background-color: $background;
         padding: 0.35rem;
         border-radius: 1rem;
         modelbutton {
@@ -121,24 +95,20 @@ popover.menu {
             padding: 0.25rem 1rem;
         }
         modelbutton:hover {
-            background-color: mix($bg, $unactive, 80%);
+            background-color: mix($background, $outline, 80%);
         }
         separator {
-            background-color: mix($bg, $unactive, 90%);
+            background-color: mix($background, $outline, 90%);
             min-height: 0.1rem;
             margin: 0.5rem 0;
         }
 
         label:disabled {
-            color: $unactive;
+            color: $outline;
         }
 
         arrow {
             opacity: 0.3;
-
-            &:hover {
-                background: none;
-            }
 
             &.left {
                 -gtk-icon-source: -gtk-icontheme("go-previous-symbolic");
@@ -149,4 +119,8 @@ popover.menu {
             }
         }
     }
+}
+
+.media-window {
+    min-width: 28rem;
 }

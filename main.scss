@@ -1,3 +1,6 @@
+* {
+    all: unset;
+}
 @import "styles/mixins/window.scss";
 @import "styles/mixins/hover.scss";
 @import "styles/mixins/bar-border.scss";
@@ -6,8 +9,3 @@
 @import "styles/workspaces.scss";
 @import "styles/notification.scss";
 @import "styles/tray.scss";
-
-* {
-    all: unset;
-    background: unset;
-}

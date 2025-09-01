@@ -1,10 +1,13 @@
 import asyncio
-from typing import Optional, List
+from typing import List, Optional
 
 from ignis import widgets
 from ignis.services.mpris import MprisPlayer, MprisService
+from ignis.window_manager import WindowManager
 
 mpris = MprisService.get_default()
+
+window_manager = WindowManager.get_default()
 
 
 class Player(widgets.EventBox):
@@ -12,10 +15,13 @@ class Player(widgets.EventBox):
         super().__init__(
             css_classes=["bar-player"],
             spacing=8,
+            on_click=self.__on_click,
         )
 
         self._players: List[MprisPlayer] = []
         self._current_player: Optional[MprisPlayer] = None
+        self._window = window_manager.get_window("ignis_media")
+        self._monitor = 0
 
         self.title_label = widgets.Label(
             ellipsize="end",
@@ -49,10 +55,12 @@ class Player(widgets.EventBox):
             return
 
         self._players.append(player)
-        
+
         # Listen for playback status changes
-        player.connect("notify::playback-status", lambda p, _: self._on_playback_changed(p))
-        
+        player.connect(
+            "notify::playback-status", lambda p, _: self._on_playback_changed(p)
+        )
+
         # Handle player removal when it closes
         player.connect("closed", lambda p: self._remove_player(p))
 
@@ -63,10 +71,12 @@ class Player(widgets.EventBox):
     def _remove_player(self, player: MprisPlayer) -> None:
         if player in self._players:
             self._players.remove(player)
-            
+
             if self._current_player == player:
                 # Find another playing player or fall back to any available player
-                next_player = self._find_playing_player() or (self._players[0] if self._players else None)
+                next_player = self._find_playing_player() or (
+                    self._players[0] if self._players else None
+                )
                 if next_player:
                     self._switch_to_player(next_player)
                 else:
@@ -91,9 +101,12 @@ class Player(widgets.EventBox):
             title = player.title or "Unknown Title"
             artist = player.artist
             return f"{title} • {artist}" if artist else title
-        
+
         self.title_label.label = player.bind("title", lambda _: format_label())
-        player.connect("notify::artist", lambda *_: setattr(self.title_label, "label", format_label()))
+        player.connect(
+            "notify::artist",
+            lambda *_: setattr(self.title_label, "label", format_label()),
+        )
 
         # Update play/pause button
         self.play_pause_button.child.image = player.bind(
@@ -111,3 +124,10 @@ class Player(widgets.EventBox):
     def _play_pause(self) -> None:
         if self._current_player:
             asyncio.create_task(self._current_player.play_pause_async())
+
+    def __on_click(self, x) -> None:
+        if self._window.monitor == self._monitor:
+            self._window.visible = not self._window.visible
+        else:
+            self._window.set_monitor(self._monitor)
+            self._window.visible = True
