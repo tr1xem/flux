@@ -7,42 +7,29 @@
 }
 
 .bar-window {
-    // background-color: rgba(black, 0.5);
-    .player-container {
-        min-height: 4.2rem;
-        .bar-player {
-            background-color: rgba(#000000, 0.1);
-            border: 2px solid rgba(#ffffff, 0.2);
-            border-radius: 1rem;
-            min-width: 26rem;
-            min-height: 2.8rem;
-            padding: 0.5rem 0.5rem;
-            color: white;
-            .media-controls {
-                opacity: 0.5;
-                &:hover {
-                    opacity: 1;
-                }
-            }
-
-            .media-title {
-                font-size: 1rem;
-            }
-            .no-media-title {
-                font-size: 1.1rem;
-                margin-left: 0.5rem;
-            }
-            .media-artist {
-                font-size: 0.8rem;
-                color: rgba(white, 0.4);
-            }
-
-            .media-album-art {
-                border-radius: 10%;
-                margin-right: 0.5rem;
-            }
-        }
-    }
+    background-color: rgba(black, 0.5);
+    min-height: 2.2rem;
+    //     .player-container {
+    //         min-height: 4.2rem;
+    //
+    //             .media-title {
+    //                 font-size: 1rem;
+    //             }
+    //             .no-media-title {
+    //                 font-size: 1.1rem;
+    //                 margin-left: 0.5rem;
+    //             }
+    //             .media-artist {
+    //                 font-size: 0.8rem;
+    //                 color: rgba(white, 0.4);
+    //             }
+    //
+    //             .media-album-art {
+    //                 border-radius: 10%;
+    //                 margin-right: 0.5rem;
+    //             }
+    //         }
+    //     }
 }
 .app-icon {
     margin-bottom: -2rem;
@@ -98,4 +85,20 @@
     // min-height: 0.7rem;
     border-radius: 1rem;
     background-color: cyan;
+}
+.bar-player {
+    background-color: rgba(#000000, 0.1);
+    @include border(#ffffff);
+}
+.media-controls {
+    opacity: 0.6;
+    &:hover {
+        opacity: 1;
+    }
+}
+.datetime {
+    @include border(#ffffff);
+    .time-label {
+        font-weight: bold;
+    }
 }

@@ -1,22 +1,17 @@
 .unset {
     all: unset;
 }
-.workspaces {
-    border-radius: 1rem;
-    padding: 0.2rem;
-    background-color: rgba(#000000, 0.01);
 
-    min-height: 1.7rem;
-    border: 1px solid rgba(#ffffff, 0.2);
-    margin: 0 0.5rem;
-    margin-left: 0;
+.ws-container {
+    @include border(#ffffff);
 }
-
 .workspace {
     // @include hover($primaryContainer: blue);
     background-color: rgba(white, 0.01);
     border-radius: 1rem;
     margin: 0 0.25rem;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
     min-width: 1.7rem;
     min-height: 1.7rem;
     transition: 0.3s;

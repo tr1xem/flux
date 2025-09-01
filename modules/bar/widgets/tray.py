@@ -25,11 +25,11 @@ def tray_item(item: SystemTrayItem) -> widgets.Button:
     )
 
 
-class tray(widgets.Box):
+class Tray(widgets.Box):
     def __init__(self):
         super().__init__(
             css_classes=["containers"],
-            spacing=10,
+            spacing=5,
             setup=lambda self: system_tray.connect(
                 "added", lambda x, item: self.append(tray_item(item))
             ),

@@ -9,11 +9,13 @@ class Info(widgets.CenterBox):
         super().__init__(
             css_classes=["info-box"],
         )
-        self.osLogo = widgets.Icon(
+        self.osLogo = widgets.Picture(
             image=fetch.os_logo,
             css_classes=["os-logo"],
             # hexpand=True,
-            pixel_size=40,
+            height=40,
+            width=40,
+            # pixel_size=40,
         )
         self.osName = widgets.Label(
             label=fetch.os_name,

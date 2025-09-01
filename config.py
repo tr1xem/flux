@@ -4,11 +4,8 @@ import os
 from ignis import utils
 from ignis.css_manager import CssInfoPath, CssManager
 from ignis.icon_manager import IconManager
-from ignis.options import options
-from ignis.services.wallpaper import WallpaperService
 
 # CUSTOM WIDGETS
-# CUSTOM MODULES
 from modules.bar.bar import Bar
 from modules.notification_popup.notification import NotificationPopup
 
@@ -25,15 +22,15 @@ css_manager.apply_css(
         priority="user",
     )
 )
-css_manager.widgets_style_priority = "user"
+css_manager.widgets_style_priority = "user"  # pyright: ignore[reportAttributeAccessIssue]
 
-WallpaperService.get_default()
-options.wallpaper.set_wallpaper_path(
-    os.path.expanduser(
-        "~/Pictures/Wallpapers/stars-wallpaper-3840x2160-gradients-cosmic-art-27056.jpg"
-    )
-)
-
+# WallpaperService.get_default()
+# options.wallpaper.set_wallpaper_path(
+#     os.path.expanduser(
+#         "~/Pictures/Wallpapers/stars-wallpaper-3840x2160-gradients-cosmic-art-27056.jpg"
+#     )
+# )
+#
 
 Bar(0)
 NotificationPopup(0)
