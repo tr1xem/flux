@@ -10,12 +10,11 @@ mpris = MprisService.get_default()
 window_manager = WindowManager.get_default()
 
 
-class Player(widgets.EventBox):
+class Player(widgets.Box):
     def __init__(self) -> None:
         super().__init__(
             css_classes=["bar-player"],
-            spacing=8,
-            on_click=self.__on_click,
+            spacing=4,
         )
 
         self._players: List[MprisPlayer] = []
@@ -40,9 +39,14 @@ class Player(widgets.EventBox):
             on_click=lambda x: self._play_pause(),
             sensitive=False,
         )
+        self.eventBox = widgets.EventBox(
+            hexpand=True,
+            on_click=lambda x: self.__on_click(x),
+            child=[self.title_label],
+        )
 
         self.append(self.play_pause_button)
-        self.append(self.title_label)
+        self.append(self.eventBox)
 
         mpris.connect("player_added", lambda x, player: self._add_player(player))
 

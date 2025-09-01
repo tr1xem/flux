@@ -86,8 +86,9 @@
     margin-right: 1rem;
 }
 popover.menu {
+    margin-top: -0.8rem;
     contents {
-        background-color: $background;
+        background-color: rgba($surface, 0.5);
         padding: 0.35rem;
         border-radius: 1rem;
         modelbutton {
@@ -96,10 +97,10 @@ popover.menu {
             padding: 0.25rem 1rem;
         }
         modelbutton:hover {
-            background-color: mix($background, $outline, 80%);
+            background-color: rgba(lighten($surface, 50%), 0.5);
         }
         separator {
-            background-color: mix($background, $outline, 90%);
+            background-color: mix($surface, $outline, 90%);
             min-height: 0.1rem;
             margin: 0.5rem 0;
         }
