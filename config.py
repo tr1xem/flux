@@ -17,6 +17,7 @@ from modules.bar.widgets.player_expanded import ExpandedPlayerWindow
 
 # from modules.bar.widgets.player import
 from modules.notification_popup.notification import NotificationPopup
+from modules.osd.osd import Osd
 from modules.shared_widgets.corner import Corner
 from user_options import user_options
 
@@ -72,7 +73,7 @@ ExpandedPlayerWindow()
 Bar(0)
 NotificationPopup(0)
 
-corner_size = (40, 40)
+corner_size = (30, 30)
 window = widgets.Window(
     namespace="corner",
     exclusivity="exclusive",
@@ -174,3 +175,5 @@ window = widgets.Window(
 #     layer="bottom",
 #     child=widgets.Box(hexpand=True, child=[pic]),
 # )
+
+Osd()

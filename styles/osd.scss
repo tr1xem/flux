@@ -1,0 +1,111 @@
+.osd-window {
+    background: transparent;
+}
+
+.osd-dismiss {
+    all: unset;
+    background: transparent;
+}
+
+.osd-box {
+    background: $surface;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    padding: 10px;
+    // margin: 20px;
+    // margin-right: -10px;
+}
+
+.osd-content {
+}
+
+.osd-corner-up,
+.osd-corner-down {
+    color: $surface;
+}
+.osd-corner-up {
+    margin-left: 28px;
+}
+.osd-corner-down {
+    margin-left: 28px;
+}
+.osd-icon-box {
+    min-height: 3.5rem;
+    min-width: 3rem;
+    background: $primary;
+    border-radius: 16px;
+}
+.osd-icon {
+    font-size: 26px;
+    font-family: "JetBrainsMono Nerd Font";
+    margin-right: 0.8rem;
+
+    color: white;
+}
+
+.osd-slider-container {
+    min-height: 200px;
+}
+
+.osd-scale {
+    min-width: 8px;
+    min-height: 200px;
+    padding: 4px;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.osd-scale {
+    all: unset;
+
+    * {
+        all: unset;
+    }
+}
+.osd-scale trough {
+    background-color: $secondaryContainer;
+    border-radius: 1rem;
+    min-width: 8px;
+    min-height: 200px;
+}
+
+.osd-scale trough highlight {
+    background-color: $primary;
+    border-radius: 1rem;
+}
+
+.osd-scale slider {
+    min-width: 20px;
+    min-height: 20px;
+    border-radius: 50%;
+}
+
+.osd-percentage {
+    margin-top: 0.5rem;
+}
+
+/* Volume specific styling */
+.osd-content.vol .osd-icon {
+    background: rgba(79, 70, 229, 0.2);
+    color: #a5b4fc;
+}
+
+.osd-content.vol .osd-scale highlight {
+    background: linear-gradient(0deg, #4f46e5, #6366f1);
+}
+
+/* Brightness specific styling */
+.osd-content.bl .osd-icon {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fcd34d;
+}
+
+.osd-content.bl .osd-scale highlight {
+    background: linear-gradient(0deg, #f59e0b, #f97316);
+}
+
+.osd-slider {
+    min-height: 0.7rem;
+    background-color: rgba(white, 0.2);
+    color: white;
+}
