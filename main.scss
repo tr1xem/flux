@@ -13,16 +13,19 @@
 @import "styles/control_center.scss";
 @import "styles/shared.scss";
 @import "styles/notification_centre.scss";
+@import "styles/powermenu.scss";
+@import "styles/settings.scss";
 
 .progress-player {
     color: $primary;
 }
 .imag {
-    margin-top: -0.5rem;
+    // margin-top: -0.5rem;
     // opacity: 0.5;
 }
 .d {
-    margin-top: -55rem;
+    margin-top: -35rem;
+    margin-left: -1.5rem;
     font-size: 15rem;
     opacity: 0.5;
     font-family: "SF Pro Rounded";
@@ -34,4 +37,50 @@
 }
 .corner {
     color: rgba($surface, 1);
+}
+/* Style the file chooser dialog background */
+filechooser,
+filechooserwidget {
+    background-color: #1e1e2e; /* dark background */
+    color: #f5f5f5; /* text color */
+    border-radius: 12px;
+    padding: 8px;
+}
+
+/* Style the sidebar (places like Home, Documents, etc.) */
+filechooserwidget > box.sidebar {
+    background-color: #2a2a3a;
+    color: #d0d0d0;
+    margin: 20px;
+    padding: 10rem;
+}
+
+/* Style the file list */
+filechooserwidget listview {
+    padding: 10px;
+    background-color: #262636;
+    border-radius: 8px;
+}
+
+filechooserwidget listview row {
+    padding: 6px 10px;
+    margin: 20px;
+}
+
+filechooserwidget listview row:selected {
+    background-color: #4a90e2;
+    color: #ffffff;
+    border-radius: 6px;
+}
+
+/* Style buttons in the footer (Open, Cancel, etc.) */
+filechooser dialog actionbar button {
+    background-color: red;
+    color: white;
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+
+filechooser dialog actionbar button:hover {
+    background-color: #357ab8;
 }

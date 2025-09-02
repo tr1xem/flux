@@ -9,11 +9,20 @@ sys.path.insert(0, os.path.dirname(__file__))
 from ignis import utils, widgets
 from ignis.css_manager import CssInfoPath, CssManager
 from ignis.icon_manager import IconManager
+from ignis.services.wallpaper import WallpaperService
 
 # from ignis.variable import Variable
 # CUSTOM WIDGETS
 # from modules.bar.widgets.player import
-from modules import Bar, ControlCenter, Corner, NotificationPopup, Osd
+from modules import (
+    Bar,
+    ControlCenter,
+    Corner,
+    NotificationPopup,
+    Osd,
+    Powermenu,
+    Settings,
+)
 from modules.bar.widgets.player_expanded import ExpandedPlayerWindow
 from user_options import user_options
 
@@ -25,7 +34,7 @@ icon_manager.add_icons(os.path.join(utils.get_current_dir(), "assets", "icons"))
 css_manager = CssManager.get_default()
 
 
-# WallpaperService.get_default()
+WallpaperService.get_default()
 # options.wallpaper.set_wallpaper_path(
 #     os.path.expanduser("~/Pictures/Wallpapers/astronaut-jellyfish-gruvbox.png")
 # )
@@ -172,5 +181,6 @@ window = widgets.Window(
 #     layer="bottom",
 #     child=widgets.Box(hexpand=True, child=[pic]),
 # )
-
 Osd()
+Settings()
+Powermenu()

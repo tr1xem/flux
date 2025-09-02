@@ -32,15 +32,15 @@
 .osd-icon-box {
     min-height: 3.5rem;
     min-width: 3rem;
-    background: $primary;
     border-radius: 16px;
+    background: $primary;
 }
 .osd-icon {
     font-size: 26px;
     font-family: "JetBrainsMono Nerd Font";
     margin-right: 0.8rem;
 
-    color: white;
+    color: $onSurface;
 }
 
 .osd-slider-container {
@@ -52,7 +52,7 @@
     min-height: 200px;
     padding: 4px;
     border-radius: 25px;
-    background: rgba(255, 255, 255, 0.2);
+    background: $primary;
 }
 
 .osd-scale {

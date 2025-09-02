@@ -12,6 +12,7 @@
 .bar-window {
     background-color: rgba($surface, 0.7);
     min-height: 2.2rem;
+    color: $onSurface;
 }
 .app-icon {
     margin-bottom: -2rem;
@@ -21,13 +22,13 @@
 .info-box {
     margin-left: 1rem;
     min-height: 4.1rem;
-    background-color: rgba(#000000, 0.1);
+    background-color: rgba($onSurface, 0.1);
     border: 2px solid rgba(#ffffff, 0.2);
     border-radius: 1rem;
     min-width: 26rem;
     min-height: 2.8rem;
     padding: 0.5rem 0.5rem;
-    color: white;
+    color: $onSurface;
 }
 
 .os-logo {
@@ -69,8 +70,8 @@
     background-color: cyan;
 }
 .bar-player {
-    @include border(#ffffff);
-    background-color: rgba($surface, 0.3);
+    @include border();
+    background-color: rgb(darken($surface, 0.1), 0.3);
 }
 .media-controls {
     opacity: 0.6;
@@ -79,8 +80,8 @@
     }
 }
 .datetime {
-    @include border(#ffffff);
-    background-color: rgba($surface, 0.3);
+    @include border();
+    background-color: rgb(darken($surface, 0.1), 0.3);
     .time-label {
         font-weight: bold;
     }
@@ -128,4 +129,8 @@ popover.menu {
 
 .media-window {
     min-width: 28rem;
+}
+
+.status-pill {
+    @include border();
 }

@@ -23,7 +23,7 @@
         border-radius: 1.2rem;
         transition: 0.3s;
         padding: 0.3rem 0.8rem;
-
+        //
         &.active {
             @include hover($primary);
             color: $surface;
@@ -35,7 +35,7 @@
     }
 
     .control-center-menu {
-        background-color: $surfaceContainerHigh;
+        background-color: rgba($surfaceContainerHigh, 0.5);
         border-radius: 1rem;
         padding: 1rem;
         margin-top: 1rem;

@@ -137,16 +137,18 @@ class StatusPill(widgets.Button):
 
         super().__init__(
             child=widgets.Box(
+                css_classes=["status-pill"],
+                spacing=5,
                 child=[
+                    BluetoothIcon(),
                     RecorderIcon(),
                     WifiIcon(),
                     EthernetIcon(),
                     VpnIcon(),
-                    BluetoothIcon(),
-                    Battery(),
                     VolumeIcon(),
                     DNDIcon(),
-                ]
+                    Battery(),
+                ],
             ),
             on_click=self.__on_click,
         )

@@ -1,4 +1,5 @@
 import asyncio
+import time
 
 from ignis import widgets
 from ignis.services.bluetooth import BluetoothDevice, BluetoothService
@@ -44,6 +45,8 @@ class BluetoothDeviceItem(widgets.Button):
 
 class BluetoothMenu(Menu):
     def __init__(self):
+        self._setup_mode_enabled = False
+        
         super().__init__(
             name="bluetooth",
             child=[
@@ -57,21 +60,35 @@ class BluetoothMenu(Menu):
                     vertical=True,
                     child=bluetooth.bind(
                         "devices",
-                        transform=lambda value: [BluetoothDeviceItem(i) for i in value]
-                        if value
-                        else [
-                            widgets.Label(
-                                label="No devices found"
-                                if bluetooth.state != "absent"
-                                else "Service integration issue",
-                                halign="center",
-                                css_classes=["dim-label"],
-                            )
-                        ],
+                        transform=self._transform_devices,
                     ),
                 ),
             ],
         )
+        
+        # Connect to reveal state changes to enable setup mode only when expanded
+        self.connect("notify::reveal-child", self._on_reveal_changed)
+    
+    def _on_reveal_changed(self, *args):
+        """Called when the menu is expanded or collapsed"""
+        if self.reveal_child:
+            self.enable_setup_mode_if_needed()
+    
+    def _transform_devices(self, devices):
+        """Transform device list into widgets, with caching to reduce recreation"""
+        if not devices:
+            return [widgets.Label(
+                label="No devices found" if bluetooth.state != "absent" else "Service integration issue",
+                halign="center",
+                css_classes=["dim-label"],
+            )]
+        return [BluetoothDeviceItem(device) for device in devices]
+    
+    def enable_setup_mode_if_needed(self):
+        """Enable setup mode only when the menu is actually opened and needs fresh device scan"""
+        if not self._setup_mode_enabled:
+            bluetooth.set_setup_mode(True)
+            self._setup_mode_enabled = True
 
 
 class BluetoothButton(QSButton):
@@ -79,7 +96,6 @@ class BluetoothButton(QSButton):
         menu = BluetoothMenu()
 
         def toggle_menu(x) -> None:
-            bluetooth.set_setup_mode(True)
             menu.toggle()
 
         def get_label(state: str, devices: list[BluetoothDevice]) -> str:
