@@ -5,6 +5,8 @@ from ignis import widgets
 from ignis.services.mpris import MprisPlayer, MprisService
 from ignis.window_manager import WindowManager
 
+from ...shared_widgets.circular_progress import CircularProgressBar
+
 mpris = MprisService.get_default()
 
 window_manager = WindowManager.get_default()
@@ -14,7 +16,9 @@ class Player(widgets.Box):
     def __init__(self) -> None:
         super().__init__(
             css_classes=["bar-player"],
-            spacing=4,
+            spacing=2,
+            vexpand=True,
+            hexpand=True,
         )
 
         self._players: List[MprisPlayer] = []
@@ -23,6 +27,7 @@ class Player(widgets.Box):
         self._monitor = 0
 
         self.title_label = widgets.Label(
+            valign="center",
             ellipsize="end",
             halign="start",
             css_classes=["media-title"],
@@ -34,17 +39,26 @@ class Player(widgets.Box):
             css_classes=["media-controls"],
             child=widgets.Icon(
                 image="play-symbolic",
-                pixel_size=20,
+                pixel_size=16,
             ),
             on_click=lambda x: self._play_pause(),
             sensitive=False,
         )
+        self._progress_bar = CircularProgressBar(
+            line_width=2,
+            size=(20, 20),
+            start_angle=270,
+            end_angle=650,
+            css_classes=["progress-player"],
+        )
         self.eventBox = widgets.EventBox(
             hexpand=True,
+            vexpand=True,
             on_click=lambda x: self.__on_click(x),
             child=[self.title_label],
         )
 
+        self.append(self._progress_bar)
         self.append(self.play_pause_button)
         self.append(self.eventBox)
 
@@ -99,6 +113,9 @@ class Player(widgets.Box):
 
     def _switch_to_player(self, player: MprisPlayer) -> None:
         self._current_player = player
+
+        self._progress_bar.max_value = player.bind("length")
+        self._progress_bar.value = player.bind("position")
 
         # Update title binding with artist
         def format_label():

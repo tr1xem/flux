@@ -9,17 +9,16 @@ from ignis.services.mpris import MprisPlayer, MprisService
 from ignis.window_manager import WindowManager
 from jinja2 import Template
 
+from services.material import MaterialService
+
+from .menu import opened_menu
+
 applications = ApplicationsService.get_default()
 
-
-window_manager = WindowManager.get_default()
-
-from services.material import MaterialService
 
 mpris = MprisService.get_default()
 css_manager = CssManager.get_default()
 material = MaterialService.get_default()
-from .menu import opened_menu
 
 window_manager = WindowManager.get_default()
 
@@ -29,14 +28,6 @@ MEDIA_ART_FALLBACK = (
     utils.get_current_dir() + "/../../../assets/icons/images/player.png"
 )
 os.makedirs(MEDIA_SCSS_CACHE_DIR, exist_ok=True)
-
-
-PLAYER_ICONS = {
-    "spotify": "spotify-symbolic",
-    "firefox": "firefox-browser-symbolic",
-    "chrome": "chrome-symbolic",
-    None: "folder-music-symbolic",
-}
 
 
 PLAYER_ICONS = {
@@ -222,7 +213,7 @@ class Player(widgets.Revealer):
             template_rendered = Template(file.read()).render(colors)
 
         if self._player.desktop_entry in css_manager.list_css_info_names():
-            css_manager.remove_css(self.get_clean_desktop_entry())
+            css_manager.remove_css(self.clean_desktop_entry())
 
         css_manager.apply_css(
             CssInfoString(
@@ -235,19 +226,22 @@ class Player(widgets.Revealer):
 
     def clean_desktop_entry(self) -> str:
         desktop_entry = self._player.desktop_entry
+        if desktop_entry is not None:
+            import os
 
-        import os
+            filename = os.path.basename(desktop_entry)
 
-        filename = os.path.basename(desktop_entry)
+            # Remove .desktop extension if present
+            if filename.endswith(".desktop"):
+                filename = filename[:-8]
 
-        # Remove .desktop extension if present
-        if filename.endswith(".desktop"):
-            filename = filename[:-8]
+            # Replace dots with dashes
+            result = filename.replace(".", "-")
 
-        # Replace dots with dashes
-        result = filename.replace(".", "-")
+            return result
 
-        return result
+        else:
+            return self._player.identity.replace(".", "-")
 
 
 class Media(widgets.Box):

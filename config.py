@@ -1,3 +1,4 @@
+# import datetime
 import os
 import sys
 
@@ -5,24 +6,21 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 
 # IGNIS IMPORTS
-from ignis import utils
+from ignis import utils, widgets
 from ignis.css_manager import CssInfoPath, CssManager
 from ignis.icon_manager import IconManager
 
+# from ignis.variable import Variable
 # CUSTOM WIDGETS
 from modules.bar.bar import Bar
 from modules.bar.widgets.player_expanded import ExpandedPlayerWindow
-from modules.osd.osd import osd_window
 
 # from modules.bar.widgets.player import
 from modules.notification_popup.notification import NotificationPopup
+from modules.shared_widgets.corner import Corner
 from user_options import user_options
 
 # Import volume OSD service to start monitoring
-try:
-    from services.volume_osd import volume_osd_service
-except ImportError:
-    pass  # Service not available
 
 icon_manager = IconManager.get_default()
 
@@ -32,11 +30,10 @@ css_manager = CssManager.get_default()
 
 # WallpaperService.get_default()
 # options.wallpaper.set_wallpaper_path(
-#     os.path.expanduser(
-#         "~/Pictures/Wallpapers/stars-wallpaper-3840x2160-gradients-cosmic-art-27056.jpg"
-#     )
+#     os.path.expanduser("~/Pictures/Wallpapers/astronaut-jellyfish-gruvbox.png")
 # )
-#
+
+
 def format_scss_var(name: str, val: str) -> str:
     return f"${name}: {val};\n"
 
@@ -75,5 +72,105 @@ ExpandedPlayerWindow()
 Bar(0)
 NotificationPopup(0)
 
-# Initialize OSD window (imported from modules.osd.osd)
-# Volume OSD service is automatically started via import
+corner_size = (40, 40)
+window = widgets.Window(
+    namespace="corner",
+    exclusivity="exclusive",
+    anchor=["top", "right", "bottom", "left"],
+    layer="bottom",
+    child=widgets.CenterBox(
+        vertical=True,
+        start_widget=widgets.Box(
+            child=[
+                widgets.CenterBox(
+                    vertical=False,
+                    vexpand=True,  # Expand vertically
+                    hexpand=True,  # Expand horizontally
+                    start_widget=widgets.Box(
+                        child=[
+                            Corner(
+                                orientation="top-left",  # Shape points to top-right
+                                size=corner_size,
+                                css_classes=["corner-top"],
+                                halign="end",  # Widget aligns to right
+                                valign="start",  # Widget aligns to top
+                            )
+                        ]
+                    ),
+                    end_widget=widgets.Box(
+                        child=[
+                            Corner(
+                                orientation="top-right",  # Shape points to top-right
+                                size=corner_size,
+                                halign="end",  # Widget aligns to right
+                                valign="start",  # Widget aligns to top
+                                css_classes=["corner-top"],
+                            ),
+                        ],
+                    ),
+                ),
+            ]
+        ),
+        end_widget=widgets.Box(
+            child=[
+                widgets.CenterBox(
+                    vertical=False,
+                    vexpand=True,  # Expand vertically
+                    hexpand=True,  # Expand horizontally
+                    start_widget=widgets.Box(
+                        child=[
+                            Corner(
+                                orientation="bottom-left",  # Shape points to top-right
+                                size=corner_size,
+                                css_classes=["corner"],
+                                halign="end",  # Widget aligns to right
+                                valign="end",  # Widget aligns to top
+                            )
+                        ]
+                    ),
+                    end_widget=widgets.Box(
+                        child=[
+                            Corner(
+                                orientation="bottom-right",  # Shape points to top-right
+                                size=corner_size,
+                                halign="end",  # Widget aligns to right
+                                valign="end",  # Widget aligns to top
+                                css_classes=["corner"],
+                            ),
+                        ],
+                    ),
+                ),
+            ]
+        ),
+    ),
+)
+
+# TODO: Implement a better way to do depth wallpapers
+
+# pic = widgets.Picture(image="./removed-background.png", css_classes=["imag"])
+# current_time = Variable(
+#     value=utils.Poll(
+#         1000,
+#         lambda x: datetime.datetime.now().strftime("%I:%M"),
+#     ).bind("output")
+# )
+#
+# time = widgets.Label(
+#     label=current_time.bind("value"),
+#     css_classes=["d"],
+#     halign="center",
+# )
+# widgets.Window(
+#     namespace="ignis_m",
+#     exclusivity="ignore",
+#     anchor=["top", "right", "bottom", "left"],
+#     layer="bottom",
+#     child=widgets.Box(hexpand=True, halign="center", child=[time]),
+# )
+# widgets.Window(
+#     namespace="ignis_ma",
+#     exclusivity="ignore",
+#     anchor=["top", "right", "bottom", "left"],
+#     layer="bottom",
+#     child=widgets.Box(hexpand=True, child=[pic]),
+# )

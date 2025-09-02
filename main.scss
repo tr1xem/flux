@@ -1,6 +1,12 @@
 * {
     all: unset;
 }
+.corner-top {
+    color: rgba($surface, 0.77);
+}
+.corner {
+    color: rgba($surface, 1);
+}
 @import "styles/mixins/window.scss";
 @import "styles/mixins/hover.scss";
 @import "styles/mixins/bar-border.scss";
@@ -10,3 +16,19 @@
 @import "styles/notification.scss";
 @import "styles/tray.scss";
 @import "styles/osd.scss";
+
+.progress-player {
+    color: $primary;
+}
+.imag {
+    margin-top: -0.5rem;
+    // opacity: 0.5;
+}
+.d {
+    margin-top: -55rem;
+    font-size: 15rem;
+    opacity: 0.5;
+    font-family: "SF Pro Rounded";
+
+    font-weight: bold;
+}

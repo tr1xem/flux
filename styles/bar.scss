@@ -4,10 +4,14 @@
 }
 .media-controls {
     all: unset;
+    margin-left: -1.8rem;
 }
 
+.media-title {
+    margin-top: -2px;
+}
 .bar-window {
-    background-color: rgba($surface, 0.5);
+    background-color: rgba($surface, 0.7);
     min-height: 2.2rem;
 }
 .app-icon {

@@ -1,11 +1,15 @@
 import datetime
 
 from ignis import utils, widgets
+from ignis.services.hyprland import HyprlandService
 from ignis.variable import Variable
 
+from .widgets.battery import Battery
 from .widgets.player import Player
 from .widgets.tray import Tray
 from .widgets.workspaces import Workspaces
+
+hyprland = HyprlandService.get_default()
 
 
 class Datetime(widgets.Box):
@@ -48,9 +52,10 @@ class Bar(widgets.Window):
                 start_widget=widgets.Box(
                     css_classes=["bar-start"],
                     hexpand=True,
-                    vexpand=False,
+                    vexpand=True,
+                    valign="center",
                     halign="center",
-                    # child=[Workspaces(0)],
+                    child=[],
                 ),
                 center_widget=widgets.Box(
                     hexpand=True,
@@ -63,7 +68,7 @@ class Bar(widgets.Window):
                     hexpand=True,
                     css_classes=["bar-end"],
                     halign="end",
-                    child=[Tray()],
+                    child=[Tray(), Battery()],
                 ),
             ),
         )
