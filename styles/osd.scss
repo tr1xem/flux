@@ -33,7 +33,7 @@
     min-height: 3.5rem;
     min-width: 3rem;
     border-radius: 16px;
-    background: $primary;
+    background: darken($primary, 10%);
 }
 .osd-icon {
     font-size: 26px;
@@ -52,7 +52,7 @@
     min-height: 200px;
     padding: 4px;
     border-radius: 25px;
-    background: $primary;
+    background: darken($primary, 10%);
 }
 
 .osd-scale {
@@ -70,7 +70,7 @@
 }
 
 .osd-scale trough highlight {
-    background-color: $primary;
+    background: darken($primary, 10%);
     border-radius: 1rem;
 }
 

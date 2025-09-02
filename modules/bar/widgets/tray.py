@@ -18,7 +18,7 @@ class TrayItem(widgets.Button):
         super().__init__(
             child=widgets.Box(
                 child=[
-                    widgets.Icon(image=item.bind("icon"), pixel_size=22),
+                    widgets.Icon(image=item.bind("icon"), pixel_size=20),
                     menu,
                 ]
             ),
