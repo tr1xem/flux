@@ -1,3 +1,29 @@
+switch {
+    background-color: $secondaryContainer;
+    border-radius: 16px;
+    padding: 2px;
+    // min-width: 40px;
+    // min-height: 20px;
+
+    slider {
+        background-color: #fff; // Knob color
+        border-radius: 50%;
+        margin: 2px;
+    }
+
+    &:checked {
+        background-color: darken($primary, 20%);
+
+        slider {
+            background-color: white;
+        }
+    }
+
+    &:disabled {
+        background-color: white;
+    }
+}
+
 .toggle-box {
     padding: 0.75rem 1rem;
     border-radius: 1rem;
@@ -29,7 +55,9 @@
     min-width: 1.5rem;
     min-height: 1.5rem;
     border-radius: 1rem;
+
     margin-right: 0.5rem;
+    background-color: unset;
 }
 
 .material-slider-arrow {

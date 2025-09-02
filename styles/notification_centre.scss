@@ -17,9 +17,11 @@
 
 .notification-count {
     background-color: $tertiary;
+    font-size: 1rem;
+    font-family: "SF Pro Rounded";
     color: $onTertiary;
     min-width: 2rem;
-    font-size: 1.5rem;
+    min-height: 2rem;
     border-radius: 2rem;
 }
 

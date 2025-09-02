@@ -1,6 +1,7 @@
 import asyncio
-from ignis.services.backlight import BacklightService
+
 from ignis import widgets
+from ignis.services.backlight import BacklightService
 
 backlight = BacklightService.get_default()
 
@@ -15,7 +16,7 @@ class Brightness(widgets.Box):
                 widgets.Icon(
                     image="display-brightness-symbolic",
                     css_classes=["material-slider-icon"],
-                    pixel_size=18,
+                    pixel_size=22,
                 ),
                 widgets.Scale(
                     min=0,
@@ -23,7 +24,9 @@ class Brightness(widgets.Box):
                     hexpand=True,
                     value=backlight.bind("brightness"),
                     css_classes=["material-slider"],
-                    on_change=lambda x: asyncio.create_task(backlight.set_brightness_async(x.value)),
+                    on_change=lambda x: asyncio.create_task(
+                        backlight.set_brightness_async(x.value)
+                    ),
                 ),
             ],
         )

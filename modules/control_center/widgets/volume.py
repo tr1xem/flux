@@ -1,10 +1,11 @@
 import asyncio
-from ignis import widgets
-from ignis import utils
-from ignis.services.audio import AudioService, Stream
 from typing import Literal
-from ..menu import Menu
+
+from ignis import utils, widgets
+from ignis.services.audio import AudioService, Stream
+
 from ...shared_widgets import MaterialVolumeSlider
+from ..menu import Menu
 
 audio = AudioService.get_default()
 
@@ -84,7 +85,9 @@ class DeviceMenu(Menu):
                     ),
                     css_classes=["volume-entry", "unset"],
                     style="margin-bottom: 0;",
-                    on_click=lambda x: asyncio.create_task(utils.exec_sh_async("pavucontrol")),
+                    on_click=lambda x: asyncio.create_task(
+                        utils.exec_sh_async("pavucontrol")
+                    ),
                 ),
             ],
         )
@@ -99,9 +102,9 @@ class VolumeSlider(widgets.Box):
         icon = widgets.Button(
             child=widgets.Icon(
                 image=stream.bind("icon_name"),
-                pixel_size=18,
+                pixel_size=22,
             ),
-            css_classes=["material-slider-icon", "unset", "hover-surface"],
+            css_classes=["material-slider-icon"],
             on_click=lambda x: stream.set_is_muted(not stream.is_muted),
         )
 
@@ -114,8 +117,10 @@ class VolumeSlider(widgets.Box):
         )
 
         arrow = widgets.Button(
-            child=widgets.Arrow(pixel_size=20, rotated=device_menu.bind("reveal_child")),
-            css_classes=["material-slider-arrow", "hover-surface"],
+            child=widgets.Arrow(
+                pixel_size=20, rotated=device_menu.bind("reveal_child")
+            ),
+            css_classes=["material-slider-arrow"],
             on_click=lambda x: device_menu.toggle(),
         )
         super().__init__(
