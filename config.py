@@ -12,13 +12,9 @@ from ignis.icon_manager import IconManager
 
 # from ignis.variable import Variable
 # CUSTOM WIDGETS
-from modules.bar.bar import Bar
-from modules.bar.widgets.player_expanded import ExpandedPlayerWindow
-
 # from modules.bar.widgets.player import
-from modules.notification_popup.notification import NotificationPopup
-from modules.osd.osd import Osd
-from modules.shared_widgets.corner import Corner
+from modules import Bar, ControlCenter, Corner, NotificationPopup, Osd
+from modules.bar.widgets.player_expanded import ExpandedPlayerWindow
 from user_options import user_options
 
 # Import volume OSD service to start monitoring
@@ -70,6 +66,7 @@ css_manager.apply_css(
 css_manager.widgets_style_priority = "user"  # pyright: ignore[reportAttributeAccessIssue]
 
 ExpandedPlayerWindow()
+ControlCenter()
 Bar(0)
 NotificationPopup(0)
 

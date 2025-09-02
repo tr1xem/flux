@@ -6,7 +6,7 @@ from ignis.services.backlight import BacklightService
 from ignis.variable import Variable
 from ignis.window_manager import WindowManager
 
-from ..shared_widgets.corner import Corner
+from ..shared_widgets import Corner
 
 window_manager = WindowManager.get_default()
 

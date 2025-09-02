@@ -1,3 +1,3 @@
-# from .notification import NotificationPopup
-#
-# __all__ = ["NotificationPopup"]
+from .notification import NotificationPopup
+
+__all__ = ["NotificationPopup"]

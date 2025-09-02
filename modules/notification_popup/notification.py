@@ -1,7 +1,7 @@
 from ignis import utils, widgets
 from ignis.services.notifications import Notification, NotificationService
 
-from ..shared_widgets.notification import NotificationWidget
+from ..shared_widgets import NotificationWidget
 
 notifications = NotificationService.get_default()
 

@@ -4,10 +4,7 @@ from ignis import utils, widgets
 from ignis.services.hyprland import HyprlandService
 from ignis.variable import Variable
 
-from .widgets.battery import Battery
-from .widgets.player import Player
-from .widgets.tray import Tray
-from .widgets.workspaces import Workspaces
+from .widgets import Player, StatusPill, Tray, Workspaces
 
 hyprland = HyprlandService.get_default()
 
@@ -68,7 +65,7 @@ class Bar(widgets.Window):
                     hexpand=True,
                     css_classes=["bar-end"],
                     halign="end",
-                    child=[Tray(), Battery()],
+                    child=[Tray(), StatusPill(0)],
                 ),
             ),
         )

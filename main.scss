@@ -1,12 +1,6 @@
 * {
     all: unset;
 }
-.corner-top {
-    color: rgba($surface, 0.77);
-}
-.corner {
-    color: rgba($surface, 1);
-}
 @import "styles/mixins/window.scss";
 @import "styles/mixins/hover.scss";
 @import "styles/mixins/bar-border.scss";
@@ -16,6 +10,9 @@
 @import "styles/notification.scss";
 @import "styles/tray.scss";
 @import "styles/osd.scss";
+@import "styles/control_center.scss";
+@import "styles/shared.scss";
+@import "styles/notification_centre.scss";
 
 .progress-player {
     color: $primary;
@@ -31,4 +28,10 @@
     font-family: "SF Pro Rounded";
 
     font-weight: bold;
+}
+.corner-top {
+    color: rgba($surface, 0.77);
+}
+.corner {
+    color: rgba($surface, 1);
 }

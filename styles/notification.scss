@@ -12,10 +12,12 @@
         }
     }
 
-    & .notification-action {
-        @include hover($bg: rgba(white, 0.1));
+    &.notification-action {
+        color: $primary;
+        @include hover($surfaceContainerHighest);
         border-radius: 0.5rem;
-        background-color: rgba(white, 0.2);
+        padding: 0.25rem 0.25rem;
+        transition: 0.3s;
     }
 }
 .notification-body {
