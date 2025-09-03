@@ -79,7 +79,7 @@ class NotificationCenter(widgets.Box):
             css_classes=["notification-center"],
             child=[
                 widgets.Box(
-                    css_classes=["notification-center-header", "rec-unset"],
+                    css_classes=["notification-center-header", "unset"],
                     child=[
                         widgets.Label(
                             label=notifications.bind(

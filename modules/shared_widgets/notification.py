@@ -18,10 +18,10 @@ class ScreenshotLayout(widgets.Box):
                         widgets.Overlay(
                             child=widgets.Picture(
                                 image=notification.icon,
-                                content_fit="contain",
+                                css_classes=["notification-icon"],
+                                # content_fit="contain",
                                 width=1920 // 7,
                                 height=1080 // 7,
-                                style="border-radius: 1rem; ",
                             ),
                             overlays=[
                                 widgets.Button(
