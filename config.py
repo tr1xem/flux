@@ -1,16 +1,11 @@
-# import datetime
 import os
 
-# IGNIS IMPORTS
 from ignis import utils, widgets
 from ignis.css_manager import CssInfoPath, CssManager
 from ignis.icon_manager import IconManager
 from ignis.options import options
 from ignis.services.wallpaper import WallpaperService
 
-# from ignis.variable import Variable
-# CUSTOM WIDGETS
-# from modules.bar.widgets.player import
 from modules import (
     Bar,
     ControlCenter,
@@ -32,8 +27,10 @@ css_manager = CssManager.get_default()
 WallpaperService.get_default()
 if options.wallpaper.wallpaper_path is None:
     options.wallpaper.set_wallpaper_path(
-        os.path.expanduser("~/Pictures/Wallpapers/astronaut-jellyfish-gruvbox.png")
+        os.path.curdir + "./assets/example_wallpapers/example-1.jpeg"
     )
+
+print(os.path.curdir + "./assets/example_wallpapers/example-1.jpeg")
 
 
 def format_scss_var(name: str, val: str) -> str:
@@ -181,3 +178,5 @@ window = widgets.Window(
 Osd()
 Settings()
 Powermenu()
+
+# Lockscreen initialized on demand
