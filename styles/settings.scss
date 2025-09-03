@@ -43,7 +43,7 @@
 }
 
 .settings-row {
-    all: unset;
+    // all: unset;
     padding: 0.7rem 2.5rem;
     transition: 0.2s;
     color: $onSurface;
@@ -70,6 +70,7 @@
 }
 .settings-page-box {
     background-color: darken($surfaceContainer, 10%);
+    font-family: "JetBrainsMono Nerd Font", monospace;
 }
 
 .settings-user-name {
@@ -81,4 +82,11 @@
     padding: 1rem;
     color: $onSurface;
     background-color: darken($surfaceContainer, 10%);
+}
+
+.settings-group,
+.settings-row {
+    * {
+        background-color: darken($surfaceContainer, 10%);
+    }
 }

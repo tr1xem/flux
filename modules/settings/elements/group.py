@@ -1,6 +1,7 @@
 from ignis import widgets
-from .row import SettingsRow
 from ignis.base_widget import BaseWidget
+
+from .row import SettingsRow
 
 
 class SettingsGroup(widgets.Box):
@@ -17,7 +18,7 @@ class SettingsGroup(widgets.Box):
                     halign="start",
                     visible=True if name else False,
                 ),
-                widgets.ListBox(rows=[*rows]),
+                widgets.ListBox(rows=[*rows], css_classes=["settings-group-rows"]),
             ],
             **kwargs,
         )

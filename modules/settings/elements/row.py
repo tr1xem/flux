@@ -9,8 +9,9 @@ class SettingsRow(widgets.ListBoxRow):
         **kwargs,
     ):
         super().__init__(
-            css_classes=["settings-row"],
             child=widgets.Box(
+                css_classes=["settings-row"],
+                hexpand=True,
                 child=[
                     widgets.Box(
                         vertical=True,
@@ -33,7 +34,7 @@ class SettingsRow(widgets.ListBoxRow):
                             ),
                         ],
                     )
-                ]
+                ],
             ),
             **kwargs,
         )
