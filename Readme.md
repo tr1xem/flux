@@ -21,6 +21,7 @@
 [![Maintained](https://img.shields.io/badge/Maintained-Yes-blue?style=for-the-badge&logo=linux&logoColor=D9E0EE&labelColor=292324&color=3362E1)]()
 [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/EMWUTgegDm)](https://discord.gg/EMWUTgegDm)
 
+
 </div>
 <h2><sub><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Camera%20with%20Flash.png" alt="Camera with Flash" width="25" height="25" /></sub> Screenshots</h2>
 <table align="center">
@@ -64,6 +65,7 @@
 
 - [Linkfrg](https://github.com/linkfrg/) for creation of [ignis](https://github.com/ignis-sh/ignis) without it this shell would'nt exists and his awesome [dotfiles](https://github.com/linkfrg/dotfiles)
 - [Tanish](https://github.com/randomboi404) for usefull snippets and ideas - [Veloria](https://github.com/randomboi404/veloria)
+* ignis means fire while flux means flow so basically its "flow of fire"
 
 _A computer is like air conditioning - it becomes useless when you open Windows_
 ~ [_Linus Torvalds_](https://www.youtube.com/watch?v=mjqTDtEY8W)
