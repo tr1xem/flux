@@ -343,13 +343,13 @@ class Weather(widgets.Box):
                 except Exception as e:
                     return (
                         "🌡️ No Location",
-                        f"<span color='red'>Location error:</span> {str(e)}",
+                        f"<span weight='bold'>Location error:</span> {str(e)}",
                     )
 
             if not location_data:
                 return (
                     "🌡️ No Location",
-                    "<span color='red'>Unable to detect location</span>",
+                    "<span weight='bold'>Unable to detect location</span>",
                 )
 
             # Check cached weather
@@ -381,7 +381,7 @@ class Weather(widgets.Box):
                         else:
                             return (
                                 f"🌡️ {location_data['city']}",
-                                f"<span color='red'>Weather API error:</span> {response.status}",
+                                f"<span weight='bold'>Weather API error:</span> {response.status}",
                             )
                 except Exception as e:
                     # Try to use stale cache
@@ -389,7 +389,7 @@ class Weather(widgets.Box):
                     if not weather_data:
                         return (
                             f"🌡️ {location_data['city']}",
-                            f"<span color='red'>Weather fetch error:</span> {str(e)}",
+                            f"<span weight='bold'>Weather fetch error:</span> {str(e)}",
                         )
 
             # Format the weather data
@@ -409,19 +409,19 @@ class Weather(widgets.Box):
                 except Exception as e:
                     return (
                         f"🌡️ {location_data['city']}",
-                        f"<span color='red'>Data parsing error:</span> {str(e)}",
+                        f"<span weight='bold'>Data parsing error:</span> {str(e)}",
                     )
             else:
                 return (
                     f"🌡️ {location_data['city']}",
-                    "<span color='orange'>No weather data available</span>",
+                    "<span style='italic'>No weather data available</span>",
                 )
 
         except Exception as e:
-            return "🌡️ Error", f"<span color='red'>Unexpected error:</span> {str(e)}"
+            return "🌡️ Error", f"<span weight='bold'>Unexpected error:</span> {str(e)}"
 
     def _create_rich_tooltip(self, weather_data: dict, location_data: dict) -> str:
-        """Create a rich, colorful tooltip with extensive weather information"""
+        """Create a rich tooltip with bold and italic styling (no colors)"""
         try:
             current = weather_data["current"]
             hourly = weather_data.get("hourly", {})
@@ -468,67 +468,72 @@ class Weather(widgets.Box):
             ]
             wind_dir = wind_dirs[round(wind_direction / 22.5) % 16]
 
-            # Build rich tooltip with better spacing and organization
-            tooltip = f"<span size='large' weight='bold' color='#4CAF50'>📍 {location_str}</span>\n"
-            tooltip += f"<span size='large' weight='bold' color='#2196F3'>{icon} {description}</span>\n"
+            # Build tooltip with bold and italic styling
+            tooltip = f"<span size='large' weight='bold'>📍 {location_str}</span>\n"
+            tooltip += f"<span size='large' weight='bold'>{icon} {description}</span>\n"
 
             # Current conditions section
-            tooltip += "\n<span weight='bold' color='#FF9800' underline='single'>Current Conditions</span>\n\n"
+            tooltip += (
+                "\n<span weight='bold' underline='single'>Current Conditions</span>\n\n"
+            )
 
-            # Temperature row with decimal places
-            temp_color = (
-                "#FF5722"
-                if temp > 30
-                else "#FF9800"
-                if temp > 20
-                else "#2196F3"
-                if temp > 10
-                else "#607D8B"
+            # Temperature row with emphasis based on temperature
+            temp_style = (
+                "weight='bold'"
+                if temp > 30 or temp < 0
+                else "style='italic'"
+                if temp > 25 or temp < 5
+                else ""
             )
-            feels_color = (
-                "#FF5722"
-                if feels_like > 30
-                else "#FF9800"
-                if feels_like > 20
-                else "#2196F3"
+            feels_style = (
+                "weight='bold'"
+                if feels_like > 30 or feels_like < 0
+                else "style='italic'"
+                if feels_like > 25 or feels_like < 5
+                else ""
             )
-            tooltip += f"<span color='{temp_color}'>🌡️ {temp:.1f}°C</span>  <span color='{feels_color}'>feels {feels_like:.1f}°C</span>\n"
+            tooltip += f"<span {temp_style}>🌡️ {temp:.1f}°C</span>  <span {feels_style}>feels {feels_like:.1f}°C</span>\n"
 
             # Environment row
-            humidity_color = (
-                "#4CAF50"
+            humidity_style = (
+                "style='italic'"
                 if 40 <= humidity <= 60
-                else "#FF9800"
-                if humidity > 60
-                else "#607D8B"
+                else "weight='bold'"
+                if humidity > 80 or humidity < 20
+                else ""
             )
-            tooltip += f"<span color='{humidity_color}'>💧 {humidity}%</span>  <span color='#9C27B0'>\n📊 {pressure}hPa</span>\n"
+            tooltip += f"<span {humidity_style}>💧 {humidity}%</span>  <span weight='bold'>📊 {pressure}hPa</span>\n"
 
-            # Wind row with decimal places
-            wind_color = (
-                "#FF5722"
+            # Wind row with emphasis based on speed
+            wind_style = (
+                "weight='bold'"
                 if wind_speed > 20
-                else "#FF9800"
+                else "style='italic'"
                 if wind_speed > 10
-                else "#4CAF50"
+                else ""
             )
-            wind_text = (
-                f"<span color='{wind_color}'>💨 {wind_speed:.1f}km/h {wind_dir}</span>"
-            )
+            wind_text = f"<span {wind_style}>💨 {wind_speed:.1f}km/h {wind_dir}</span>"
             if wind_gusts > wind_speed:
-                wind_text += (
-                    f"  <span color='#FF5722'>gusts {wind_gusts:.1f}km/h</span>"
-                )
+                wind_text += f"  <span weight='bold'>gusts {wind_gusts:.1f}km/h</span>"
             tooltip += wind_text + "\n"
 
             # Precipitation row (only if present)
             if precipitation > 0:
-                tooltip += f"<span color='#2196F3'>🌧️ {precipitation:.1f}mm precipitation</span>\n"
+                tooltip += f"<span weight='bold'>🌧️ {precipitation:.1f}mm precipitation</span>\n"
 
             # Hourly forecast section
             if hourly and "time" in hourly and len(hourly["time"]) > 1:
-                tooltip += "\n<span weight='bold' color='#9C27B0' underline='single'>Next 6 Hours</span>\n\n"
-                for i in range(1, min(7, len(hourly["time"]))):
+                tooltip += (
+                    "\n<span weight='bold' underline='single'>Next 6 Hours</span>\n\n"
+                )
+
+                # Find current hour index by comparing with current time
+                import datetime
+
+                current_hour = datetime.datetime.now().hour
+                start_index = current_hour  # Start from current hour
+
+                for i in range(start_index, min(start_index + 6, len(hourly["time"]))):
                     try:
                         hour_temp = hourly["temperature_2m"][i]  # Keep as float
                         hour_code = hourly["weather_code"][i]
@@ -540,35 +545,35 @@ class Weather(widgets.Box):
                             "wind_speed_10m", [0] * len(hourly["time"])
                         )[i]
 
-                        # Extract hour from ISO time
+                        # Extract hour from ISO time and convert to 12-hour format
                         time_str = hourly["time"][i]
-                        hour = (
-                            time_str.split("T")[1][:2]
-                            if "T" in time_str
-                            else f"{i:02d}"
-                        )
+                        if "T" in time_str:
+                            # Parse the full datetime string like "2025-09-03T18:00"
+                            time_part = time_str.split("T")[1]
+                            hour_24 = int(time_part[:2])
+                            if hour_24 == 0:
+                                hour = "12:00AM"
+                            elif hour_24 < 12:
+                                hour = f"{hour_24:02d}:00AM"
+                            elif hour_24 == 12:
+                                hour = "12:00PM"
+                            else:
+                                hour = f"{hour_24 - 12:02d}:00PM"
+                        else:
+                            hour = f"{i:02d}:00"
 
-                        # Color code temperature
-                        temp_color = (
-                            "#FF5722"
-                            if hour_temp > 25
-                            else "#FF9800"
-                            if hour_temp > 15
-                            else "#2196F3"
-                        )
-
-                        # Build hourly line with decimal places
-                        line = f"<span color='#607D8B'>{hour}:00</span>  <span color='{temp_color}'>{hour_icon} {hour_temp:.1f}°C</span>"
+                        # Build hourly line (without weather icon and temperature styling)
+                        line = f"<span font_family='monospace'font_weight='bold' >{hour}</span>   {hour_temp:.1f}°C"
 
                         # Add additional info if significant
                         extras = []
                         if hour_precipitation > 20:
                             extras.append(
-                                f"<span color='#2196F3'>💧{hour_precipitation}%</span>"
+                                f"<span weight='bold'>💧{hour_precipitation}%</span>"
                             )
                         if hour_wind > 15:
                             extras.append(
-                                f"<span color='#FF9800'>💨{hour_wind:.1f}</span>"
+                                f"<span weight='bold'>💨{hour_wind:.1f}</span>"
                             )
 
                         if extras:
@@ -580,7 +585,9 @@ class Weather(widgets.Box):
 
             # Daily forecast section
             if daily and "time" in daily and len(daily["time"]) > 1:
-                tooltip += "\n<span weight='bold' color='#4CAF50' underline='single'>3-Day Forecast</span>\n\n"
+                tooltip += (
+                    "\n<span weight='bold' underline='single'>3-Day Forecast</span>\n\n"
+                )
                 days = ["Today", "Tomorrow", "Day 3"]
                 for i in range(min(3, len(daily["time"]))):
                     try:
@@ -595,27 +602,27 @@ class Weather(widgets.Box):
                             "wind_speed_10m_max", [0] * len(daily["time"])
                         )[i]
 
-                        max_color = (
-                            "#FF5722"
-                            if max_temp > 25
-                            else "#FF9800"
-                            if max_temp > 15
-                            else "#2196F3"
+                        max_style = (
+                            "weight='bold'"
+                            if max_temp > 25 or max_temp < 5
+                            else "style='italic'"
+                            if max_temp > 20 or max_temp < 10
+                            else ""
                         )
-                        min_color = "#2196F3" if min_temp < 10 else "#607D8B"
+                        min_style = "style='italic'" if min_temp < 10 else ""
 
-                        # Build daily line with decimal places
-                        line = f"<span color='#607D8B'>{days[i]:<8}</span> <span color='{max_color}'>{day_icon} {max_temp:.1f}°C</span>/<span color='{min_color}'>{min_temp:.1f}°C</span>"
+                        # Build daily line with equal spacing
+                        line = f"<span font_family='monospace' font_weight='bold'>{days[i]:<8}</span>  <span {max_style}>{day_icon} {max_temp:.1f}°C</span>/<span {min_style}>{min_temp:.1f}°C</span>"
 
                         # Add weather details if significant
                         extras = []
                         if day_precipitation > 1:
                             extras.append(
-                                f"<span color='#2196F3'>🌧️{day_precipitation:.1f}mm</span>"
+                                f"<span weight='bold'>🌧️{day_precipitation:.1f}mm</span>"
                             )
                         if day_wind > 20:
                             extras.append(
-                                f"<span color='#FF9800'>💨{day_wind:.1f}km/h</span>"
+                                f"<span weight='bold'>💨{day_wind:.1f}km/h</span>"
                             )
 
                         if extras:
@@ -626,12 +633,12 @@ class Weather(widgets.Box):
                         continue
 
             # Data source footer
-            tooltip += "\n<span size='small' color='#607D8B' style='italic'>📡 Open-Meteo API</span>"
+            tooltip += "\n<span size='small' style='italic'>📡 Open-Meteo API</span>"
 
             return tooltip.strip()
 
         except Exception as e:
-            return f"<span color='red'>Tooltip error: {str(e)}</span>"
+            return f"<span weight='bold'>Tooltip error: {str(e)}</span>"
 
     def _periodic_update(self) -> str:
         """Periodic update function for Poll"""

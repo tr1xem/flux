@@ -30,8 +30,6 @@ if options.wallpaper.wallpaper_path is None:
         os.path.curdir + "./assets/example_wallpapers/example-1.jpeg"
     )
 
-print(os.path.curdir + "./assets/example_wallpapers/example-1.jpeg")
-
 
 def format_scss_var(name: str, val: str) -> str:
     return f"${name}: {val};\n"
