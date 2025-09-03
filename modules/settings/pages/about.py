@@ -214,7 +214,6 @@ class AboutEntry(SettingsEntry):
                     rows=[
                         widgets.Grid(
                             column_num=2,
-                            css_classes=["settings-group"],
                             hexpand=True,
                             child=[
                                 SettingsRow(

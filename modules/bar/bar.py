@@ -3,7 +3,7 @@ import datetime
 from ignis import utils, widgets
 from ignis.variable import Variable
 
-from .widgets import Player, StatusPill, Tray, Weather, Workspaces
+from .widgets import CpuUsage, Player, RamUsage, StatusPill, Tray, Weather, Workspaces
 
 
 class Datetime(widgets.Box):
@@ -27,6 +27,16 @@ class Datetime(widgets.Box):
 class CentreBar(widgets.Box):
     def __init__(self):
         super().__init__(css_classes=["bar-center"], hexpand=True, spacing=9)
+        self.append(
+            widgets.Box(
+                css_classes=["usage"],
+                spacing=9,
+                child=[
+                    CpuUsage(),
+                    RamUsage(),
+                ],
+            )
+        )
         self.append(Player())
         self.append(Workspaces(0))
         self.append(Weather())

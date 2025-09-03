@@ -2,16 +2,13 @@
 //     all: unset;
 //     background: unset;
 // }
-.media-controls {
-    all: unset;
-    margin-left: 2px;
-    opacity: 0.6;
-    &:hover {
-        opacity: 1;
-    }
-}
 .media-icon-s {
-    color: $onSurface;
+    margin-right: -0.3rem;
+}
+.media-controls,
+.bar-cpu,
+.bar-ram {
+    all: unset;
 }
 
 // .media-title {
@@ -78,7 +75,8 @@
     border-radius: 1rem;
     background-color: cyan;
 }
-.bar-player {
+.bar-player,
+.usage {
     @include border();
     background-color: rgb(darken($surface, 0.1), 0.3);
 }
@@ -145,19 +143,41 @@ popover.menu {
 .weather {
     @include border();
     background-color: rgb(darken($surface, 0.1), 0.3);
-    
+
     .weather-label {
         font-weight: 500;
         color: $onSurface;
     }
-    
+
     .weather-container {
         padding: 0.25rem 0.5rem;
         border-radius: 0.5rem;
         transition: all 0.2s ease;
-        
+
         &:hover {
             background-color: rgba(lighten($surface, 10%), 0.2);
         }
     }
+}
+.progress-player,
+.progress-cpu,
+.progress-ram {
+    @if $darkmode == true {
+        color: darken($primary, 10%);
+    } @else {
+        color: $onPrimaryContainer;
+    }
+}
+
+.cpu-icon,
+.ram-icon,
+.media-icon-s {
+    @if $darkmode == true {
+        color: $onSurface;
+    } @else {
+        color: $surfaceContainerLow;
+    }
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 0.8rem;
+    margin-left: -0.3rem;
 }

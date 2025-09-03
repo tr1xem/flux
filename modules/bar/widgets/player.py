@@ -49,15 +49,16 @@ class Player(widgets.Box):
         )
         self._progress_bar = CircularProgressBar(
             line_width=2,
-            size=(20, 20),
+            size=(23, 23),
             start_angle=270,
+            pie=True,
             end_angle=650,
             css_classes=["progress-player"],
         )
         self._progress_barOvelay = widgets.Overlay(
-            child=self.play_pause_button,
+            child=self._progress_bar,
             halign="center",
-            overlays=[self._progress_bar],
+            overlays=[self.play_pause_button],
             hexpand=True,
             vexpand=True,
         )
