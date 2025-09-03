@@ -16,7 +16,7 @@ class Player(widgets.Box):
     def __init__(self) -> None:
         super().__init__(
             css_classes=["bar-player"],
-            spacing=2,
+            spacing=8,
             vexpand=True,
             hexpand=True,
         )
@@ -51,6 +51,13 @@ class Player(widgets.Box):
             end_angle=650,
             css_classes=["progress-player"],
         )
+        self._progress_barOvelay = widgets.Overlay(
+            child=self.play_pause_button,
+            halign="center",
+            overlays=[self._progress_bar],
+            hexpand=True,
+            vexpand=True,
+        )
         self.eventBox = widgets.EventBox(
             hexpand=True,
             vexpand=True,
@@ -58,8 +65,9 @@ class Player(widgets.Box):
             child=[self.title_label],
         )
 
-        self.append(self._progress_bar)
-        self.append(self.play_pause_button)
+        self.append(widgets.Box(child=[self._progress_barOvelay]))
+        # self.append(self._progress_bar)
+        # self.append(self.play_pause_button)
         self.append(self.eventBox)
 
         mpris.connect("player_added", lambda x, player: self._add_player(player))

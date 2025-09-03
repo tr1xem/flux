@@ -16,7 +16,7 @@ class Brightness(widgets.Box):
                 widgets.Icon(
                     image="display-brightness-symbolic",
                     css_classes=["material-slider-icon"],
-                    pixel_size=22,
+                    pixel_size=18,
                 ),
                 widgets.Scale(
                     min=0,

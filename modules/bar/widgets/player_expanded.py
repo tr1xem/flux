@@ -106,7 +106,7 @@ class Player(widgets.Revealer):
                                                 if value == "Playing"
                                                 else "play-symbolic",
                                             ),
-                                            pixel_size=18,
+                                            pixel_size=22,
                                         ),
                                         on_click=lambda x: asyncio.create_task(
                                             player.play_pause_async()
@@ -220,7 +220,7 @@ class Player(widgets.Revealer):
                 name=self.clean_desktop_entry(),
                 compiler_function=lambda string: utils.sass_compile(string=string),
                 string=template_rendered,
-                priority="user",
+                # priority="user",
             )
         )
 

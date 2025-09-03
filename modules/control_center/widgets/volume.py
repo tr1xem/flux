@@ -86,7 +86,7 @@ class DeviceMenu(Menu):
                     css_classes=["volume-entry", "unset"],
                     style="margin-bottom: 0;",
                     on_click=lambda x: asyncio.create_task(
-                        utils.exec_sh_async("pavucontrol")
+                        utils.exec_sh_async("pwvucontrol")
                     ),
                 ),
             ],
@@ -102,7 +102,7 @@ class VolumeSlider(widgets.Box):
         icon = widgets.Button(
             child=widgets.Icon(
                 image=stream.bind("icon_name"),
-                pixel_size=22,
+                pixel_size=18,
             ),
             css_classes=["material-slider-icon"],
             on_click=lambda x: stream.set_is_muted(not stream.is_muted),

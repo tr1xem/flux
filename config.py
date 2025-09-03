@@ -65,10 +65,10 @@ css_manager.apply_css(
         name="main",
         compiler_function=patch_style_scss,
         path=os.path.join(utils.get_current_dir(), "main.scss"),
-        priority="user",
+        # priority="user",
     )
 )
-css_manager.widgets_style_priority = "user"  # pyright: ignore[reportAttributeAccessIssue]
+# css_manager.widgets_style_priority = "user"  # pyright: ignore[reportAttributeAccessIssue]
 
 ExpandedPlayerWindow()
 ControlCenter()
