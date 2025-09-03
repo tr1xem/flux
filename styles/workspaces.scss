@@ -3,11 +3,14 @@
 }
 
 .ws-container {
+    all: unset;
     @include border();
     background-color: rgb(darken($surface, 0.1), 0.3);
 }
 .workspace {
+    all: unset;
     @include hover($secondary_paletteKeyColor);
+    background-color: $primaryContainer;
 
     border-radius: 1rem;
     margin: 0 0.25rem;
@@ -18,6 +21,7 @@
     transition: 0.3s;
 
     &.active {
-        background-color: rgba($primary, 0.5);
+        background-color: $primary;
+        color: $onPrimary;
     }
 }

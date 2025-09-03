@@ -1,5 +1,7 @@
 from ignis import widgets
+
 from user_options import user_options
+
 from .active_page import active_page
 from .pages import (
     AboutEntry,
@@ -15,6 +17,7 @@ class Settings(widgets.RegularWindow):
         content = widgets.Box(
             hexpand=True,
             vexpand=True,
+            css_classes=["settings-page-box"],
             child=active_page.bind("value", transform=lambda value: [value]),
         )
         self._listbox = widgets.ListBox()

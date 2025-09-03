@@ -1,6 +1,7 @@
 .settings-sidebar {
     background-color: $surfaceContainer;
     min-width: 300px;
+    color: $onSurface;
 }
 
 .settings-sidebar-label {
@@ -8,12 +9,14 @@
     margin-left: 1rem;
     margin-bottom: 0.5rem;
     margin-top: 2rem;
+    color: $onSurface;
 }
 
 .settings-sidebar-entry {
     all: unset;
     background-color: $surfaceContainer;
     padding: 1rem 2rem;
+    color: $onSurface;
     padding-left: 0.75rem;
     font-size: 1.2rem;
 
@@ -29,6 +32,7 @@
 .settings-page-name {
     font-size: 2rem;
     margin-left: 2.5rem;
+    color: $onSurface;
     margin-bottom: 2rem;
     margin-top: 2rem;
 }
@@ -42,7 +46,9 @@
     all: unset;
     padding: 0.7rem 2.5rem;
     transition: 0.2s;
+    color: $onSurface;
 
+    background-color: darken($surfaceContainer, 10%);
     &:active {
         @if $darkmode == true {
             background-color: rgba(255, 255, 255, 0.05);
@@ -54,6 +60,7 @@
 
 .settings-row-label {
     font-size: 1.2rem;
+    color: $onSurface;
 }
 
 .settings-row-sublabel {
@@ -61,12 +68,16 @@
     font-weight: normal;
     color: $onSurfaceVariant;
 }
+.settings-page-box {
+    background-color: darken($surfaceContainer, 10%);
+}
 
 .settings-user-name {
     font-size: 2.3rem;
+    color: $onSurface;
     margin-left: 1.5rem;
 }
 .settings-wallpaper {
     padding: 1rem;
+    color: $onSurface;
 }
-

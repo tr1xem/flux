@@ -72,6 +72,6 @@ class NotificationPopup(widgets.Window):
             child=PopupBox(window=self, monitor=monitor),
             visible=False,
             dynamic_input_region=True,
-            css_classes=["rec-unset"],
+            css_classes=["unset"],
             style="min-width: 29rem;",
         )

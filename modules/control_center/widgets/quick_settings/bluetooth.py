@@ -1,6 +1,7 @@
 import asyncio
 
 from ignis import widgets
+from ignis import utils
 from ignis.services.bluetooth import BluetoothDevice, BluetoothService
 
 from ....shared_widgets import ToggleBox
@@ -60,6 +61,21 @@ class BluetoothMenu(Menu):
                     child=bluetooth.bind(
                         "devices",
                         transform=self._transform_devices,
+                    ),
+                ),
+                widgets.Separator(),
+                widgets.Button(
+                    css_classes=["network-item", "unset"],
+                    on_click=lambda x: asyncio.create_task(utils.exec_sh_async("blueman-manager")),
+                    style="margin-bottom: 0;",
+                    child=widgets.Box(
+                        child=[
+                            widgets.Icon(image="preferences-system-symbolic"),
+                            widgets.Label(
+                                label="Bluetooth Settings",
+                                halign="start",
+                            ),
+                        ]
                     ),
                 ),
             ],

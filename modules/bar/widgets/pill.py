@@ -124,32 +124,35 @@ class BatteryItem(widgets.Box):
 class Battery(widgets.Box):
     def __init__(self):
         super().__init__(
+            css_classes=["rec-unset"],
             setup=lambda self: upower.connect(
                 "battery-added", lambda x, device: self.append(BatteryItem(device))
             ),
         )
 
 
-class StatusPill(widgets.Button):
+class StatusPill(widgets.EventBox):
     def __init__(self, monitor: int):
         self._monitor = monitor
         self._window = window_manager.get_window("ignis_CONTROL_CENTER")
 
         super().__init__(
-            child=widgets.Box(
-                css_classes=["status-pill"],
-                spacing=5,
-                child=[
-                    BluetoothIcon(),
-                    RecorderIcon(),
-                    WifiIcon(),
-                    EthernetIcon(),
-                    VpnIcon(),
-                    VolumeIcon(),
-                    DNDIcon(),
-                    Battery(),
-                ],
-            ),
+            child=[
+                widgets.Box(
+                    css_classes=["status-pill"],
+                    spacing=5,
+                    child=[
+                        BluetoothIcon(),
+                        RecorderIcon(),
+                        WifiIcon(),
+                        EthernetIcon(),
+                        VpnIcon(),
+                        VolumeIcon(),
+                        DNDIcon(),
+                        Battery(),
+                    ],
+                )
+            ],
             on_click=self.__on_click,
         )
 

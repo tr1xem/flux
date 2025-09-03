@@ -1,27 +1,24 @@
+.rec-unset {
+    * {
+        all: unset;
+    }
+}
 switch {
     background-color: $secondaryContainer;
-    border-radius: 16px;
-    padding: 2px;
-    // min-width: 40px;
-    // min-height: 20px;
-
-    slider {
-        background-color: #fff; // Knob color
-        border-radius: 50%;
-        margin: 2px;
-    }
-
     &:checked {
         background-color: darken($primary, 20%);
-
-        slider {
-            background-color: white;
-        }
     }
 
     &:disabled {
         background-color: white;
     }
+}
+
+tooltip {
+    all: unset;
+    background-color: $surface;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
 }
 
 .toggle-box {

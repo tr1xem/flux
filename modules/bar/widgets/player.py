@@ -36,8 +36,11 @@ class Player(widgets.Box):
         )
 
         self.play_pause_button = widgets.Button(
-            css_classes=["media-controls"],
+            css_classes=[
+                "media-controls",
+            ],
             child=widgets.Icon(
+                css_classes=["media-icon-s"],
                 image="play-symbolic",
                 pixel_size=16,
             ),

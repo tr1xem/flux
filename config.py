@@ -79,6 +79,7 @@ corner_size = (30, 30)
 window = widgets.Window(
     namespace="corner",
     exclusivity="exclusive",
+    css_classes=["rec-unset"],
     anchor=["top", "right", "bottom", "left"],
     layer="bottom",
     child=widgets.CenterBox(
