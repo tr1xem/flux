@@ -1,14 +1,11 @@
 # import datetime
 import os
-import sys
-
-# Add current directory to Python path for local imports
-sys.path.insert(0, os.path.dirname(__file__))
 
 # IGNIS IMPORTS
 from ignis import utils, widgets
 from ignis.css_manager import CssInfoPath, CssManager
 from ignis.icon_manager import IconManager
+from ignis.options import options
 from ignis.services.wallpaper import WallpaperService
 
 # from ignis.variable import Variable
@@ -26,8 +23,6 @@ from modules import (
 from modules.bar.widgets.player_expanded import ExpandedPlayerWindow
 from user_options import user_options
 
-# Import volume OSD service to start monitoring
-
 icon_manager = IconManager.get_default()
 
 icon_manager.add_icons(os.path.join(utils.get_current_dir(), "assets", "icons"))
@@ -35,9 +30,10 @@ css_manager = CssManager.get_default()
 
 
 WallpaperService.get_default()
-# options.wallpaper.set_wallpaper_path(
-#     os.path.expanduser("~/Pictures/Wallpapers/astronaut-jellyfish-gruvbox.png")
-# )
+if options.wallpaper.wallpaper_path is None:
+    options.wallpaper.set_wallpaper_path(
+        os.path.expanduser("~/Pictures/Wallpapers/astronaut-jellyfish-gruvbox.png")
+    )
 
 
 def format_scss_var(name: str, val: str) -> str:

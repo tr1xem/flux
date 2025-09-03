@@ -1,12 +1,9 @@
 import datetime
 
 from ignis import utils, widgets
-from ignis.services.hyprland import HyprlandService
 from ignis.variable import Variable
 
 from .widgets import Player, StatusPill, Tray, Workspaces
-
-hyprland = HyprlandService.get_default()
 
 
 class Datetime(widgets.Box):
@@ -33,7 +30,6 @@ class CentreBar(widgets.Box):
         self.append(Player())
         self.append(Workspaces(0))
         self.append(Datetime())
-        # self.append(Info())
 
 
 class Bar(widgets.Window):
@@ -65,7 +61,7 @@ class Bar(widgets.Window):
                     hexpand=True,
                     css_classes=["bar-end"],
                     halign="end",
-                    child=[Tray(), StatusPill(0)],
+                    child=[Tray(), StatusPill(monitor_id)],
                 ),
             ),
         )
