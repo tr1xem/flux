@@ -181,3 +181,28 @@ popover.menu {
     font-size: 0.8rem;
     margin-left: -0.3rem;
 }
+
+@keyframes recorder-animation {
+    0% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.record-indicator {
+    &.active {
+        color: $error;
+        animation: recorder-animation 2s infinite;
+    }
+}

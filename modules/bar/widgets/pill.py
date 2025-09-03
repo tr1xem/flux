@@ -1,4 +1,5 @@
 import datetime
+import subprocess
 
 from ignis import utils, widgets
 from ignis.options import options
@@ -26,6 +27,42 @@ current_time = Variable(
     value=utils.Poll(1000, lambda x: datetime.datetime.now().strftime("%H:%M")).bind(
         "output"
     )
+)
+
+
+def check_recording_processes(*args) -> bool:
+    """Check if any screen recording processes are running"""
+    recording_processes = [
+        "wf-recorder",
+        "wl-screenrec",
+        "gpu-screen-recorder",
+        "obs",
+        "ffmpeg",
+        "grim",
+    ]
+
+    try:
+        # Get list of all running processes
+        result = subprocess.run(
+            ["ps", "ax", "-o", "comm="], capture_output=True, text=True, check=True
+        )
+
+        running_processes = result.stdout.strip().split("\n")
+
+        # Check if any recording process is running
+        for process in recording_processes:
+            if any(process in running_proc for running_proc in running_processes):
+                return True
+
+        return False
+
+    except subprocess.CalledProcessError:
+        # If ps command fails, assume no recording
+        return False
+
+
+recording_status = Variable(
+    value=utils.Poll(1000, check_recording_processes).bind("output")
 )
 
 
@@ -60,17 +97,9 @@ class RecorderIcon(IndicatorIcon):
         super().__init__(
             image="media-record-symbolic",
             css_classes=["record-indicator"],
-            setup=lambda self: recorder.connect(
-                "notify::is-paused", self.__update_css_class
-            ),
-            visible=recorder.bind("active"),
+            visible=recording_status.bind("value"),
         )
-
-    def __update_css_class(self, *args) -> None:
-        if recorder.is_paused:
-            self.remove_css_class("active")
-        else:
-            self.add_css_class("active")
+        self.add_css_class("active")
 
 
 class VolumeIcon(IndicatorIcon):
@@ -142,8 +171,8 @@ class StatusPill(widgets.EventBox):
                     css_classes=["status-pill"],
                     spacing=5,
                     child=[
-                        BluetoothIcon(),
                         RecorderIcon(),
+                        BluetoothIcon(),
                         WifiIcon(),
                         EthernetIcon(),
                         VpnIcon(),
