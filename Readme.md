@@ -34,7 +34,7 @@ A hackable shell for Hyprland powered by [ignis](https://github.com/ignis-sh/ign
 # Credits
 
 - Linkfrg for his awesome [dotfiles](https://github.com/linkfrg/dotfiles) and [ignis](https://github.com/ignis-sh/ignis)
-- [RandomBoi](https://github.com/randomboi404) for usefull snippets and ideas - [Veloria](https://github.com/randomboi404/veloria)
+- [Tanish](https://github.com/randomboi404) for usefull snippets and ideas - [Veloria](https://github.com/randomboi404/veloria)
 
 _A computer is like air conditioning - it becomes useless when you open Windows_
-_~ [Linus Torvalds](https://www.youtube.com/watch?v=mjqTDtEY8W)_
+~ [_Linus Torvalds_](https://www.youtube.com/watch?v=mjqTDtEY8W)
