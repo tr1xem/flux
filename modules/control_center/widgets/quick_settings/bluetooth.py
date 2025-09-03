@@ -1,7 +1,6 @@
 import asyncio
 
-from ignis import widgets
-from ignis import utils
+from ignis import utils, widgets
 from ignis.services.bluetooth import BluetoothDevice, BluetoothService
 
 from ....shared_widgets import ToggleBox
@@ -66,7 +65,9 @@ class BluetoothMenu(Menu):
                 widgets.Separator(),
                 widgets.Button(
                     css_classes=["network-item", "unset"],
-                    on_click=lambda x: asyncio.create_task(utils.exec_sh_async("blueman-manager")),
+                    on_click=lambda x: asyncio.create_task(
+                        utils.exec_sh_async("blueman-manager")
+                    ),
                     style="margin-bottom: 0;",
                     child=widgets.Box(
                         child=[
@@ -118,7 +119,7 @@ class BluetoothButton(QSButton):
             menu.toggle()
 
         def get_label(state: str, devices: list[BluetoothDevice]) -> str:
-            if state == "absent":
+            if state == "absent" or state == "off" or state == "turning-off":
                 return "Bluetooth"
             elif len(devices) == 0:
                 return "No Connection"

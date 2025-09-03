@@ -1,14 +1,15 @@
 from ignis import widgets
-from .wifi import wifi_control
-from .record import RecordButton
-from .dnd import DNDButton
-from .dark_mode import DarkModeButton
-from .ethernet import ethernet_control
-from .vpn import vpn_control
-from .bluetooth import bluetooth_control
-from .power_profiles import PowerProfilesButton
-from ...qs_button import QSButton
 from ignis.services.network import NetworkService
+
+from ...qs_button import QSButton
+from .bluetooth import bluetooth_control
+from .dark_mode import DarkModeButton
+from .dnd import DNDButton
+from .ethernet import ethernet_control
+from .idle_inhibitor import IdleInhibitorButton
+from .power_profiles import PowerProfilesButton
+from .vpn import vpn_control
+from .wifi import wifi_control
 
 network = NetworkService.get_default()
 
@@ -35,7 +36,8 @@ class QuickSettings(widgets.Box):
             DNDButton(),
             DarkModeButton(),
             PowerProfilesButton(),
-            RecordButton(),
+            IdleInhibitorButton(),
+            # RecordButton(),
         )
 
     def __qs_fabric(self, *buttons: QSButton) -> None:

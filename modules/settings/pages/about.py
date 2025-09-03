@@ -217,7 +217,6 @@ class AboutEntry(SettingsEntry):
                             hexpand=True,
                             child=[
                                 SettingsRow(
-                                    width_request=330,
                                     label="  CPU",
                                     sublabel=fetch.cpu,
                                 ),
