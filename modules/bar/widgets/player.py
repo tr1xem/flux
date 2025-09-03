@@ -13,7 +13,7 @@ window_manager = WindowManager.get_default()
 
 
 class Player(widgets.Box):
-    def __init__(self) -> None:
+    def __init__(self, monitor_id: int = 0):
         super().__init__(
             css_classes=["bar-player"],
             spacing=8,
@@ -23,7 +23,7 @@ class Player(widgets.Box):
 
         self._players: List[MprisPlayer] = []
         self._current_player: Optional[MprisPlayer] = None
-        self._window = window_manager.get_window("ignis_MEDIA")
+        self._window = window_manager.get_window(f"ignis_MEDIA_{monitor_id}")
         self._monitor = 0
 
         self.title_label = widgets.Label(

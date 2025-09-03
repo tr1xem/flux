@@ -25,7 +25,7 @@ class Datetime(widgets.Box):
 
 
 class CentreBar(widgets.Box):
-    def __init__(self):
+    def __init__(self, monitor_id: int = 0):
         super().__init__(css_classes=["bar-center"], hexpand=True, spacing=9)
         self.append(
             widgets.Box(
@@ -37,7 +37,7 @@ class CentreBar(widgets.Box):
                 ],
             )
         )
-        self.append(Player())
+        self.append(Player(monitor_id))
         self.append(Workspaces(0))
         self.append(Weather())
         self.append(Datetime())
@@ -46,7 +46,7 @@ class CentreBar(widgets.Box):
 class Bar(widgets.Window):
     def __init__(self, monitor_id: int = 0):
         super().__init__(
-            namespace="ignis_BAR",
+            namespace=f"ignis_BAR_{monitor_id}",
             monitor=monitor_id,
             css_classes=["bar-window"],
             anchor=["top", "left", "right"],
@@ -66,7 +66,7 @@ class Bar(widgets.Window):
                     vexpand=True,
                     css_classes=["bar-center"],
                     halign="center",
-                    child=[CentreBar()],
+                    child=[CentreBar(monitor_id)],
                 ),
                 end_widget=widgets.Box(
                     hexpand=True,

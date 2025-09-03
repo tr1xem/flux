@@ -63,86 +63,86 @@ css_manager.apply_css(
         # priority="user",
     )
 )
-# css_manager.widgets_style_priority = "user"  # pyright: ignore[reportAttributeAccessIssue]
 
-ExpandedPlayerWindow()
-ControlCenter()
-Bar(0)
-NotificationPopup(0)
 
 corner_size = (30, 30)
-window = widgets.Window(
-    namespace="ignis_CORNER",
-    exclusivity="exclusive",
-    css_classes=["rec-unset"],
-    anchor=["top", "right", "bottom", "left"],
-    layer="bottom",
-    child=widgets.CenterBox(
-        vertical=True,
-        start_widget=widgets.Box(
-            child=[
-                widgets.CenterBox(
-                    vertical=False,
-                    vexpand=True,  # Expand vertically
-                    hexpand=True,  # Expand horizontally
-                    start_widget=widgets.Box(
-                        child=[
-                            Corner(
-                                orientation="top-left",  # Shape points to top-right
-                                size=corner_size,
-                                css_classes=["corner-top"],
-                                halign="end",  # Widget aligns to right
-                                valign="start",  # Widget aligns to top
-                            )
-                        ]
-                    ),
-                    end_widget=widgets.Box(
-                        child=[
-                            Corner(
-                                orientation="top-right",  # Shape points to top-right
-                                size=corner_size,
-                                halign="end",  # Widget aligns to right
-                                valign="start",  # Widget aligns to top
-                                css_classes=["corner-top"],
+
+
+class CornerAll(widgets.Window):
+    def __init__(self, monitor_id: int = 0):
+        super().__init__(
+            namespace=f"ignis_CORNER_{monitor_id}",
+            exclusivity="exclusive",
+            css_classes=["rec-unset"],
+            anchor=["top", "right", "bottom", "left"],
+            layer="bottom",
+            child=widgets.CenterBox(
+                vertical=True,
+                start_widget=widgets.Box(
+                    child=[
+                        widgets.CenterBox(
+                            vertical=False,
+                            vexpand=True,
+                            hexpand=True,
+                            start_widget=widgets.Box(
+                                child=[
+                                    Corner(
+                                        orientation="top-left",
+                                        size=corner_size,
+                                        css_classes=["corner-top"],
+                                        halign="end",
+                                        valign="start",
+                                    )
+                                ]
                             ),
-                        ],
-                    ),
-                ),
-            ]
-        ),
-        end_widget=widgets.Box(
-            child=[
-                widgets.CenterBox(
-                    vertical=False,
-                    vexpand=True,  # Expand vertically
-                    hexpand=True,  # Expand horizontally
-                    start_widget=widgets.Box(
-                        child=[
-                            Corner(
-                                orientation="bottom-left",  # Shape points to top-right
-                                size=corner_size,
-                                css_classes=["corner"],
-                                halign="end",  # Widget aligns to right
-                                valign="end",  # Widget aligns to top
-                            )
-                        ]
-                    ),
-                    end_widget=widgets.Box(
-                        child=[
-                            Corner(
-                                orientation="bottom-right",  # Shape points to top-right
-                                size=corner_size,
-                                halign="end",  # Widget aligns to right
-                                valign="end",  # Widget aligns to top
-                                css_classes=["corner"],
+                            end_widget=widgets.Box(
+                                child=[
+                                    Corner(
+                                        orientation="top-right",
+                                        size=corner_size,
+                                        halign="end",
+                                        valign="start",
+                                        css_classes=["corner-top"],
+                                    ),
+                                ],
                             ),
-                        ],
-                    ),
+                        ),
+                    ]
                 ),
-            ]
-        ),
-    ),
-)
+                end_widget=widgets.Box(
+                    child=[
+                        widgets.CenterBox(
+                            vertical=False,
+                            vexpand=True,
+                            hexpand=True,
+                            start_widget=widgets.Box(
+                                child=[
+                                    Corner(
+                                        orientation="bottom-left",
+                                        size=corner_size,
+                                        css_classes=["corner"],
+                                        halign="end",
+                                        valign="end",
+                                    )
+                                ]
+                            ),
+                            end_widget=widgets.Box(
+                                child=[
+                                    Corner(
+                                        orientation="bottom-right",
+                                        size=corner_size,
+                                        halign="end",
+                                        valign="end",
+                                        css_classes=["corner"],
+                                    ),
+                                ],
+                            ),
+                        ),
+                    ]
+                ),
+            ),
+        )
+
 
 # TODO: Implement a better way to do depth wallpapers
 
@@ -173,8 +173,21 @@ window = widgets.Window(
 #     layer="bottom",
 #     child=widgets.Box(hexpand=True, child=[pic]),
 # )
-Osd()
+for monitor in range(utils.get_n_monitors()):
+    ExpandedPlayerWindow(monitor)
+
+for monitor in range(utils.get_n_monitors()):
+    ControlCenter(monitor)
+for monitor in range(utils.get_n_monitors()):
+    Bar(monitor)
+
+for monitor in range(utils.get_n_monitors()):
+    NotificationPopup(monitor)
+
+for monitor in range(utils.get_n_monitors()):
+    CornerAll(monitor)
+for monitor in range(utils.get_n_monitors()):
+    Osd(monitor)
+
 Settings()
 Powermenu()
-
-# Lockscreen initialized on demand

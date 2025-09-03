@@ -12,7 +12,7 @@ window_manager = WindowManager.get_default()
 
 
 class OsdWindow(widgets.RevealerWindow):
-    def __init__(self, state: dict):
+    def __init__(self, state: dict, monitor_id: int = 0):
         self.state = state
 
         # Create percentage label
@@ -110,7 +110,7 @@ class OsdWindow(widgets.RevealerWindow):
             layer="overlay",
             css_classes=["osd-window"],
             anchor=["top", "bottom", "right"],
-            namespace=f"ignis_OSD_{state['name']}",
+            namespace=f"ignis_OSD_{state['name']}_{monitor_id}",
             child=widgets.CenterBox(
                 hexpand=True,
                 halign="fill",
@@ -143,8 +143,9 @@ class OsdWindow(widgets.RevealerWindow):
 
 
 class Osd:
-    def __init__(self):
+    def __init__(self, monitor_id: int = 0):
         self.service_inits()
+        self.monitor_id = monitor_id
 
         # Backlight
         self.brightness_multiplier = 9
@@ -241,5 +242,5 @@ class Osd:
         self.vol_state["visible"].value = False
 
     def popup(self, state: dict):
-        osd_window = OsdWindow(state)
+        osd_window = OsdWindow(state, self.monitor_id)
         self.osd_windows[state["name"]] = osd_window

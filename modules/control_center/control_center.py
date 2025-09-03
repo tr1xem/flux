@@ -14,7 +14,7 @@ window_manager = WindowManager.get_default()
 
 
 class ControlCenter(widgets.RevealerWindow):
-    def __init__(self):
+    def __init__(self, monitor_id: int = 0):
         revealer = widgets.Revealer(
             transition_type="slide_left",
             child=widgets.Box(
@@ -43,10 +43,11 @@ class ControlCenter(widgets.RevealerWindow):
             visible=False,
             popup=True,
             kb_mode="on_demand",
+            monitor=monitor_id,
             layer="top",
             css_classes=["unset"],
             anchor=["top", "right", "bottom", "left"],
-            namespace="ignis_CONTROL_CENTER",
+            namespace=f"ignis_CONTROL_CENTER_{monitor_id}",
             child=widgets.Box(
                 child=[
                     widgets.Button(
@@ -54,7 +55,7 @@ class ControlCenter(widgets.RevealerWindow):
                         hexpand=True,
                         css_classes=["unset"],
                         on_click=lambda x: window_manager.close_window(
-                            "ignis_CONTROL_CENTER"
+                            f"ignis_CONTROL_CENTER_{monitor_id}"
                         ),
                     ),
                     revealer,

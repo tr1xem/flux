@@ -163,7 +163,7 @@ class Battery(widgets.Box):
 class StatusPill(widgets.EventBox):
     def __init__(self, monitor: int):
         self._monitor = monitor
-        self._window = window_manager.get_window("ignis_CONTROL_CENTER")
+        self._window = window_manager.get_window(f"ignis_CONTROL_CENTER_{monitor}")
 
         super().__init__(
             child=[
