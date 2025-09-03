@@ -16,7 +16,7 @@ switch {
 
 tooltip {
     all: unset;
-    background-color: $surface;
+    background-color: rgba($surface, 0.5);
     padding: 0.5rem 1rem;
     border-radius: 1rem;
 }

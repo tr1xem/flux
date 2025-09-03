@@ -3,7 +3,7 @@ import datetime
 from ignis import utils, widgets
 from ignis.variable import Variable
 
-from .widgets import Player, StatusPill, Tray, Workspaces
+from .widgets import Player, StatusPill, Tray, Weather, Workspaces
 
 
 class Datetime(widgets.Box):
@@ -29,6 +29,7 @@ class CentreBar(widgets.Box):
         super().__init__(css_classes=["bar-center"], hexpand=True, spacing=9)
         self.append(Player())
         self.append(Workspaces(0))
+        self.append(Weather())
         self.append(Datetime())
 
 

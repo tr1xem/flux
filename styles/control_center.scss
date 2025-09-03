@@ -13,7 +13,8 @@
     }
 
     .user {
-        margin-top: 1rem;
+        // margin-top: 1rem;
+        padding-bottom: 1rem;
     }
 
     .qs-button {
@@ -102,18 +103,20 @@
 
     .user-name {
         font-size: 1.2rem;
+        font-weight: bold;
     }
 
     .user-name-secondary {
         color: $onSurfaceVariant;
         font-size: 0.9rem;
+        opacity: 0.8;
     }
 
     .user-settings {
         @include hover($surfaceContainerHighest);
         color: $onSurface;
         border-radius: 2rem;
-        min-width: 2.35rem;
+        min-width: 2.55rem;
         margin: 0.4rem 0rem;
         margin-right: 0.5rem;
         transition: 0.3s;
@@ -123,7 +126,7 @@
         @include hover($primary);
         color: $surface;
         border-radius: 1.5rem;
-        min-width: 2.35rem;
+        min-width: 2.55rem;
         margin: 0.4rem 0rem;
         transition: 0.3s;
     }

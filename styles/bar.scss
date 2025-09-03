@@ -141,3 +141,23 @@ popover.menu {
 .status-pill {
     @include border();
 }
+
+.weather {
+    @include border();
+    background-color: rgb(darken($surface, 0.1), 0.3);
+    
+    .weather-label {
+        font-weight: 500;
+        color: $onSurface;
+    }
+    
+    .weather-container {
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.5rem;
+        transition: all 0.2s ease;
+        
+        &:hover {
+            background-color: rgba(lighten($surface, 10%), 0.2);
+        }
+    }
+}
