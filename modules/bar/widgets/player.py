@@ -23,7 +23,7 @@ class Player(widgets.Box):
 
         self._players: List[MprisPlayer] = []
         self._current_player: Optional[MprisPlayer] = None
-        self._window = window_manager.get_window("ignis_media")
+        self._window = window_manager.get_window("ignis_MEDIA")
         self._monitor = 0
 
         self.title_label = widgets.Label(

@@ -72,7 +72,7 @@ NotificationPopup(0)
 
 corner_size = (30, 30)
 window = widgets.Window(
-    namespace="corner",
+    namespace="ignis_CORNER",
     exclusivity="exclusive",
     css_classes=["rec-unset"],
     anchor=["top", "right", "bottom", "left"],

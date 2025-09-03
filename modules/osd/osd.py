@@ -110,7 +110,7 @@ class OsdWindow(widgets.RevealerWindow):
             layer="overlay",
             css_classes=["osd-window"],
             anchor=["top", "bottom", "right"],
-            namespace=f"ignis_osd_{state['name']}",
+            namespace=f"ignis_OSD_{state['name']}",
             child=widgets.CenterBox(
                 hexpand=True,
                 halign="fill",
@@ -149,7 +149,7 @@ class Osd:
         # Backlight
         self.brightness_multiplier = 9
         self.bl_state = {
-            "name": "bl",
+            "name": "BL",
             "visible": Variable(value=False),
             "icon": Variable(value=""),
             "value": Variable(value=0.5),
@@ -168,7 +168,7 @@ class Osd:
 
         # Volume
         self.vol_state = {
-            "name": "vol",
+            "name": "VOL",
             "visible": Variable(value=False),
             "icon": Variable(value=""),
             "value": Variable(value=0.5),

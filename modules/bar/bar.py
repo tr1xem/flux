@@ -46,7 +46,7 @@ class CentreBar(widgets.Box):
 class Bar(widgets.Window):
     def __init__(self, monitor_id: int = 0):
         super().__init__(
-            namespace="ignis_bar",
+            namespace="ignis_BAR",
             monitor=monitor_id,
             css_classes=["bar-window"],
             anchor=["top", "left", "right"],

@@ -35,7 +35,7 @@ class ControlCenter(widgets.RevealerWindow):
                     NotificationCenter(),
                 ],
             ),
-            transition_duration=300,
+            transition_duration=500,
             reveal_child=True,
         )
 

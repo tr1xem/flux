@@ -1,6 +1,3 @@
-// * {
-//     all: unset;
-// }
 @import "styles/mixins/window.scss";
 @import "styles/mixins/hover.scss";
 @import "styles/mixins/bar-border.scss";
@@ -16,19 +13,6 @@
 @import "styles/notification_centre.scss";
 @import "styles/powermenu.scss";
 
-.imag {
-    // margin-top: -0.5rem;
-    // opacity: 0.5;
-}
-.d {
-    margin-top: -35rem;
-    margin-left: -1.5rem;
-    font-size: 15rem;
-    opacity: 0.5;
-    font-family: "SF Pro Rounded";
-
-    font-weight: bold;
-}
 .corner-top {
     // all: unset;
     background: unset;
@@ -42,78 +26,4 @@
 
 button {
     background-color: $primaryContainer;
-}
-
-.lockscreen-bg {
-    background-size: cover;
-    font-family: "SF Pro Rounded";
-}
-.indicator-box {
-    margin-right: 10px;
-    margin-top: 4px;
-}
-.container-box {
-    min-height: 50px;
-    min-width: 250px;
-    transition: all 0.7s ease-in-out;
-}
-.password-entry {
-    background-color: rgba($surface, 0.8);
-    border-radius: 20px;
-    color: $onSurface;
-    min-width: 220px;
-    min-height: 40px;
-    padding-right: 5px;
-    padding-left: 5px;
-    font-size: 14px;
-    placeholder {
-        padding-left: 4rem;
-    }
-    font-weight: 500;
-    transition: all 0.7s ease-in-out;
-}
-.profile-box {
-    margin-bottom: 10px;
-    border-radius: 50%;
-}
-.username {
-    font-size: 21px;
-    font-weight: bold;
-    font-family: "SF Pro Rounded";
-    margin-top: 5px;
-    transition: all 0.7s ease-in-out;
-}
-.lock-date {
-    background-color: transparent;
-    color: rgba(#fff, 0.6);
-    border: none;
-    font-size: 30px;
-    font-family: "SF Pro Rounded";
-    margin-top: 80px;
-    font-weight: bold;
-}
-.lock-clock {
-    background-color: transparent;
-    color: rgba(#fff, 0.6);
-    border: none;
-    font-family: "SF Pro Rounded";
-    font-size: 120px;
-    margin-top: -20px;
-    font-weight: bold;
-}
-
-.face-icon image {
-    margin-bottom: 10px;
-}
-.face-icon {
-    padding-bottom: 10px;
-}
-
-.unlock-box {
-    margin-bottom: 40px;
-}
-.unlock-text {
-    font-size: 15px;
-    color: rgba(#fff, 0.6);
-    font-weight: bold;
 }

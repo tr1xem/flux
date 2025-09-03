@@ -284,7 +284,7 @@ class ExpandedPlayerWindow(widgets.RevealerWindow):
             vexpand=True,
             hexpand=True,
             css_classes=["unset"],
-            on_click=lambda x: window_manager.close_window("ignis_media"),
+            on_click=lambda x: window_manager.close_window("ignis_MEDIA"),
         )
         super().__init__(
             visible=False,
@@ -293,7 +293,7 @@ class ExpandedPlayerWindow(widgets.RevealerWindow):
             layer="top",
             css_classes=["unset"],
             anchor=["top", "left", "bottom", "right"],
-            namespace="ignis_media",
+            namespace="ignis_MEDIA",
             child=widgets.CenterBox(
                 hexpand=True,
                 halign="fill",
@@ -303,7 +303,7 @@ class ExpandedPlayerWindow(widgets.RevealerWindow):
                     vexpand=True,
                     hexpand=True,
                     css_classes=["unset"],
-                    on_click=lambda x: window_manager.close_window("ignis_media"),
+                    on_click=lambda x: window_manager.close_window("ignis_MEDIA"),
                 ),
                 center_widget=widgets.Box(
                     vertical=True, child=[revealer, self.closeButton]
@@ -312,17 +312,8 @@ class ExpandedPlayerWindow(widgets.RevealerWindow):
                     vexpand=True,
                     hexpand=True,
                     css_classes=["unset"],
-                    on_click=lambda x: window_manager.close_window("ignis_media"),
+                    on_click=lambda x: window_manager.close_window("ignis_MEDIA"),
                 ),
-                # widgets.Button(
-                #     vexpand=True,
-                #     # hexpand=True,
-                #     css_classes=["unset"],
-                #     on_click=lambda x: window_manager.close_window(
-                #         "ignis_media"
-                #     ),
-                # ),
-                # revealer,
             ),
             setup=lambda self: self.connect(
                 "notify::visible", lambda x, y: opened_menu.set_value("")
