@@ -80,4 +80,5 @@
 .settings-wallpaper {
     padding: 1rem;
     color: $onSurface;
+    background-color: darken($surfaceContainer, 10%);
 }

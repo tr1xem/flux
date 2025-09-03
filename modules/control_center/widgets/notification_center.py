@@ -1,7 +1,7 @@
-from ignis import widgets
-from ignis.services.notifications import Notification, NotificationService
-from ignis import utils
 from gi.repository import GLib  # type: ignore
+from ignis import utils, widgets
+from ignis.services.notifications import Notification, NotificationService
+
 from ...shared_widgets import NotificationWidget
 
 notifications = NotificationService.get_default()
@@ -34,7 +34,6 @@ class NotificationList(widgets.Box):
             vertical=True,
             child=[loading_notifications_label],
             vexpand=True,
-            css_classes=["rec-unset"],
             setup=lambda self: notifications.connect(
                 "notified",
                 lambda x, notification: self.__on_notified(notification),

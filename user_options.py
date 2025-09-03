@@ -1,9 +1,19 @@
 import os
-from ignis.options_manager import OptionsGroup, OptionsManager
-from ignis import DATA_DIR, CACHE_DIR  # type: ignore
+
+from ignis import CACHE_DIR, DATA_DIR  # type: ignore
+from ignis.options_manager import OptionsGroup, OptionsManager, TrackedList
 
 USER_OPTIONS_FILE = f"{DATA_DIR}/user_options.json"
 OLD_USER_OPTIONS_FILE = f"{CACHE_DIR}/user_options.json"
+
+
+SCREENSHOT_APPS = [
+    "grimblast",
+    "gnome-screenshot",
+    "hyprshot",
+    "Flameshot",
+    "flameshot",
+]
 
 
 # FIXME: remove someday
@@ -37,9 +47,16 @@ class UserOptions(OptionsManager):
         dark_mode: bool = True
         colors: dict[str, str] = {}
 
+    class Default(OptionsGroup):
+        screenshot_app: list[str] = TrackedList()
+
+    default = Default()
     user = User()
     settings = Settings()
     material = Material()
 
 
 user_options = UserOptions()
+for app in SCREENSHOT_APPS:
+    if app not in user_options.default.screenshot_app:
+        user_options.default.screenshot_app.append(app)
