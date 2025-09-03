@@ -201,7 +201,7 @@ class AboutEntry(SettingsEntry):
                                     sublabel=fetch.session_type,
                                 ),
                                 SettingsRow(
-                                    label="  Wayland compositor",
+                                    label="   Wayland compositor",
                                     sublabel=fetch.current_desktop,
                                 ),
                                 SettingsRow(label="  Kernel", sublabel=fetch.kernel),
@@ -217,7 +217,7 @@ class AboutEntry(SettingsEntry):
                             hexpand=True,
                             child=[
                                 SettingsRow(
-                                    label="  CPU",
+                                    label="   CPU",
                                     sublabel=fetch.cpu,
                                 ),
                                 SettingsRow(
@@ -237,13 +237,13 @@ class AboutEntry(SettingsEntry):
                                     sublabel=get_wifi_driver_name(),
                                 ),
                                 SettingsRow(
-                                    label="  Motherboard", sublabel=fetch.board_vendor
+                                    label="   Motherboard", sublabel=fetch.board_vendor
                                 ),
                                 SettingsRow(
-                                    label="  UEFI Version", sublabel=fetch.board_name
+                                    label="   UEFI Version", sublabel=fetch.board_name
                                 ),
                                 SettingsRow(
-                                    label="  Secure Boot",
+                                    label="   Secure Boot",
                                     sublabel="Enabled"
                                     if is_secure_boot_enabled()
                                     else "Disabled",

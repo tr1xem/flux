@@ -9,12 +9,12 @@ class SettingsRow(widgets.ListBoxRow):
         **kwargs,
     ):
         super().__init__(
+            css_classes=["settings-row"],
             child=widgets.Box(
-                css_classes=["settings-row"],
-                hexpand=True,
                 child=[
                     widgets.Box(
                         vertical=True,
+                        spacing=5,
                         child=[
                             widgets.Label(
                                 label=label,
@@ -22,6 +22,7 @@ class SettingsRow(widgets.ListBoxRow):
                                 halign="start",
                                 vexpand=True,
                                 wrap=True,
+                                max_width_chars=25,
                                 visible=True if label else False,
                             ),
                             widgets.Label(
@@ -30,11 +31,12 @@ class SettingsRow(widgets.ListBoxRow):
                                 halign="start",
                                 vexpand=True,
                                 wrap=True,
+                                max_width_chars=35,
                                 visible=True if sublabel else False,
                             ),
                         ],
                     )
-                ],
+                ]
             ),
             **kwargs,
         )

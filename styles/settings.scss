@@ -47,6 +47,7 @@
     padding: 0.7rem 2.5rem;
     transition: 0.2s;
     color: $onSurface;
+    min-width: 15rem;
 
     background-color: darken($surfaceContainer, 10%);
     &:active {
