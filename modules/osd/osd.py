@@ -233,11 +233,11 @@ class Osd:
         )
         self.bl_popup_debounce()
 
-    @utils.debounce(1000)
+    @utils.debounce(3000)
     def bl_popup_debounce(self):
         self.bl_state["visible"].value = False
 
-    @utils.debounce(1000)
+    @utils.debounce(3000)
     def vol_popup_debounce(self):
         self.vol_state["visible"].value = False
 
