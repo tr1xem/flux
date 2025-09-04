@@ -11,7 +11,7 @@ class NightModeButton(QSButton):
     def __init__(self):
         super().__init__(
             label="Night Mode",
-            icon_name="night-light-symbolic",
+            icon_name="stock_weather-night-clear",
             on_activate=lambda x: asyncio.create_task(self.activate_night_mode()),
             on_deactivate=lambda x: asyncio.create_task(self.deactivate_night_mode()),
             active=False,

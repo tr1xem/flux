@@ -87,6 +87,49 @@
     }
 }
 
+// Color scheme dropdown styling
+.settings-dropdown dropdown {
+    button {
+        font-size: 1rem;
+        min-width: 10rem;
+        background-color: $surfaceContainer;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        color: $onSurface;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background-color: $surfaceContainerHigh;
+        }
+    }
+
+    popover {
+        background-color: $surfaceContainer;
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+
+        contents modelbutton {
+            all: unset;
+            padding: 1rem 1.5rem;
+            border-radius: 0.25rem;
+            background-color: rgba($surfaceContainer, 0.8);
+            color: $onSurface;
+            margin: 0.2rem 0;
+            font-size: 1rem;
+
+            &:hover {
+                background-color: $primary;
+                color: $onPrimary;
+            }
+
+            &:active {
+                background-color: $primary;
+                color: $onPrimary;
+            }
+        }
+    }
+}
+
 .color-scheme-button {
     all: unset;
     font-size: 1rem;

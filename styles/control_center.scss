@@ -54,44 +54,45 @@
         color: $error;
     }
 
-    .record-dropdown {
+    // Record dropdown styling  
+    .record-dropdown dropdown {
         min-width: 120px;
 
         button {
             all: unset;
             color: $onSurface;
-            background-color: rgba($surfaceContainer, 0.8);
-            border: 1px solid rgba($outline, 0.3);
+            background-color: $surfaceContainer;
             border-radius: 0.5rem;
-            padding: 0.4rem 0.8rem;
+            padding: 0.75rem 1.25rem;
             font-size: 0.9rem;
             transition: all 0.2s ease;
 
             &:hover {
-                background-color: $surfaceContainer;
-                border-color: rgba($outline, 0.6);
+                background-color: $surfaceContainerHigh;
             }
         }
 
-        popover contents {
-            all: unset;
+        popover {
             background-color: $surfaceContainer;
-            border: 1px solid rgba($outline, 0.2);
             border-radius: 0.5rem;
-            padding: 0.25rem;
+            padding: 0.75rem;
 
-            modelbutton {
-                padding: 0.5rem 0.8rem;
+            contents modelbutton {
+                all: unset;
+                padding: 1rem 1.5rem;
                 border-radius: 0.25rem;
                 color: $onSurface;
-                margin: 1.1rem;
+                margin: 0.2rem 0;
+                font-size: 0.9rem;
 
                 &:hover {
-                    background-color: rgba($primary, 0.1);
+                    background-color: $primary;
+                    color: $onPrimary;
                 }
 
                 &:active {
-                    background-color: rgba($primary, 0.2);
+                    background-color: $primary;
+                    color: $onPrimary;
                 }
             }
         }
