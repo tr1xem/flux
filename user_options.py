@@ -13,6 +13,7 @@ SCREENSHOT_APPS = [
     "hyprshot",
     "Flameshot",
     "flameshot",
+    "wf-recorder",
 ]
 
 

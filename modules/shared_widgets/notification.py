@@ -1,5 +1,6 @@
 import os
 import tempfile
+
 from ignis import widgets
 from ignis.services.notifications import Notification
 from PIL import Image
@@ -13,30 +14,30 @@ def crop_to_square(image_path: str) -> str:
     """
     if not image_path or not os.path.exists(image_path):
         return image_path
-    
+
     try:
         with Image.open(image_path) as img:
             width, height = img.size
-            
+
             # If already square, return original
             if width == height:
                 return image_path
-            
+
             # Calculate crop box for center square
             size = min(width, height)
             left = (width - size) // 2
             top = (height - size) // 2
             right = left + size
             bottom = top + size
-            
+
             # Crop to square
             cropped = img.crop((left, top, right, bottom))
-            
+
             # Save to temporary file
-            temp_fd, temp_path = tempfile.mkstemp(suffix='.png')
+            temp_fd, temp_path = tempfile.mkstemp(suffix=".png")
             os.close(temp_fd)
-            cropped.save(temp_path, 'PNG')
-            
+            cropped.save(temp_path, "PNG")
+
             return temp_path
     except Exception:
         # If cropping fails, return original path
@@ -45,7 +46,7 @@ def crop_to_square(image_path: str) -> str:
 
 class CroppedPicture(widgets.Picture):
     """Picture widget that automatically crops images to square aspect ratio."""
-    
+
     def __init__(self, image=None, **kwargs):
         if image and isinstance(image, str):
             image = crop_to_square(image)
@@ -209,7 +210,8 @@ class NormalLayout(widgets.Box):
                             child=[
                                 widgets.Label(
                                     ellipsize="end",
-                                    label=notification.summary,
+                                    label=f"{notification.summary} | <span color='#999'>{notification.app_name}</span>",
+                                    use_markup=True,
                                     halign="start",
                                     visible=notification.summary != "",
                                     css_classes=["notification-summary"],
@@ -256,7 +258,10 @@ class NotificationWidget(widgets.Box):
     def __init__(self, notification: Notification) -> None:
         layout: NormalLayout | ScreenshotLayout
 
-        if notification.app_name in user_options.default.screenshot_app:
+        if (
+            notification.app_name in user_options.default.screenshot_app
+            and notification.icon
+        ):
             layout = ScreenshotLayout(notification)
         else:
             layout = NormalLayout(notification)
