@@ -32,8 +32,10 @@
 .notification-close {
     @include hover($surfaceContainerHigh);
     color: $onSurface;
-    border-radius: 1rem;
-    padding: 0.25rem;
+    border-radius: 50%;
+    padding: 0.35rem;
+    min-width: 1.5rem;
+    min-height: 1.5rem;
     margin-left: 0.5rem;
     transition: 0.3s;
 }

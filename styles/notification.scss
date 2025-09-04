@@ -3,7 +3,8 @@
     min-width: 25rem;
 
     & .notification-close {
-        @include hover($bg: rgba(white, $opacity-low));
+        all: unset;
+        @include hover($bg: rgba(#999, $opacity-low));
         // background-color: rgba(white, $opacity-low);
         border-radius: 50%;
         padding: 0.2rem;
@@ -28,4 +29,9 @@
 }
 .notification-icon {
     border-radius: 1rem;
+}
+.notification-close-icon {
+    color: $onSurface;
+    min-width: 1rem;
+    min-height: 1rem;
 }

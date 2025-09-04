@@ -76,6 +76,7 @@ class ScreenshotLayout(widgets.Box):
                                 widgets.Button(
                                     child=widgets.Icon(
                                         image="window-close-symbolic",
+                                        css_classes=["notification-close-icon"],
                                         pixel_size=20,
                                     ),
                                     halign="end",
@@ -227,7 +228,9 @@ class NormalLayout(widgets.Box):
                         ),
                         widgets.Button(
                             child=widgets.Icon(
-                                image="window-close-symbolic", pixel_size=20
+                                image="window-close-symbolic",
+                                pixel_size=22,
+                                css_classes=["notification-close-icon"],
                             ),
                             halign="end",
                             valign="start",
