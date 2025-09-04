@@ -99,16 +99,20 @@ popover.menu {
     contents {
         all: unset;
         background-color: rgba($surface, $opacity-medium);
-        // padding: 0.35rem;
         border-radius: 1rem;
+        color: $onSurface;
         color: $onSurface;
         modelbutton {
             transition: 0.3s;
+            * {
+                color: $onSurface;
+            }
             border-radius: 0.5rem;
             // padding: 0.25rem 1rem;
-            background-color: rgba($surface, $opacity-medium);
+            // background-color: rgba($surface, $opacity-medium);
         }
         modelbutton:hover {
+            color: $onSurface;
             background-color: rgba(lighten($surface, 50%), $opacity-medium);
         }
         separator {
@@ -165,10 +169,6 @@ popover.menu {
         padding: 0.25rem 0.5rem;
         border-radius: 0.5rem;
         transition: all 0.2s ease;
-
-        &:hover {
-            background-color: rgba(lighten($surface, 10%), $opacity-low);
-        }
     }
 }
 .progress-player,

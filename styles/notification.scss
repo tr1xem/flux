@@ -20,9 +20,11 @@
         padding: 0.25rem 0.25rem;
         transition: 0.3s;
     }
-}
-.notification-body {
-    opacity: $opacity-high;
+    .notification-body,
+    .notification-summary {
+        color: $onSurface;
+        opacity: $opacity-high;
+    }
 }
 .notification-action {
     padding: 0.2rem;

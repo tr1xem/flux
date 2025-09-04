@@ -68,7 +68,6 @@ class ScreenshotLayout(widgets.Box):
                             child=CroppedPicture(
                                 image=notification.icon,
                                 css_classes=["notification-icon"],
-                                # content_fit="contain",
                                 width=1920 // 7,
                                 height=1080 // 7,
                             ),
@@ -211,7 +210,7 @@ class NormalLayout(widgets.Box):
                             child=[
                                 widgets.Label(
                                     ellipsize="end",
-                                    label=f"{notification.summary} | <span color='#999'>{notification.app_name}</span>",
+                                    label=f"{notification.summary} | <span color={"'#999'" if user_options.material.dark_mode else "'#111'"}>{notification.app_name}</span>",
                                     use_markup=True,
                                     halign="start",
                                     visible=notification.summary != "",

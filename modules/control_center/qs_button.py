@@ -1,7 +1,9 @@
-from ignis import widgets
-from gi.repository import GObject  # type: ignore
 from typing import Callable
+
+from gi.repository import GObject  # type: ignore
+from ignis import widgets
 from ignis.gobject import Binding
+
 from .menu import Menu
 
 
@@ -23,7 +25,10 @@ class QSButton(widgets.Button):
             child=widgets.Box(
                 child=[
                     widgets.Icon(image=icon_name),
-                    widgets.Label(label=label, css_classes=["qs-button-label"]),
+                    widgets.Label(
+                        label=label,
+                        css_classes=["qs-button-label"],
+                    ),
                     widgets.Arrow(
                         halign="end",
                         hexpand=True,

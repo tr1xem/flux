@@ -1,5 +1,6 @@
-from ...qs_button import QSButton
 from user_options import user_options
+
+from ...qs_button import QSButton
 
 
 class DarkModeButton(QSButton):
