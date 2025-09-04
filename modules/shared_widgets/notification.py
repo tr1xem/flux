@@ -1,7 +1,55 @@
+import os
+import tempfile
 from ignis import widgets
 from ignis.services.notifications import Notification
+from PIL import Image
 
 from user_options import user_options
+
+
+def crop_to_square(image_path: str) -> str:
+    """
+    Crop an image to square aspect ratio and return the path to the cropped image.
+    """
+    if not image_path or not os.path.exists(image_path):
+        return image_path
+    
+    try:
+        with Image.open(image_path) as img:
+            width, height = img.size
+            
+            # If already square, return original
+            if width == height:
+                return image_path
+            
+            # Calculate crop box for center square
+            size = min(width, height)
+            left = (width - size) // 2
+            top = (height - size) // 2
+            right = left + size
+            bottom = top + size
+            
+            # Crop to square
+            cropped = img.crop((left, top, right, bottom))
+            
+            # Save to temporary file
+            temp_fd, temp_path = tempfile.mkstemp(suffix='.png')
+            os.close(temp_fd)
+            cropped.save(temp_path, 'PNG')
+            
+            return temp_path
+    except Exception:
+        # If cropping fails, return original path
+        return image_path
+
+
+class CroppedPicture(widgets.Picture):
+    """Picture widget that automatically crops images to square aspect ratio."""
+    
+    def __init__(self, image=None, **kwargs):
+        if image and isinstance(image, str):
+            image = crop_to_square(image)
+        super().__init__(image=image, **kwargs)
 
 
 class ScreenshotLayout(widgets.Box):
@@ -16,7 +64,7 @@ class ScreenshotLayout(widgets.Box):
                     vertical=True,
                     child=[
                         widgets.Overlay(
-                            child=widgets.Picture(
+                            child=CroppedPicture(
                                 image=notification.icon,
                                 css_classes=["notification-icon"],
                                 # content_fit="contain",
@@ -145,7 +193,7 @@ class NormalLayout(widgets.Box):
             child=[
                 widgets.Box(
                     child=[
-                        widgets.Picture(
+                        CroppedPicture(
                             css_classes=["notification-icon"],
                             image=notification.icon
                             if notification.icon
