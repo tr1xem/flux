@@ -152,6 +152,8 @@ class Player(widgets.Box):
         self._current_player = None
         self.title_label.label = "No Media Playing"
         self.play_pause_button.child.image = "play-symbolic"
+        self._progress_bar.value = 1
+        self._progress_bar.max_value = 1
         self.play_pause_button.sensitive = False
 
     def _play_pause(self) -> None:
