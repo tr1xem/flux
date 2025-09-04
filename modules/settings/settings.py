@@ -1,5 +1,4 @@
 from ignis import widgets
-
 from user_options import user_options
 
 from .active_page import active_page

@@ -1,11 +1,12 @@
 import asyncio
 import os
+import tempfile
 
 from ignis import utils, widgets
 from ignis.options import options
-
 from services.material import MaterialService
 from user_options import user_options
+from PIL import Image
 
 from ..elements import FileRow, SettingsEntry, SettingsGroup, SettingsPage, SwitchRow
 
@@ -49,6 +50,53 @@ def get_scheme_index(scheme_name: str) -> int:
         return COLOR_SCHEME_OPTIONS.index(scheme_name)
     except ValueError:
         return 0  # Default to "Tonal Spot"
+
+
+def downscale_image_to_preview_size(image_path: str, target_width: int = 480, target_height: int = 270) -> str:
+    """
+    Downscale an image to match the appearance preview dimensions.
+    Default dimensions are 1920//4 x 1080//4 (480x270) to match the wallpaper preview.
+    Returns the path to the downscaled image, or the original path if scaling fails.
+    """
+    if not image_path or not os.path.exists(image_path):
+        return image_path
+    
+    try:
+        with Image.open(image_path) as img:
+            original_width, original_height = img.size
+            
+            # Calculate aspect ratios
+            original_aspect = original_width / original_height
+            target_aspect = target_width / target_height
+            
+            # Determine new dimensions to maintain aspect ratio
+            if original_aspect > target_aspect:
+                # Image is wider, fit by height
+                new_height = target_height
+                new_width = int(target_height * original_aspect)
+            else:
+                # Image is taller or same aspect, fit by width
+                new_width = target_width
+                new_height = int(target_width / original_aspect)
+            
+            # Only downscale if the image is larger than target
+            if new_width < original_width or new_height < original_height:
+                # Resize using high-quality resampling
+                resized = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+                
+                # Save to temporary file
+                temp_fd, temp_path = tempfile.mkstemp(suffix=".png")
+                os.close(temp_fd)
+                resized.save(temp_path, "PNG", optimize=True)
+                
+                return temp_path
+            else:
+                # Image is already smaller than target, return original
+                return image_path
+                
+    except Exception as e:
+        # If processing fails, return original path
+        return image_path
 
 
 # Global registry to track all color scheme buttons - DEPRECATED, keeping for backwards compatibility
@@ -109,7 +157,10 @@ class AppearanceEntry(SettingsEntry):
                         widgets.ListBoxRow(
                             css_classes=["settings-wallpaper"],
                             child=widgets.Picture(
-                                image=options.wallpaper.bind("wallpaper_path"),
+                                image=options.wallpaper.bind(
+                                    "wallpaper_path",
+                                    transform=lambda path: downscale_image_to_preview_size(path) if path else None
+                                ),
                                 width=1920 // 4,
                                 height=1080 // 4,
                                 halign="center",

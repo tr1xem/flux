@@ -1,6 +1,9 @@
 #!/usr/bin/python
 import asyncio
+import gc
+import hashlib
 import os
+from typing import Optional
 
 from gi.repository import GLib  # type: ignore
 from ignis import utils
@@ -47,17 +50,25 @@ COLOR_SCHEMES = {
 class MaterialService(BaseService):
     def __init__(self):
         super().__init__()
-
+        
+        # Caching mechanisms
+        self._colors_cache = {}
+        self._template_cache = {}
+        self._last_wallpaper_path = None
+        self._last_scheme = None
+        self._last_dark_mode = None
+        
+        # Initialize only if necessary
         if not options.wallpaper.wallpaper_path:
             self.__on_colors_not_found()
-        if user_options.material.colors == {}:
+        elif user_options.material.colors == {}:
             self.__on_colors_not_found()
 
         user_options.material.connect_option(
-            "dark_mode", lambda: self.generate_colors(options.wallpaper.wallpaper_path)
+            "dark_mode", lambda: self._handle_option_change("dark_mode")
         )
         user_options.material.connect_option(
-            "color_scheme", lambda: self.generate_colors(options.wallpaper.wallpaper_path)
+            "color_scheme", lambda: self._handle_option_change("color_scheme")
         )
         user_options.material.connect_option(
             "blur_enabled", lambda: self.__handle_blur_change()
@@ -65,6 +76,56 @@ class MaterialService(BaseService):
         
         # Apply initial blur state
         self.__handle_blur_change()
+
+    def get_cache_stats(self) -> dict:
+        """Get cache statistics for monitoring performance"""
+        return {
+            "colors_cache_size": len(self._colors_cache),
+            "template_cache_size": len(self._template_cache),
+            "last_wallpaper": self._last_wallpaper_path,
+            "last_scheme": self._last_scheme,
+            "last_dark_mode": self._last_dark_mode
+        }
+
+    def _cleanup_cache(self, max_entries: int = 10):
+        """Clean up caches to prevent memory leaks"""
+        if len(self._colors_cache) > max_entries:
+            # Keep only the most recent entries
+            items = list(self._colors_cache.items())
+            self._colors_cache = dict(items[-max_entries//2:])
+            
+        if len(self._template_cache) > max_entries:
+            # Keep only the most recent entries  
+            items = list(self._template_cache.items())
+            self._template_cache = dict(items[-max_entries//2:])
+
+    def _handle_option_change(self, option_name: str):
+        """Handle changes to material options with caching"""
+        current_path = options.wallpaper.wallpaper_path
+        if current_path:
+            # Clear cache if relevant options changed
+            if (self._last_wallpaper_path != current_path or 
+                self._last_scheme != user_options.material.color_scheme or
+                self._last_dark_mode != user_options.material.dark_mode):
+                # Only clear caches, don't regenerate immediately
+                self._colors_cache.clear()
+                self._template_cache.clear()
+                
+            self.generate_colors(current_path)
+            
+            # Cleanup caches after each change to prevent accumulation
+            self._cleanup_cache(max_entries=8)
+
+    def _get_cache_key(self, path: str, dark_mode: bool) -> str:
+        """Generate a cache key for color calculations"""
+        # Include file modification time for cache invalidation
+        try:
+            mtime = os.path.getmtime(path)
+            scheme = user_options.material.color_scheme
+            return hashlib.md5(f"{path}_{dark_mode}_{scheme}_{mtime}".encode()).hexdigest()
+        except OSError:
+            # If file doesn't exist, use path + timestamp
+            return hashlib.md5(f"{path}_{dark_mode}_{user_options.material.color_scheme}".encode()).hexdigest()
 
     def __handle_blur_change(self):
         """Handle blur setting changes - update CSS and Hyprland config"""
@@ -115,58 +176,118 @@ class MaterialService(BaseService):
         asyncio.create_task(utils.exec_sh_async("hyprctl reload"))
 
     def get_colors_from_img(self, path: str, dark_mode: bool) -> dict[str, str]:
-        image = Image.open(path)
-        wsize, hsize = image.size
-        wsize_new, hsize_new = calculate_optimal_size(wsize, hsize, 128)
-        if wsize_new < wsize or hsize_new < hsize:
-            image = image.resize((wsize_new, hsize_new), Image.Resampling.BICUBIC)  # type: ignore
-
-        pixel_len = image.width * image.height
-        image_data = image.getdata()
-        pixel_array = [image_data[_] for _ in range(0, pixel_len, 1)]
-
-        colors = QuantizeCelebi(pixel_array, 128)
-        argb = Score.score(colors)[0]
-
-        hct = Hct.from_int(argb)
+        """Get colors from image with caching for performance"""
+        cache_key = self._get_cache_key(path, dark_mode)
         
-        # Get the selected color scheme class
-        scheme_name = getattr(user_options.material, 'color_scheme', 'Tonal Spot')
-        scheme_class = COLOR_SCHEMES.get(scheme_name, SchemeTonalSpot)
-        scheme = scheme_class(hct, dark_mode, 0.0)
+        # Return cached result if available
+        if cache_key in self._colors_cache:
+            return self._colors_cache[cache_key]
 
-        material_colors = {}
-        for color in vars(MaterialDynamicColors).keys():
-            color_name = getattr(MaterialDynamicColors, color)
-            if hasattr(color_name, "get_hct"):
-                rgba = color_name.get_hct(scheme).to_rgba()
-                material_colors[color] = rgba_to_hex(rgba)
+        # Generate colors if not cached
+        image = None
+        try:
+            image = Image.open(path)
+            wsize, hsize = image.size
+            wsize_new, hsize_new = calculate_optimal_size(wsize, hsize, 128)
+            if wsize_new < wsize or hsize_new < hsize:
+                image = image.resize((wsize_new, hsize_new), Image.Resampling.BICUBIC)  # type: ignore
 
-        return material_colors
+            pixel_len = image.width * image.height
+            image_data = image.getdata()
+            pixel_array = [image_data[_] for _ in range(0, pixel_len, 1)]
+
+            colors = QuantizeCelebi(pixel_array, 128)
+            argb = Score.score(colors)[0]
+
+            hct = Hct.from_int(argb)
+            
+            # Get the selected color scheme class
+            scheme_name = getattr(user_options.material, 'color_scheme', 'Tonal Spot')
+            scheme_class = COLOR_SCHEMES.get(scheme_name, SchemeTonalSpot)
+            scheme = scheme_class(hct, dark_mode, 0.0)
+
+            material_colors = {}
+            for color in vars(MaterialDynamicColors).keys():
+                color_name = getattr(MaterialDynamicColors, color)
+                if hasattr(color_name, "get_hct"):
+                    rgba = color_name.get_hct(scheme).to_rgba()
+                    material_colors[color] = rgba_to_hex(rgba)
+
+            # Cache the result
+            self._colors_cache[cache_key] = material_colors
+            
+            # Update tracking variables
+            self._last_wallpaper_path = path
+            self._last_scheme = scheme_name
+            self._last_dark_mode = dark_mode
+
+            return material_colors
+        except Exception as e:
+            print(f"Error generating colors from {path}: {e}")
+            # Return empty colors on error
+            return {}
+        finally:
+            # Always close the PIL Image to prevent memory leaks
+            if image is not None:
+                try:
+                    image.close()
+                except Exception:
+                    pass
 
     def generate_colors(self, path: str) -> None:
-        colors = self.get_colors_from_img(path, user_options.material.dark_mode)
+        """Generate colors with optimized caching and lazy loading"""
+        if not path:
+            return
+            
+        # Check if we need to regenerate colors
+        current_scheme = user_options.material.color_scheme
+        current_dark_mode = user_options.material.dark_mode
+        
+        # Skip if nothing changed and colors exist
+        if (self._last_wallpaper_path == path and 
+            self._last_scheme == current_scheme and 
+            self._last_dark_mode == current_dark_mode and
+            user_options.material.colors):
+            return
+
+        colors = self.get_colors_from_img(path, current_dark_mode)
         dark_colors = self.get_colors_from_img(path, True)
+        
         user_options.material.colors = colors
         self.__render_templates(colors, dark_colors)
         asyncio.create_task(self.__setup(path))
 
     def __render_templates(self, colors: dict, dark_colors: dict) -> None:
+        """Render templates with caching optimization"""
+        # Generate cache keys for colors
+        colors_hash = hashlib.md5(str(sorted(colors.items())).encode()).hexdigest()
+        dark_colors_hash = hashlib.md5(str(sorted(dark_colors.items())).encode()).hexdigest()
+        
         for template in os.listdir(TEMPLATES):
-            self.render_template(
-                colors=colors,
-                dark_mode=user_options.material.dark_mode,
-                input_file=f"{TEMPLATES}/{template}",
-                output_file=f"{MATERIAL_CACHE_DIR}/{template}",
-            )
-
-        for template in os.listdir(TEMPLATES):
-            self.render_template(
-                colors=dark_colors,
-                dark_mode=True,
-                input_file=f"{TEMPLATES}/{template}",
-                output_file=f"{MATERIAL_CACHE_DIR}/dark_{template}",
-            )
+            # Check cache for regular template
+            cache_key = f"{template}_{colors_hash}_{user_options.material.dark_mode}"
+            if cache_key not in self._template_cache:
+                self.render_template(
+                    colors=colors,
+                    dark_mode=user_options.material.dark_mode,
+                    input_file=f"{TEMPLATES}/{template}",
+                    output_file=f"{MATERIAL_CACHE_DIR}/{template}",
+                )
+                self._template_cache[cache_key] = True
+            
+            # Check cache for dark template
+            dark_cache_key = f"dark_{template}_{dark_colors_hash}_True"
+            if dark_cache_key not in self._template_cache:
+                self.render_template(
+                    colors=dark_colors,
+                    dark_mode=True,
+                    input_file=f"{TEMPLATES}/{template}",
+                    output_file=f"{MATERIAL_CACHE_DIR}/dark_{template}",
+                )
+                self._template_cache[dark_cache_key] = True
+        
+        # Clean up template cache after each render to prevent memory leaks
+        self._cleanup_cache(max_entries=12)
 
     def render_template(
         self,
@@ -198,8 +319,11 @@ class MaterialService(BaseService):
     async def __setup(self, image_path: str) -> None:
         try:
             await utils.exec_sh_async("pkill -SIGUSR1 kitty")
-        except GLib.Error:
+        except Exception:
             ...
         options.wallpaper.set_wallpaper_path(image_path)
         css_manager.reload_all_css()
+        
+        # Force garbage collection after color changes to free memory
+        gc.collect()
         # await self.__reload_gtk_theme()
