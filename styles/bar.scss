@@ -143,6 +143,7 @@ popover.menu {
     all: unset;
     @include border();
     transition: 0.5s;
+    background-color: rgb(darken($surface, 0.1), 0.3);
 }
 
 .status-active {
@@ -222,4 +223,5 @@ popover.menu {
     margin-top: -0.3rem;
 
     @include border();
+    background-color: rgb(darken($surface, 0.1), 0.3);
 }
