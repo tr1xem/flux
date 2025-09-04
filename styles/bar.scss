@@ -206,3 +206,9 @@ popover.menu {
         animation: recorder-animation 2s infinite;
     }
 }
+.bar-start {
+    margin-left: 0.5rem;
+    margin-top: -0.3rem;
+
+    @include border();
+}

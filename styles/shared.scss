@@ -283,28 +283,28 @@ popover * row,
 popover row,
 popover listboxrow,
 popover * listboxrow {
-    all: unset !important;
-    background-color: $primaryContainer !important;
-    border-radius: 0.75rem !important;
-    margin: 0.25rem !important;
-    transition: all 0.3s ease !important;
-    color: $onSurface !important;
-    font-size: 1rem !important;
-    min-height: 1rem !important;
+    all: unset;
+    background-color: $primaryContainer;
+    border-radius: 0.75rem;
+    margin: 0.25rem;
+    transition: all 0.3s ease;
+    color: $onSurface;
+    font-size: 1rem;
+    min-height: 1rem;
 
     &:hover {
-        background-color: mix($primary, transparent, 10%) !important;
+        background-color: mix($primary, transparent, 10%);
     }
 
     &:first-child {
         margin-top: 10px;
     }
     &:selected {
-        background-color: $primaryContainer !important;
-        color: $onPrimaryContainer !important;
+        background-color: $primaryContainer;
+        color: $onPrimaryContainer;
     }
 
     &:focus {
-        background-color: mix($primary, transparent, 15%) !important;
+        background-color: mix($primary, transparent, 15%);
     }
 }

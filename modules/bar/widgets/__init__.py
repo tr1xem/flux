@@ -6,6 +6,7 @@ from .player_expanded import ExpandedPlayerWindow
 from .ram import RamUsage
 from .tray import Tray
 from .weather import Weather
+from .windowtitle import WindowTitle
 from .workspaces import Workspaces
 
 __all__ = [
@@ -18,4 +19,5 @@ __all__ = [
     "Workspaces",
     "StatusPill",
     "Weather",
+    "WindowTitle",
 ]

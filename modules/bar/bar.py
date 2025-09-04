@@ -3,7 +3,16 @@ import datetime
 from ignis import utils, widgets
 from ignis.variable import Variable
 
-from .widgets import CpuUsage, Player, RamUsage, StatusPill, Tray, Weather, Workspaces
+from .widgets import (
+    CpuUsage,
+    Player,
+    RamUsage,
+    StatusPill,
+    Tray,
+    Weather,
+    WindowTitle,
+    Workspaces,
+)
 
 
 class Datetime(widgets.Box):
@@ -53,13 +62,14 @@ class Bar(widgets.Window):
             exclusivity="exclusive",
             child=widgets.CenterBox(
                 hexpand=True,
+                vexpand=True,
                 start_widget=widgets.Box(
                     css_classes=["bar-start"],
                     hexpand=True,
                     vexpand=True,
-                    valign="center",
-                    halign="center",
-                    child=[],
+                    valign="fill",
+                    halign="start",
+                    child=[WindowTitle()],
                 ),
                 center_widget=widgets.Box(
                     hexpand=True,
