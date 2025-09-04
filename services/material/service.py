@@ -49,6 +49,9 @@ class MaterialService(BaseService):
         elif user_options.material.colors == {}:
             self.__on_colors_not_found()
 
+        options.wallpaper.connect_option(
+            "wallpaper_path", lambda: self._handle_option_change("wallpaper_path")
+        )
         user_options.material.connect_option(
             "dark_mode", lambda: self._handle_option_change("dark_mode")
         )
@@ -71,7 +74,11 @@ class MaterialService(BaseService):
 
     def _handle_option_change(self, option_name: str):
         """Handle changes to material options with caching"""
-        if option_name == "dark_mode" or option_name == "color_scheme":
+        if (
+            option_name == "dark_mode"
+            or option_name == "color_scheme"
+            or option_name == "wallpaper_path"
+        ):
             colors = self.get_colors_from_img(
                 str(options.wallpaper.wallpaper_path), user_options.material.dark_mode
             )
