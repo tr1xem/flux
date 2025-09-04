@@ -4,7 +4,7 @@ import threading
 import time
 import urllib.request
 from pathlib import Path
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional
 
 from ignis import utils, widgets
 
@@ -23,8 +23,8 @@ LOCATION_CACHE_FILE = TEMP_DIR / "location_cache.json"
 IP_LOCATION_API = "http://ip-api.com/json/"
 WEATHER_API_BASE = "https://api.open-meteo.com/v1/forecast"
 
-# Weather icons mapping (WMO weather codes to emoji icons)
-WEATHER_ICONS: Dict[int, str] = {
+# Weather emoji mapping for tooltips
+WEATHER_EMOJIS: Dict[int, str] = {
     0: "☀️",  # Clear sky
     1: "🌤️",  # Mainly clear
     2: "⛅",  # Partly cloudy
@@ -36,23 +36,55 @@ WEATHER_ICONS: Dict[int, str] = {
     55: "🌧️",  # Drizzle: Dense
     56: "🌨️",  # Freezing Drizzle: Light
     57: "🌨️",  # Freezing Drizzle: Dense
-    61: "🌧️",  # Rain: Slight
+    61: "🌦️",  # Rain: Slight
     63: "🌧️",  # Rain: Moderate
     65: "🌧️",  # Rain: Heavy
     66: "🌨️",  # Freezing Rain: Light
     67: "🌨️",  # Freezing Rain: Heavy
     71: "❄️",  # Snow fall: Slight
-    73: "❄️",  # Snow fall: Moderate
+    73: "🌨️",  # Snow fall: Moderate
     75: "❄️",  # Snow fall: Heavy
     77: "❄️",  # Snow grains
     80: "🌦️",  # Rain showers: Slight
     81: "🌧️",  # Rain showers: Moderate
     82: "⛈️",  # Rain showers: Violent
     85: "🌨️",  # Snow showers: Slight
-    86: "🌨️",  # Snow showers: Heavy
+    86: "❄️",  # Snow showers: Heavy
     95: "⛈️",  # Thunderstorm: Slight or moderate
     96: "⛈️",  # Thunderstorm with slight hail
     99: "⛈️",  # Thunderstorm with heavy hail
+}
+
+# Weather icons mapping (WMO weather codes to system icon names)
+WEATHER_ICONS: Dict[int, str] = {
+    0: "weather-clear-symbolic",  # Clear sky
+    1: "weather-few-clouds-symbolic",  # Mainly clear
+    2: "weather-few-clouds-symbolic",  # Partly cloudy
+    3: "weather-overcast-symbolic",  # Overcast
+    45: "weather-fog-symbolic",  # Fog
+    48: "weather-fog-symbolic",  # Depositing rime fog
+    51: "weather-showers-symbolic",  # Drizzle: Light
+    53: "weather-showers-symbolic",  # Drizzle: Moderate
+    55: "weather-showers-symbolic",  # Drizzle: Dense
+    56: "weather-showers-symbolic",  # Freezing Drizzle: Light
+    57: "weather-showers-symbolic",  # Freezing Drizzle: Dense
+    61: "weather-showers-symbolic",  # Rain: Slight
+    63: "weather-showers-symbolic",  # Rain: Moderate
+    65: "weather-showers-symbolic",  # Rain: Heavy
+    66: "weather-showers-symbolic",  # Freezing Rain: Light
+    67: "weather-showers-symbolic",  # Freezing Rain: Heavy
+    71: "weather-snow-symbolic",  # Snow fall: Slight
+    73: "weather-snow-symbolic",  # Snow fall: Moderate
+    75: "weather-snow-symbolic",  # Snow fall: Heavy
+    77: "weather-snow-symbolic",  # Snow grains
+    80: "weather-showers-symbolic",  # Rain showers: Slight
+    81: "weather-showers-symbolic",  # Rain showers: Moderate
+    82: "weather-storm-symbolic",  # Rain showers: Violent
+    85: "weather-snow-symbolic",  # Snow showers: Slight
+    86: "weather-snow-symbolic",  # Snow showers: Heavy
+    95: "weather-storm-symbolic",  # Thunderstorm: Slight or moderate
+    96: "weather-storm-symbolic",  # Thunderstorm with slight hail
+    99: "weather-storm-symbolic",  # Thunderstorm with heavy hail
 }
 
 
@@ -91,16 +123,16 @@ def get_weather_description(code: int) -> str:
     return descriptions.get(code, "Unknown")
 
 
-def format_weather(data: dict) -> Optional[str]:
-    """Format Open-Meteo data into display text"""
+def format_weather(data: dict) -> tuple[str, str]:
+    """Format Open-Meteo data into display text and icon name"""
     try:
         current = data["current"]
         temp = current["temperature_2m"]
         weather_code = current["weather_code"]
-        icon = WEATHER_ICONS.get(weather_code, "🌡")
-        return f"{icon} {temp:.1f}°C"
+        icon_name = WEATHER_ICONS.get(weather_code, "weather-clear-symbolic")
+        return f"{temp:.1f}°C", icon_name
     except Exception:
-        return None
+        return "N/A", "weather-clear-symbolic"
 
 
 def create_tooltip(weather_data: dict, location_data: dict) -> str:
@@ -134,7 +166,7 @@ def create_tooltip(weather_data: dict, location_data: dict) -> str:
             if i < len(hourly["time"]):
                 hour_temp = round(hourly["temperature_2m"][i])
                 hour_code = hourly["weather_code"][i]
-                hour_icon = WEATHER_ICONS.get(hour_code, "🌡")
+                hour_icon = WEATHER_EMOJIS.get(hour_code, "🌡️")
                 hour_desc = get_weather_description(hour_code)
                 # Extract hour from time string
                 time_str = hourly["time"][i]
@@ -292,13 +324,19 @@ def fetch_weather(lat: float, lon: float) -> Optional[dict]:
 
 class Weather(widgets.Box):
     def __init__(self):
-        super().__init__(css_classes=["weather"])
+        super().__init__(
+            css_classes=["weather"],
+        )
 
-        # Start with a simple working widget first
-        self._label = widgets.Label(css_classes=["weather-label"], label="🌡️ Loading...")
+        # Create icon and label widgets
+        self._icon = widgets.Icon(
+            image="weather-clear-symbolic", pixel_size=16, css_classes=["weather-icon"]
+        )
+        self._label = widgets.Label(css_classes=["weather-label"], label="Loading...")
 
         self._event_box = widgets.EventBox(
-            child=[self._label],
+            child=[self._icon, self._label],
+            spacing=8,
             tooltip_text="Loading weather data...",
             css_classes=["weather-container"],
         )
@@ -317,8 +355,8 @@ class Weather(widgets.Box):
             UPDATE_INTERVAL * 1000, lambda _: self._periodic_update()
         )
 
-    def _fetch_weather_data(self) -> Tuple[str, str]:
-        """Fetch weather data - returns (weather_text, tooltip_text)"""
+    def _fetch_weather_data(self) -> tuple[str, str, str]:
+        """Fetch weather data - returns (text, icon_name, tooltip_text)"""
         try:
             # Check cached location first
             location_data = self._location_cache.get_location()
@@ -342,13 +380,15 @@ class Weather(widgets.Box):
                                 self._location_cache.set_location(location_data)
                 except Exception as e:
                     return (
-                        "🌡️ No Location",
+                        "No Location",
+                        "weather-clear-symbolic",
                         f"<span weight='bold'>Location error:</span> {str(e)}",
                     )
 
             if not location_data:
                 return (
-                    "🌡️ No Location",
+                    "No Location",
+                    "weather-clear-symbolic",
                     "<span weight='bold'>Unable to detect location</span>",
                 )
 
@@ -380,7 +420,8 @@ class Weather(widgets.Box):
                             self._weather_cache.set_cache(weather_data)
                         else:
                             return (
-                                f"🌡️ {location_data['city']}",
+                                location_data["city"],
+                                "weather-clear-symbolic",
                                 f"<span weight='bold'>Weather API error:</span> {response.status}",
                             )
                 except Exception as e:
@@ -388,7 +429,8 @@ class Weather(widgets.Box):
                     weather_data = self._weather_cache.get_cache(network=False)
                     if not weather_data:
                         return (
-                            f"🌡️ {location_data['city']}",
+                            location_data["city"],
+                            "weather-clear-symbolic",
                             f"<span weight='bold'>Weather fetch error:</span> {str(e)}",
                         )
 
@@ -398,27 +440,35 @@ class Weather(widgets.Box):
                     current = weather_data["current"]
                     temp = current["temperature_2m"]  # Keep as float for .1f formatting
                     weather_code = current["weather_code"]
-                    icon = WEATHER_ICONS.get(weather_code, "🌡")
+                    icon_name = WEATHER_ICONS.get(
+                        weather_code, "weather-clear-symbolic"
+                    )
 
-                    text = f"{icon} {temp:.1f}°C"
+                    text = f"{temp:.1f}°C"
 
                     # Create extensive colorful tooltip
                     tooltip = self._create_rich_tooltip(weather_data, location_data)
 
-                    return text, tooltip
+                    return text, icon_name, tooltip
                 except Exception as e:
                     return (
-                        f"🌡️ {location_data['city']}",
+                        location_data["city"],
+                        "weather-clear-symbolic",
                         f"<span weight='bold'>Data parsing error:</span> {str(e)}",
                     )
             else:
                 return (
-                    f"🌡️ {location_data['city']}",
+                    location_data["city"],
+                    "weather-clear-symbolic",
                     "<span style='italic'>No weather data available</span>",
                 )
 
         except Exception as e:
-            return "🌡️ Error", f"<span weight='bold'>Unexpected error:</span> {str(e)}"
+            return (
+                "Error",
+                "weather-clear-symbolic",
+                f"<span weight='bold'>Unexpected error:</span> {str(e)}",
+            )
 
     def _create_rich_tooltip(self, weather_data: dict, location_data: dict) -> str:
         """Create a rich tooltip with bold and italic styling (no colors)"""
@@ -440,7 +490,7 @@ class Weather(widgets.Box):
             precipitation = current.get("precipitation", 0)
             weather_code = current["weather_code"]
             description = get_weather_description(weather_code)
-            icon = WEATHER_ICONS.get(weather_code, "🌡")
+            icon = WEATHER_EMOJIS.get(weather_code, "🌡️")
 
             # Location info
             city = location_data.get("city", "Unknown")
@@ -537,7 +587,7 @@ class Weather(widgets.Box):
                     try:
                         hour_temp = hourly["temperature_2m"][i]  # Keep as float
                         hour_code = hourly["weather_code"][i]
-                        hour_icon = WEATHER_ICONS.get(hour_code, "🌡")
+                        hour_icon = WEATHER_EMOJIS.get(hour_code, "🌡️")
                         hour_precipitation = hourly.get(
                             "precipitation_probability", [0] * len(hourly["time"])
                         )[i]
@@ -594,7 +644,7 @@ class Weather(widgets.Box):
                         max_temp = daily["temperature_2m_max"][i]  # Keep as float
                         min_temp = daily["temperature_2m_min"][i]  # Keep as float
                         day_code = daily["weather_code"][i]
-                        day_icon = WEATHER_ICONS.get(day_code, "🌡")
+                        day_icon = WEATHER_EMOJIS.get(day_code, "🌡️")
                         day_precipitation = daily.get(
                             "precipitation_sum", [0] * len(daily["time"])
                         )[i]
@@ -645,12 +695,13 @@ class Weather(widgets.Box):
         utils.ThreadTask(self._fetch_weather_data, self._update_display).run()
         return "Updated"
 
-    def _update_display(self, result: Tuple[str, str]) -> None:
+    def _update_display(self, result: tuple[str, str, str]) -> None:
         """Update weather display on main thread"""
-        text, tooltip_text = result
+        text, icon_name, tooltip_text = result
 
-        # Update label text
+        # Update label text and icon
         self._label.label = text
+        self._icon.set_image(icon_name)
 
         # Set tooltip
         if tooltip_text:
