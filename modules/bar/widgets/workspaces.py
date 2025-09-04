@@ -106,39 +106,52 @@ def workspace_button(workspace) -> widgets.Button:
 
 
 def scroll_workspaces(direction: str) -> None:
-    current = hyprland.active_workspace.id
-    if direction == "up":
-        target = current - 1
-        hyprland.switch_to_workspace(target)
-    else:
-        target = current + 1
-        if target == 11:
+    if hyprland.is_available:
+        current = hyprland.active_workspace.id
+        if direction == "up":
+            target = current - 1
+            hyprland.switch_to_workspace(target)
+        else:
+            target = current + 1
+            if target == 11:
+                return
+            hyprland.switch_to_workspace(target)
+    elif niri.is_available:
+        # Get active workspace for Niri
+        active_workspaces = [ws for ws in niri.workspaces if ws.is_active]
+        if not active_workspaces:
             return
-        hyprland.switch_to_workspace(target)
+        
+        current = active_workspaces[0].idx
+        if direction == "up":
+            target = current - 1
+            if target > 0:
+                niri.switch_to_workspace(target)
+        else:
+            target = current + 1
+            if target <= 10:
+                niri.switch_to_workspace(target)
 
 
-class Workspaces(widgets.EventBox):
+class Workspaces(widgets.Box):
     def __init__(self, monitor_name: int):
-        super().__init__(
-            on_scroll_up=lambda x: scroll_workspaces("up"),
-            on_scroll_down=lambda x: scroll_workspaces("down"),
-            css_classes=["ws-container"],
-            vexpand=False,
-            spacing=4,
-        )
-
         self.monitor_name = monitor_name
 
         if hyprland.is_available:
-            self.child = hyprland.bind_many(
+            child_content = hyprland.bind_many(
                 ["workspaces", "active_workspace"], transform=self._hyprland_transform
             )
-
         elif niri.is_available:
-            self.child = niri.bind("workspaces", transform=self._niri_transform)
-
+            child_content = niri.bind("workspaces", transform=self._niri_transform)
         else:
-            self.child = widgets.EventBox()
+            child_content = []
+
+        super().__init__(
+            css_classes=["ws-container"],
+            vexpand=False,
+            spacing=4,
+            child=child_content,
+        )
 
     def _hyprland_transform(self, workspaces, active_workspace):
         buttons = []
@@ -163,12 +176,20 @@ class Workspaces(widgets.EventBox):
 
     def _niri_transform(self, workspaces):
         buttons = []
-        # Get existing workspaces for this monitor
-        existing_workspaces = {
-            ws.idx: ws
-            for ws in workspaces
-            if ws.output == self.monitor_name and ws.idx > 0
-        }
+        # Get the monitor name properly - convert int to string if needed
+        monitor_name = str(self.monitor_name) if isinstance(self.monitor_name, int) else self.monitor_name
+        
+        # For Niri, if no specific monitor filtering is needed, show all workspaces
+        # or filter by the active output if needed
+        active_output = niri.active_output
+        relevant_workspaces = [
+            ws for ws in workspaces 
+            if ws.idx > 0 and (not monitor_name or ws.output == active_output)
+        ]
+        
+        # Get existing workspaces indexed by their idx
+        existing_workspaces = {ws.idx: ws for ws in relevant_workspaces}
+        
         # Get all workspace IDs (both existing and persistent)
         all_workspace_ids = set(existing_workspaces.keys()) | set(PERSISTENT_WORKSPACES)
         # Sort all workspace IDs numerically

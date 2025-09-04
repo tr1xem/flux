@@ -1,8 +1,10 @@
 from ignis import widgets
 from ignis.services.applications import ApplicationsService
 from ignis.services.hyprland import HyprlandService
+from ignis.services.niri import NiriService
 
 hyprland = HyprlandService.get_default()
+niri = NiriService.get_default()
 applications = ApplicationsService.get_default()
 
 
@@ -66,25 +68,53 @@ class WindowTitle(widgets.Box):
             spacing=8,
             valign="center",
             css_classes=["container"],
-            child=[
-                widgets.Icon(
-                    image=hyprland.bind(
-                        "active_window",
-                        transform=lambda window: get_app_info(
-                            window.initial_title, window.initial_class
-                        )[0],
-                    ),
-                    pixel_size=20,
-                ),
-                widgets.Label(
-                    label=hyprland.bind(
-                        "active_window",
-                        transform=lambda window: get_app_info(
-                            window.initial_title, window.initial_class
-                        )[1],
-                    ),
-                    css_classes=["title-text"],
-                ),
-            ],
         )
+        
+        if hyprland.is_available:
+            icon = widgets.Icon(
+                image=hyprland.bind(
+                    "active_window",
+                    transform=lambda window: get_app_info(
+                        window.initial_title, window.initial_class
+                    )[0],
+                ),
+                pixel_size=20,
+            )
+            label = widgets.Label(
+                label=hyprland.bind(
+                    "active_window",
+                    transform=lambda window: get_app_info(
+                        window.initial_title, window.initial_class
+                    )[1],
+                ),
+                css_classes=["title-text"],
+            )
+            self.append(icon)
+            self.append(label)
+        elif niri.is_available:
+            icon = widgets.Icon(
+                image=niri.bind(
+                    "active_window",
+                    transform=lambda window: get_app_info(
+                        window.title, window.app_id
+                    )[0],
+                ),
+                pixel_size=20,
+            )
+            label = widgets.Label(
+                label=niri.bind(
+                    "active_window",
+                    transform=lambda window: get_app_info(
+                        window.title, window.app_id
+                    )[1],
+                ),
+                css_classes=["title-text"],
+            )
+            self.append(icon)
+            self.append(label)
+        else:
+            icon = widgets.Icon(image="desktop", pixel_size=20)
+            label = widgets.Label(label="Desktop", css_classes=["title-text"])
+            self.append(icon)
+            self.append(label)
 
