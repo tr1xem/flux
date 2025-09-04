@@ -87,7 +87,7 @@
 
 .settings-group,
 .settings-row {
-    * {
+    list {
         background-color: darken($surfaceContainer, 10%);
     }
 }

@@ -24,6 +24,22 @@
     color: black;
 }
 
-button {
-    background-color: $primaryContainer;
+headerbar,
+filechooser {
+    navigation-sidebar {
+        * {
+            background: $primaryContainer;
+        }
+    }
+    * {
+        button {
+            background-color: $primaryContainer;
+            label {
+                color: $onPrimaryContainer;
+            }
+            image {
+                color: $onPrimaryContainer;
+            }
+        }
+    }
 }

@@ -4,14 +4,33 @@
     }
 }
 switch {
-    background-color: white;
+    background-color: $surfaceContainerHigh;
+    border-radius: 2rem;
+    border: 1px solid $primary;
+    min-width: 3rem;
+    min-height: 1.5rem;
+    transition: all 0.3s ease;
+
     &:checked {
-        background-color: darken($primary, 20%);
+        background-color: $primary;
     }
 
     &:disabled {
-        background-color: white;
+        background-color: $surfaceContainer;
+        opacity: $opacity-medium;
     }
+
+    slider {
+        background: $onSurface;
+        border-radius: 50%;
+        min-width: 1.2rem;
+        min-height: 1.2rem;
+        margin: 0.15rem;
+        transition: all 0.3s ease;
+    }
+
+    // &:checked slider {
+    // }
 }
 
 tooltip {
