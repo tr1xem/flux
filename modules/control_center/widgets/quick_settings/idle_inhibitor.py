@@ -35,10 +35,9 @@ class IdleInhibitorButton(QSButton):
 
         super().__init__(
             label=idle_inhibitor.bind("is_inhibiting", get_label),
-            icon_name="system-suspend-uninhibited",
+            icon_name=idle_inhibitor.bind("is_inhibiting", get_icon),
             on_activate=toggle_inhibitor,
             on_deactivate=toggle_inhibitor,
             active=idle_inhibitor.bind("is_inhibiting"),
             visible=idle_inhibitor.bind("available"),
         )
-

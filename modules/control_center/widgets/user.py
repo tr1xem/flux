@@ -13,9 +13,9 @@ window_manager = WindowManager.get_default()
 def format_uptime(value: tuple[int, int, int, int]) -> str:
     days, hours, minutes, seconds = value
     if days:
-        return f"up {days:02}:{hours:02}:{minutes:02}"
+        return f"up {days:02}days {hours:02}h {minutes:02}min"
     else:
-        return f"up {hours:02}:{minutes:02}"
+        return f"up {hours:02}h {minutes:02}min"
 
 
 class User(widgets.Box):

@@ -6,6 +6,7 @@ from ignis import utils, widgets
 from ignis.css_manager import CssManager
 from ignis.options import options
 from PIL import Image
+
 from services.material import MaterialService
 from user_options import user_options
 
@@ -106,6 +107,7 @@ def create_color_scheme_dropdown() -> widgets.DropDown:
 
     dropdown = widgets.DropDown(
         items=COLOR_SCHEME_OPTIONS,
+        css_classes=["settings-color-scheme"],
         selected=COLOR_SCHEME_OPTIONS[selected_index],
     )
 

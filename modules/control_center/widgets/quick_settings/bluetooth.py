@@ -18,6 +18,22 @@ class BluetoothDeviceItem(widgets.Button):
             else:
                 asyncio.create_task(device.connect_to())
 
+        def get_battery_icon(battery_level):
+            if battery_level is None or battery_level < 0:
+                return None
+            elif battery_level <= 10:
+                return "battery-level-0-symbolic"
+            elif battery_level <= 30:
+                return "battery-level-20-symbolic"
+            elif battery_level <= 50:
+                return "battery-level-40-symbolic"
+            elif battery_level <= 70:
+                return "battery-level-60-symbolic"
+            elif battery_level <= 90:
+                return "battery-level-80-symbolic"
+            else:
+                return "battery-level-100-symbolic"
+
         super().__init__(
             css_classes=["network-item", "unset"],
             on_click=handle_click,
@@ -31,11 +47,31 @@ class BluetoothDeviceItem(widgets.Button):
                         halign="start",
                         css_classes=["wifi-network-label"],
                     ),
-                    widgets.Icon(
-                        image="object-select-symbolic",
+                    widgets.Box(
                         halign="end",
                         hexpand=True,
-                        visible=device.bind("connected"),
+                        child=[
+                            widgets.Icon(
+                                image=device.bind("battery_percentage", transform=get_battery_icon),
+                                visible=device.bind_many(
+                                    ["battery_percentage", "connected"],
+                                    lambda battery, connected: battery is not None and battery >= 0 and connected
+                                ),
+                                css_classes=["battery-icon"],
+                            ),
+                            widgets.Label(
+                                label=device.bind("battery_percentage", transform=lambda level: f"{int(level)}%" if level is not None and level >= 0 else ""),
+                                visible=device.bind_many(
+                                    ["battery_percentage", "connected"],
+                                    lambda battery, connected: battery is not None and battery >= 0 and connected
+                                ),
+                                css_classes=["battery-label", "dim-label"],
+                            ),
+                            widgets.Icon(
+                                image="object-select-symbolic",
+                                visible=device.bind("connected"),
+                            ),
+                        ]
                     ),
                 ]
             ),
