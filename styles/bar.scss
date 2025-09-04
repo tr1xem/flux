@@ -175,7 +175,7 @@ popover.menu {
     @if $darkmode == true {
         color: $onSurface;
     } @else {
-        color: $surfaceContainerLow;
+        color: $inverseOnSurface;
     }
     font-family: "JetBrainsMono Nerd Font", monospace;
     font-size: 0.8rem;

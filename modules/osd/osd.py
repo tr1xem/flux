@@ -22,13 +22,13 @@ class OsdWindow(widgets.RevealerWindow):
         )
 
         # Create icon
-
-        icon = widgets.Label(
-            label=state["icon"].bind("value"),
+        icon = widgets.Icon(
+            image=state["icon"].bind("value"),
             halign="center",
             valign="center",
             hexpand=True,
             vexpand=True,
+            pixel_size=28,
             css_classes=["osd-icon"],
         )
 
@@ -201,18 +201,17 @@ class Osd:
         if self.bl_state["visible"].value:
             self.bl_state["visible"].value = False
 
-        icons = "󰖁", "󰕿", "󰖀", "󰕾", "󱄡"
         volume *= 100
         if volume <= 0 or type(volume) is not float or muted:
-            self.vol_state["icon"].value = icons[0]
+            self.vol_state["icon"].value = "audio-volume-muted-symbolic"
         elif volume > 0 and volume <= 33:
-            self.vol_state["icon"].value = icons[1]
+            self.vol_state["icon"].value = "audio-volume-low-symbolic"
         elif volume > 33 and volume <= 66:
-            self.vol_state["icon"].value = icons[2]
+            self.vol_state["icon"].value = "audio-volume-medium-symbolic"
         elif volume > 66 and volume <= 100:
-            self.vol_state["icon"].value = icons[3]
+            self.vol_state["icon"].value = "audio-volume-high-symbolic"
         elif volume > 100:
-            self.vol_state["icon"].value = icons[4]
+            self.vol_state["icon"].value = "audio-volume-overamplified-symbolic"
         volume /= 100
         self.vol_state["visible"].value = True
         self.vol_state["value"].value = volume
@@ -223,14 +222,18 @@ class Osd:
         if self.vol_state["visible"].value:
             self.vol_state["visible"].value = False
 
-        icons = "󰃞", "󰃝", "󰃟", "󰃠"
-        self.bl_state["icon"].value = icons[
-            int(self.backlight.brightness / self.backlight.max_brightness * 10 // 3)
-        ]
+        brightness_level = self.backlight.brightness / self.backlight.max_brightness
+        if brightness_level <= 0.25:
+            self.bl_state["icon"].value = "display-brightness-low-symbolic"
+        elif brightness_level <= 0.5:
+            self.bl_state["icon"].value = "display-brightness-medium-symbolic"
+        elif brightness_level <= 0.75:
+            self.bl_state["icon"].value = "display-brightness-high-symbolic"
+        else:
+            self.bl_state["icon"].value = "display-brightness-symbolic"
+
         self.bl_state["visible"].value = True
-        self.bl_state["value"].value = (
-            self.backlight.brightness / self.backlight.max_brightness
-        )
+        self.bl_state["value"].value = brightness_level
         self.bl_popup_debounce()
 
     @utils.debounce(3000)

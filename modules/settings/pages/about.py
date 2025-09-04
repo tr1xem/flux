@@ -176,7 +176,7 @@ class AboutEntry(SettingsEntry):
                         "dark_mode",
                         transform=lambda value: get_os_logo(value),
                     ),
-                    pixel_size=200,
+                    pixel_size=250,
                 ),
                 SettingsGroup(
                     name="System Info",
@@ -259,4 +259,3 @@ class AboutEntry(SettingsEntry):
             icon="help-about-symbolic",
             page=page,
         )
-

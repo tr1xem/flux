@@ -17,6 +17,26 @@ def clamp(value: float, min_val: float, max_val: float) -> float:
 
 
 class CircularProgressBar(Gtk.DrawingArea, BaseWidget):
+    """
+    Bases: :class:`Gtk.DrawingArea`
+
+    A circular progress indicator widget.
+
+    Args:
+        **kwargs: Properties to set.
+
+    .. code-block:: python
+
+        widgets.CircularProgressBar(
+            value=0.75,
+            min_value=0,
+            max_value=100,
+            line_width=6,
+            line_style='round',
+            pie=False
+        )
+    """
+
     __gtype_name__ = "IgnisCircularProgressBar"
     __gproperties__ = {**BaseWidget.gproperties}
 
@@ -60,7 +80,7 @@ class CircularProgressBar(Gtk.DrawingArea, BaseWidget):
         BaseWidget.__init__(self, **kwargs)
 
         self.set_size_request(size[0], size[1])
-        self.set_draw_func(self._on_draw)
+        self.set_draw_func(self.__on_draw)
 
     @IgnisProperty
     def value(self) -> float:
@@ -156,12 +176,12 @@ class CircularProgressBar(Gtk.DrawingArea, BaseWidget):
         self._invert = value
         self.queue_draw()
 
-    def _on_draw(
+    def __on_draw(
         self, drawing_area, cr: cairo.Context, width: int, height: int, user_data=None
     ):
         progress_color = self.get_color()
 
-        track_color = RGBA(0.4, 0.4, 0.4, 1.0)  # pyright: ignore[reportAttributeAccessIssue]
+        track_color = RGBA(0.2, 0.2, 0.2, 1.0)  # pyright: ignore[reportAttributeAccessIssue]
 
         line_width = self._line_width
         center_x = width / 2
@@ -223,27 +243,3 @@ class CircularProgressBar(Gtk.DrawingArea, BaseWidget):
                 cr.stroke()
 
         cr.restore()
-
-    def _get_theme_colors(self, style_context, default_progress, default_track):
-        """Modern GTK4 approach to get CSS colors with multiple fallback methods"""
-        progress_color = default_progress
-        track_color = default_track
-
-        progress_color = self.get_color()
-
-        # Try several CSS names for track color
-        # for name in [
-        #     "border-color",
-        #     "--track-color",
-        #     "border-top-color",
-        #     "outline-color",
-        # ]:
-        #     try:
-        #         found, color = style_context.lookup_color("background-color")
-        #         if found:
-        #             track_color = color
-        #             break
-        #     except Exception:
-        #         continue
-
-        return progress_color, track_color
