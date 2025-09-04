@@ -44,7 +44,7 @@
 - [x] Screenshot Notification Layout
 - [x] Bluetooth Module
 - [x] Player Expanded
-- [ ] Calendar Widget in Bar
+- [x] Calendar Widget in Bar
 - [x] More Info in Settings
 - [x] Volume and Brighness OSD
 - [ ] AI Panel
@@ -68,5 +68,5 @@
 
 * ignis means fire while flux means flow so basically its "flow of fire"
 
-_A computer is like air conditioning - it becomes useless when you open Windows_
+_A computer is like air conditioning - it becomes useless when you open Windows_ <br>
 ~ [_Linus Torvalds_](https://www.youtube.com/watch?v=mjqTDtEY8W)

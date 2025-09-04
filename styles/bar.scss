@@ -81,6 +81,7 @@
     background-color: rgb(darken($surface, 0.1), 0.3);
 }
 .datetime {
+    all: unset;
     @include border();
     background-color: rgb(darken($surface, 0.1), 0.3);
     .time-label {
@@ -224,4 +225,10 @@ popover.menu {
 
     @include border();
     background-color: rgb(darken($surface, 0.1), 0.3);
+}
+.datetime-button {
+    @include border();
+    &:hover {
+        background-color: red;
+    }
 }

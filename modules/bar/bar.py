@@ -5,6 +5,7 @@ from ignis.variable import Variable
 
 from .widgets import (
     CpuUsage,
+    Datetime,
     Player,
     RamUsage,
     StatusPill,
@@ -13,24 +14,6 @@ from .widgets import (
     WindowTitle,
     Workspaces,
 )
-
-
-class Datetime(widgets.Box):
-    def __init__(self):
-        super().__init__(
-            css_classes=["datetime"],
-        )
-        self.current_time = Variable(
-            value=utils.Poll(
-                1000,
-                lambda x: datetime.datetime.now().strftime("<b>%I:%M</b> • %A, %-d %b"),
-            ).bind("output")
-        )
-        self.time = widgets.Label(
-            label=self.current_time.bind("value"),
-            use_markup=True,
-        )
-        self.append(self.time)
 
 
 class CentreBar(widgets.Box):
@@ -47,9 +30,9 @@ class CentreBar(widgets.Box):
             )
         )
         self.append(Player(monitor_id))
-        self.append(Workspaces(0))
+        self.append(Workspaces(monitor_id))
         self.append(Weather())
-        self.append(Datetime())
+        self.append(Datetime(monitor_id))
 
 
 class Bar(widgets.Window):

@@ -1,5 +1,6 @@
 from .battery import Battery
 from .cpu import CpuUsage
+from .datetime import Datetime
 from .pill import StatusPill
 from .player import Player
 from .player_expanded import ExpandedPlayerWindow
@@ -12,6 +13,7 @@ from .workspaces import Workspaces
 __all__ = [
     "Battery",
     "CpuUsage",
+    "Datetime",
     "ExpandedPlayerWindow",
     "Player",
     "RamUsage",
