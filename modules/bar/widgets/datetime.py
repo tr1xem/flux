@@ -1,11 +1,9 @@
 import calendar
 import datetime
-from gi.repository import GLib
 
+from gi.repository import GLib
 from ignis import utils, widgets
 from ignis.variable import Variable
-
-from user_options import user_options
 
 
 class CalendarWidget(widgets.Box):
@@ -15,7 +13,7 @@ class CalendarWidget(widgets.Box):
             vertical=True,
             spacing=4,
         )
-        
+
         self._current_date = datetime.datetime.now()
         self._setup_calendar()
 
@@ -26,7 +24,7 @@ class CalendarWidget(widgets.Box):
             next_child = child.get_next_sibling()
             self.remove(child)
             child = next_child
-        
+
         # Month and year header
         month_year = widgets.Box(
             css_classes=["calendar-header"],
@@ -57,7 +55,7 @@ class CalendarWidget(widgets.Box):
             css_classes=["calendar-days-header"],
             spacing=2,
         )
-        
+
         # Single letter day names
         day_names = ["S", "M", "T", "W", "T", "F", "S"]
         for i, day in enumerate(day_names):
@@ -65,7 +63,7 @@ class CalendarWidget(widgets.Box):
             # Add Sunday styling (first column only)
             if i == 0:
                 css_classes.append("calendar-sunday")
-            
+
             day_label = widgets.Label(
                 label=day,
                 css_classes=css_classes,
@@ -73,14 +71,14 @@ class CalendarWidget(widgets.Box):
                 hexpand=True,
             )
             days_header.append(day_label)
-        
+
         self.append(days_header)
 
         # Calendar grid
         calendar.setfirstweekday(calendar.SUNDAY)  # Set Sunday as first day of week
         cal = calendar.monthcalendar(self._current_date.year, self._current_date.month)
         today = datetime.datetime.now()
-        
+
         for week in cal:
             week_box = widgets.Box(spacing=2)
             for day_index, day in enumerate(week):
@@ -99,22 +97,22 @@ class CalendarWidget(widgets.Box):
                         and self._current_date.month == today.month
                         and self._current_date.year == today.year
                     )
-                    
+
                     css_classes = ["calendar-day"]
                     if is_today:
                         css_classes.append("calendar-today")
-                    
+
                     # Add Sunday styling (first column only, since we start with Sunday)
                     if day_index == 0:
                         css_classes.append("calendar-sunday")
-                    
+
                     day_button = widgets.Label(
                         label=str(day),
                         css_classes=css_classes,
                         hexpand=True,
                         halign="center",
                     )
-                
+
                 week_box.append(day_button)
             self.append(week_box)
 
@@ -122,16 +120,24 @@ class CalendarWidget(widgets.Box):
         if delta > 0:
             # Next month
             if self._current_date.month == 12:
-                self._current_date = self._current_date.replace(year=self._current_date.year + 1, month=1)
+                self._current_date = self._current_date.replace(
+                    year=self._current_date.year + 1, month=1
+                )
             else:
-                self._current_date = self._current_date.replace(month=self._current_date.month + 1)
+                self._current_date = self._current_date.replace(
+                    month=self._current_date.month + 1
+                )
         else:
             # Previous month
             if self._current_date.month == 1:
-                self._current_date = self._current_date.replace(year=self._current_date.year - 1, month=12)
+                self._current_date = self._current_date.replace(
+                    year=self._current_date.year - 1, month=12
+                )
             else:
-                self._current_date = self._current_date.replace(month=self._current_date.month - 1)
-        
+                self._current_date = self._current_date.replace(
+                    month=self._current_date.month - 1
+                )
+
         self._setup_calendar()
 
 
@@ -145,7 +151,7 @@ class CalendarPopup(widgets.Window):
             reveal_child=False,
             child=CalendarWidget(),
         )
-        
+
         super().__init__(
             namespace=f"ignis_CALENDAR_{monitor_id}",
             monitor=monitor_id,
@@ -165,10 +171,7 @@ class CalendarPopup(widgets.Window):
                             css_classes=["unset"],
                             on_click=lambda x: self.close(),
                         ),
-                        center_widget=widgets.Box(
-                            halign="end",
-                            child=[self.revealer]
-                        ),
+                        center_widget=widgets.Box(halign="end", child=[self.revealer]),
                         end_widget=widgets.Button(
                             hexpand=True,
                             css_classes=["unset"],
@@ -191,11 +194,11 @@ class CalendarPopup(widgets.Window):
             self.revealer.reveal_child = True
         else:
             self.close()
-    
+
     def close(self):
         self.revealer.reveal_child = False
         # Hide window after animation completes
-        GLib.timeout_add(350, lambda: setattr(self, 'visible', False) or False)
+        GLib.timeout_add(350, lambda: setattr(self, "visible", False) or False)
 
 
 class Datetime(widgets.Box):
@@ -203,23 +206,26 @@ class Datetime(widgets.Box):
         super().__init__(
             css_classes=["datetime"],
         )
-        
+
         self.calendar_popup = CalendarPopup(monitor_id)
-        
+
         self.current_time = Variable(
             value=utils.Poll(
                 1000,
                 lambda x: datetime.datetime.now().strftime("<b>%I:%M</b> • %A, %-d %b"),
             ).bind("output")
         )
-        
-        self.time_button = widgets.Button(
-            css_classes=["datetime-button"],
+
+        self.time_button = widgets.EventBox(
+            css_classes=["unset"],
             on_click=lambda x: self.calendar_popup.toggle(),
-            child=widgets.Label(
-                label=self.current_time.bind("value"),
-                use_markup=True,
-            ),
+            child=[
+                widgets.Label(
+                    label=self.current_time.bind("value"),
+                    use_markup=True,
+                ),
+            ],
         )
-        
+
         self.append(self.time_button)
+
