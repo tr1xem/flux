@@ -4,7 +4,7 @@
     }
 }
 switch {
-    background-color: $secondaryContainer;
+    background-color: white;
     &:checked {
         background-color: darken($primary, 20%);
     }
@@ -16,7 +16,7 @@ switch {
 
 tooltip {
     all: unset;
-    background-color: rgba($surface, 0.5);
+    background-color: rgba($surface, $opacity-medium);
     padding: 0.5rem 1rem;
     border-radius: 1rem;
 }

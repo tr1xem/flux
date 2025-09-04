@@ -11,7 +11,7 @@
 }
 
 .osd-box {
-    background: rgba($surface, 0.5);
+    background: rgba($surface, $opacity-medium);
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
     padding: 10px;
@@ -24,7 +24,7 @@
 
 .osd-corner-up,
 .osd-corner-down {
-    color: rgba($surface, 0.5);
+    color: rgba($surface, $opacity-medium);
 }
 .osd-corner-up {
     margin-left: 28px;

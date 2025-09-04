@@ -44,12 +44,31 @@ def patch_style_scss(path: str) -> str:
     for key, value in user_options.material.colors.items():
         scss_colors += format_scss_var(key, value)
 
+    # Add opacity variables based on blur setting
+    blur_enabled = getattr(user_options.material, "blur_enabled", True)
+    if blur_enabled:
+        opacity_high = "0.7"
+        opacity_medium = "0.5"
+        opacity_low = "0.3"
+    else:
+        opacity_high = "1"
+        opacity_medium = "1"
+        opacity_low = "1"
+
+    opacity_vars = (
+        format_scss_var("opacity-high", opacity_high)
+        + format_scss_var("opacity-medium", opacity_medium)
+        + format_scss_var("opacity-low", opacity_low)
+    )
+
     string = (
         format_scss_var("darkmode", str(user_options.material.dark_mode).lower())
         + scss_colors
+        + opacity_vars
         + contents
     )
 
+    print(string)
     return utils.sass_compile(
         string=string, extra_args=["--load-path", utils.get_current_dir()]
     )

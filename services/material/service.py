@@ -35,6 +35,55 @@ class MaterialService(BaseService):
         user_options.material.connect_option(
             "dark_mode", lambda: self.generate_colors(options.wallpaper.wallpaper_path)
         )
+        user_options.material.connect_option(
+            "blur_enabled", lambda: self.__handle_blur_change()
+        )
+        
+        # Apply initial blur state
+        self.__handle_blur_change()
+
+    def __handle_blur_change(self):
+        """Handle blur setting changes - update CSS and Hyprland config"""
+        css_manager.reload_all_css()
+        self.__update_hyprland_blur_config()
+
+    def __update_hyprland_blur_config(self):
+        """Add or remove blur.conf source line from hyprland.conf"""
+        hyprland_conf_path = os.path.expanduser("~/.config/hypr/hyprland.conf")
+        
+        # Get path to blur.conf relative to config.py location
+        config_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # Go up from services/material/ to ignis root
+        blur_conf_path = os.path.join(config_dir, "assets/hypr/blur.conf")
+        source_line = f"source={blur_conf_path}"
+        
+        # Check if hyprland.conf exists
+        if not os.path.exists(hyprland_conf_path):
+            return
+            
+        # Read current content
+        try:
+            with open(hyprland_conf_path, 'r') as f:
+                lines = f.readlines()
+        except Exception:
+            return
+            
+        # Remove existing source line if present
+        lines = [line for line in lines if source_line not in line.strip()]
+        
+        # Add source line if blur is enabled
+        blur_enabled = getattr(user_options.material, 'blur_enabled', True)
+        if blur_enabled:
+            # Add source line at the end
+            if not lines or not lines[-1].endswith('\n'):
+                lines.append('\n')
+            lines.append(f"{source_line}\n")
+        
+        # Write back to file
+        try:
+            with open(hyprland_conf_path, 'w') as f:
+                f.writelines(lines)
+        except Exception:
+            pass
 
     def __on_colors_not_found(self) -> None:
         options.wallpaper.set_wallpaper_path(SAMPLE_WALL)
@@ -102,6 +151,7 @@ class MaterialService(BaseService):
             colors["dark_mode"] = str(user_options.material.dark_mode).lower()
         else:
             colors["dark_mode"] = str(dark_mode).lower()
+        
         with open(input_file) as file:
             template_rendered = Template(file.read()).render(colors)
 

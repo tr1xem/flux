@@ -16,7 +16,7 @@
 .corner-top {
     // all: unset;
     background: unset;
-    color: rgba($surface, 0.5);
+    color: rgba($surface, $opacity-medium);
 }
 .corner {
     all: unset;

@@ -16,7 +16,7 @@
 // }
 .bar-window {
     all: unset;
-    background-color: rgba($surface, 0.5);
+    background-color: rgba($surface, $opacity-medium);
     min-height: 2.2rem;
     color: $onSurface;
 }
@@ -28,8 +28,8 @@
 .info-box {
     margin-left: 1rem;
     min-height: 4.1rem;
-    background-color: rgba($onSurface, 0.1);
-    border: 2px solid rgba(#ffffff, 0.2);
+    background-color: rgba($onSurface, $opacity-low);
+    border: 2px solid rgba(#ffffff, $opacity-low);
     border-radius: 1rem;
     min-width: 26rem;
     min-height: 2.8rem;
@@ -46,7 +46,7 @@
 .os-name {
 }
 .os-kernel {
-    color: rgba(white, 0.4);
+    color: rgba(white, $opacity-medium);
 }
 // .usage-slider {
 //     all: unset;
@@ -67,7 +67,7 @@
 .usage-slider trough {
     min-height: 0.7rem;
     min-width: 5rem;
-    background-color: rgba(white, 0.2);
+    background-color: rgba(white, $opacity-low);
     border-radius: 1rem;
 }
 .usage-slider trough highlight {
@@ -96,7 +96,7 @@ popover.menu {
     }
     margin-top: -0.8rem;
     contents {
-        background-color: rgba($surface, 0.5);
+        background-color: rgba($surface, $opacity-medium);
         padding: 0.35rem;
         border-radius: 1rem;
         color: $onSurface;
@@ -106,7 +106,7 @@ popover.menu {
             padding: 0.25rem 1rem;
         }
         modelbutton:hover {
-            background-color: rgba(lighten($surface, 50%), 0.5);
+            background-color: rgba(lighten($surface, 50%), $opacity-medium);
         }
         separator {
             background-color: mix($surface, $outline, 90%);
@@ -119,7 +119,7 @@ popover.menu {
         }
 
         arrow {
-            opacity: 0.3;
+            opacity: $opacity-low;
 
             &.left {
                 -gtk-icon-source: -gtk-icontheme("go-previous-symbolic");
@@ -155,7 +155,7 @@ popover.menu {
         transition: all 0.2s ease;
 
         &:hover {
-            background-color: rgba(lighten($surface, 10%), 0.2);
+            background-color: rgba(lighten($surface, 10%), $opacity-low);
         }
     }
 }

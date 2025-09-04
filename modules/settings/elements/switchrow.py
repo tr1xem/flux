@@ -1,7 +1,9 @@
-from ignis import widgets
-from .row import SettingsRow
 from typing import Callable
+
+from ignis import widgets
 from ignis.gobject import Binding
+
+from .row import SettingsRow
 
 
 class SwitchRow(SettingsRow):

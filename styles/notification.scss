@@ -3,12 +3,12 @@
     min-width: 25rem;
 
     & .notification-close {
-        @include hover($bg: rgba(white, 0.1));
-        // background-color: rgba(white, 0.1);
+        @include hover($bg: rgba(white, $opacity-low));
+        // background-color: rgba(white, $opacity-low);
         border-radius: 50%;
         padding: 0.2rem;
         &:hover {
-            background-color: rgba(white, 0.2);
+            background-color: rgba(white, $opacity-low);
         }
     }
 
@@ -21,7 +21,7 @@
     }
 }
 .notification-body {
-    opacity: 0.6;
+    opacity: $opacity-high;
 }
 .notification-action {
     padding: 0.2rem;

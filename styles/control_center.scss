@@ -36,7 +36,7 @@
     }
 
     .control-center-menu {
-        background-color: rgba($surfaceContainerHigh, 0.5);
+        background-color: rgba($surfaceContainerHigh, $opacity-medium);
         border-radius: 1rem;
         padding: 1rem;
         margin-top: 1rem;
@@ -109,7 +109,7 @@
     .user-name-secondary {
         color: $onSurfaceVariant;
         font-size: 0.9rem;
-        opacity: 0.8;
+        opacity: $opacity-high;
     }
 
     .user-settings {

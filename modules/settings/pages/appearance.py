@@ -39,6 +39,12 @@ class AppearanceEntry(SettingsEntry):
                             state: user_options.material.set_dark_mode(state),
                             style="margin-top: 1rem;",
                         ),
+                        SwitchRow(
+                            label="Blur effects",
+                            active=user_options.material.bind("blur_enabled"),
+                            on_change=lambda x,
+                            state: user_options.material.set_blur_enabled(state),
+                        ),
                         FileRow(
                             label="Wallpaper path",
                             button_label=os.path.basename(

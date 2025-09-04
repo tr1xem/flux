@@ -45,6 +45,7 @@ class UserOptions(OptionsManager):
 
     class Material(OptionsGroup):
         dark_mode: bool = True
+        blur_enabled: bool = True
         colors: dict[str, str] = {}
 
     class Default(OptionsGroup):

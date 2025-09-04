@@ -1,5 +1,5 @@
 @mixin border() {
-    border: 1px solid rgba($onSurface, 0.2);
+    border: 1px solid rgba($onSurface, $opacity-low);
     border-radius: 2rem;
     padding: 0rem 0.8rem;
     margin: 3px 0 3px 0;

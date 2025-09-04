@@ -1,5 +1,5 @@
 @mixin window {
-    background-color: rgba($surface, 0.5);
+    background-color: rgba($surface, $opacity-medium);
     border-radius: 1rem;
     padding: 0.5rem;
     color: $onSurface;
