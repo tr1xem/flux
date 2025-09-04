@@ -7,7 +7,9 @@ from .dark_mode import DarkModeButton
 from .dnd import DNDButton
 from .ethernet import ethernet_control
 from .idle_inhibitor import IdleInhibitorButton
+from .nightlight import NightModeButton
 from .power_profiles import PowerProfilesButton
+from .record import RecordButton
 from .vpn import vpn_control
 from .wifi import wifi_control
 
@@ -37,7 +39,8 @@ class QuickSettings(widgets.Box):
             DarkModeButton(),
             PowerProfilesButton(),
             IdleInhibitorButton(),
-            # RecordButton(),
+            RecordButton(),
+            NightModeButton(),
         )
 
     def __qs_fabric(self, *buttons: QSButton) -> None:

@@ -76,14 +76,79 @@
         font-size: 1rem;
         min-width: 10rem;
         background-color: rgba($surfaceContainer, 0.8);
-        
+
         &:hover {
             background-color: $surfaceContainer;
         }
     }
-    
+
     popover contents {
         min-width: 10rem;
+    }
+}
+
+.color-scheme-button {
+    all: unset;
+    font-size: 1rem;
+
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    // background-color: rgba($surfaceContainer, 0.8);
+    color: $onSurface;
+    border: 1px solid rgba($outline, 0.3);
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: $surfaceContainer;
+        border-color: rgba($outline, 0.6);
+        transform: translateY(-1px);
+    }
+
+    &.active {
+        background-color: $primary;
+        color: $onPrimary;
+        border-color: $primary;
+    }
+
+    &.active:hover {
+        background-color: lighten($primary, 5%);
+        border-color: lighten($primary, 5%);
+    }
+}
+
+.color-scheme-button-label {
+    font-weight: 500;
+}
+
+// PopoverMenu styling for better appearance
+popover.menu {
+    background-color: $surfaceContainer;
+    border: 1px solid rgba($outline, 0.2);
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+
+    contents {
+        background: transparent;
+
+        modelbutton {
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            color: $onSurface;
+            margin: 0.1rem;
+
+            &:hover {
+                background-color: rgba($primary, 0.1);
+            }
+
+            &:active {
+                background-color: rgba($primary, 0.2);
+            }
+
+            &:disabled {
+                color: $onSurfaceVariant;
+                opacity: 0.6;
+            }
+        }
     }
 }
 .settings-page-box {

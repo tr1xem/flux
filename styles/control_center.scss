@@ -55,15 +55,52 @@
     }
 
     .record-dropdown {
+        min-width: 120px;
+
         button {
             all: unset;
-            color: $onSurfaceVariant;
+            color: $onSurface;
+            background-color: rgba($surfaceContainer, 0.8);
+            border: 1px solid rgba($outline, 0.3);
+            border-radius: 0.5rem;
+            padding: 0.4rem 0.8rem;
             font-size: 0.9rem;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background-color: $surfaceContainer;
+                border-color: rgba($outline, 0.6);
+            }
+        }
+
+        popover contents {
+            all: unset;
+            background-color: $surfaceContainer;
+            border: 1px solid rgba($outline, 0.2);
+            border-radius: 0.5rem;
+            padding: 0.25rem;
+
+            modelbutton {
+                padding: 0.5rem 0.8rem;
+                border-radius: 0.25rem;
+                color: $onSurface;
+                margin: 1.1rem;
+
+                &:hover {
+                    background-color: rgba($primary, 0.1);
+                }
+
+                &:active {
+                    background-color: rgba($primary, 0.2);
+                }
+            }
         }
     }
 
     .record-cancel-button,
-    .record-start-button {
+    .record-start-button,
+    .record-pause-button,
+    .record-stop-button {
         color: $surface;
         border-radius: 1rem;
         padding: 0.25rem 0.75rem;
@@ -79,6 +116,17 @@
 
     .record-start-button {
         @include hover($primary);
+        background-color: $primary;
+    }
+
+    .record-pause-button {
+        @include hover($secondary);
+        background-color: $secondary;
+    }
+
+    .record-stop-button {
+        @include hover($error);
+        background-color: $error;
     }
 
     .volume-entry {
