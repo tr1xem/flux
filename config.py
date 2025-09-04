@@ -68,7 +68,6 @@ def patch_style_scss(path: str) -> str:
         + contents
     )
 
-    print(string)
     return utils.sass_compile(
         string=string, extra_args=["--load-path", utils.get_current_dir()]
     )
