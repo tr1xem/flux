@@ -15,7 +15,6 @@ class SpinRow(SettingsRow):
         width: int = 0,
         **kwargs,
     ):
-        super().__init__(**kwargs)
         self._spin_button = widgets.SpinButton(
             value=value,
             on_change=on_change,
@@ -27,4 +26,4 @@ class SpinRow(SettingsRow):
             hexpand=True,
             step=step,
         )
-        self.child.append(self._spin_button)
+        super().__init__(additional_widgets=[self._spin_button], **kwargs)

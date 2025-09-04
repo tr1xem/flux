@@ -18,7 +18,10 @@ class SettingsGroup(widgets.Box):
                     halign="start",
                     visible=True if name else False,
                 ),
-                widgets.ListBox(rows=[*rows], css_classes=["settings-group-rows"]),
+                widgets.Box(
+                    vertical=True,
+                    child=[*rows],
+                ),
             ],
             **kwargs,
         )

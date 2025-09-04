@@ -12,7 +12,6 @@ class EntryRow(SettingsRow):
         width: int | None = None,
         **kwargs,
     ):
-        super().__init__(**kwargs)
         self._entry = widgets.Entry(
             on_change=on_change,
             text=text,
@@ -21,4 +20,4 @@ class EntryRow(SettingsRow):
             width_request=width,
             hexpand=True,
         )
-        self.child.append(self._entry)
+        super().__init__(additional_widgets=[self._entry], **kwargs)

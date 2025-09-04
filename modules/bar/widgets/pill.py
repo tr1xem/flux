@@ -160,29 +160,32 @@ class Battery(widgets.Box):
         )
 
 
-class StatusPill(widgets.EventBox):
+class StatusPill(widgets.Button):
     def __init__(self, monitor: int):
         self._monitor = monitor
         self._window = window_manager.get_window(f"ignis_CONTROL_CENTER_{monitor}")
 
         super().__init__(
-            child=[
-                widgets.Box(
-                    css_classes=["status-pill"],
-                    spacing=5,
-                    child=[
-                        RecorderIcon(),
-                        BluetoothIcon(),
-                        WifiIcon(),
-                        EthernetIcon(),
-                        VpnIcon(),
-                        VolumeIcon(),
-                        DNDIcon(),
-                        Battery(),
-                    ],
-                )
-            ],
+            child=widgets.Box(
+                spacing=5,
+                child=[
+                    RecorderIcon(),
+                    BluetoothIcon(),
+                    WifiIcon(),
+                    EthernetIcon(),
+                    VpnIcon(),
+                    VolumeIcon(),
+                    DNDIcon(),
+                    Battery(),
+                ],
+            ),
             on_click=self.__on_click,
+            css_classes=self._window.bind(
+                "visible",
+                lambda value: ["status-pill", "status-active"]
+                if value
+                else ["status-pill"],
+            ),
         )
 
     def __on_click(self, x) -> None:

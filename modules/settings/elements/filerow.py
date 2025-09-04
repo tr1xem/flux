@@ -10,7 +10,6 @@ class FileRow(SettingsRow):
         button_label: str | Binding | None = None,
         **kwargs,
     ):
-        super().__init__(**kwargs)
         self._button = widgets.FileChooserButton(
             dialog=dialog,
             label=widgets.Label(
@@ -20,4 +19,4 @@ class FileRow(SettingsRow):
             halign="end",
         )
 
-        self.child.append(self._button)
+        super().__init__(additional_widgets=[self._button], **kwargs)

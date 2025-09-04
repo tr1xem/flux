@@ -91,19 +91,22 @@
     margin-right: 1rem;
 }
 popover.menu {
-    * {
-        all: unset;
-    }
-    margin-top: -0.8rem;
+    // * {
+    //     all: unset;
+    // }
+    border: 1px solid rgba($outline, 0.2);
+    border-radius: 1rem;
     contents {
+        all: unset;
         background-color: rgba($surface, $opacity-medium);
-        padding: 0.35rem;
+        // padding: 0.35rem;
         border-radius: 1rem;
         color: $onSurface;
         modelbutton {
             transition: 0.3s;
             border-radius: 0.5rem;
-            padding: 0.25rem 1rem;
+            // padding: 0.25rem 1rem;
+            background-color: rgba($surface, $opacity-medium);
         }
         modelbutton:hover {
             background-color: rgba(lighten($surface, 50%), $opacity-medium);
@@ -137,9 +140,17 @@ popover.menu {
 }
 
 .status-pill {
+    all: unset;
     @include border();
+    transition: 0.5s;
 }
 
+.status-active {
+    @include border();
+    background-color: $primary;
+    color: $onPrimary;
+    transition: 0.5s;
+}
 .weather {
     @include border();
     background-color: rgb(darken($surface, 0.1), 0.3);

@@ -13,18 +13,18 @@
 }
 
 .settings-sidebar-entry {
-    all: unset;
     background-color: $surfaceContainer;
     padding: 1rem 2rem;
     color: $onSurface;
     padding-left: 0.75rem;
+    transition: 0.5s;
     font-size: 1.2rem;
 
     &:selected {
         @if $darkmode == true {
-            background-color: lighten($surfaceContainer, 10%);
+            background-color: lighten($primaryContainer, 10%);
         } @else {
-            background-color: darken($surfaceContainer, 10%);
+            background-color: lighten($primaryContainer, 10%);
         }
     }
 }
@@ -37,27 +37,24 @@
     margin-top: 2rem;
 }
 
+.settings-page {
+    background-color: darken($surfaceContainer, 10%);
+}
+
 .settings-group-name {
     margin-left: 2.5rem;
     color: $primary;
 }
 
-.settings-row {
-    // all: unset;
-    padding: 0.7rem 2.5rem;
-    transition: 0.2s;
-    color: $onSurface;
-    min-width: 15rem;
-
-    background-color: darken($surfaceContainer, 10%);
-    &:active {
-        @if $darkmode == true {
-            background-color: rgba(255, 255, 255, $opacity-low);
-        } @else {
-            background-color: rgba(0, 0, 0, $opacity-low);
-        }
-    }
-}
+// .settings-row {
+//     // all: unset;
+//     padding: 0.7rem 2.5rem;
+//     // transition: 0.2s;
+//     color: $onSurface;
+//     min-width: 15rem;
+//
+//     background-color: darken($surfaceContainer, 10%);
+// }
 
 .settings-row-label {
     font-size: 1.2rem;
@@ -70,133 +67,9 @@
     color: $onSurfaceVariant;
 }
 
-// Settings-specific dropdown styling
-.settings-row dropdown {
-    button {
-        font-size: 1rem;
-        min-width: 10rem;
-        background-color: rgba($surfaceContainer, 0.8);
-
-        &:hover {
-            background-color: $surfaceContainer;
-        }
-    }
-
-    popover contents {
-        min-width: 10rem;
-    }
-}
-
-// Color scheme dropdown styling
-.settings-dropdown dropdown {
-    button {
-        font-size: 1rem;
-        min-width: 10rem;
-        background-color: $surfaceContainer;
-        border-radius: 0.5rem;
-        padding: 0.75rem 1.25rem;
-        color: $onSurface;
-        transition: all 0.2s ease;
-
-        &:hover {
-            background-color: $surfaceContainerHigh;
-        }
-    }
-
-    popover {
-        background-color: $surfaceContainer;
-        border-radius: 0.5rem;
-        padding: 0.75rem;
-
-        contents modelbutton {
-            all: unset;
-            padding: 1rem 1.5rem;
-            border-radius: 0.25rem;
-            background-color: rgba($surfaceContainer, 0.8);
-            color: $onSurface;
-            margin: 0.2rem 0;
-            font-size: 1rem;
-
-            &:hover {
-                background-color: $primary;
-                color: $onPrimary;
-            }
-
-            &:active {
-                background-color: $primary;
-                color: $onPrimary;
-            }
-        }
-    }
-}
-
-.color-scheme-button {
-    all: unset;
-    font-size: 1rem;
-
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    // background-color: rgba($surfaceContainer, 0.8);
-    color: $onSurface;
-    border: 1px solid rgba($outline, 0.3);
-    transition: all 0.2s ease;
-
-    &:hover {
-        background-color: $surfaceContainer;
-        border-color: rgba($outline, 0.6);
-        transform: translateY(-1px);
-    }
-
-    &.active {
-        background-color: $primary;
-        color: $onPrimary;
-        border-color: $primary;
-    }
-
-    &.active:hover {
-        background-color: lighten($primary, 5%);
-        border-color: lighten($primary, 5%);
-    }
-}
-
-.color-scheme-button-label {
-    font-weight: 500;
-}
-
-// PopoverMenu styling for better appearance
-popover.menu {
-    background-color: $surfaceContainer;
-    border: 1px solid rgba($outline, 0.2);
-    border-radius: 0.5rem;
-    padding: 0.25rem;
-
-    contents {
-        background: transparent;
-
-        modelbutton {
-            padding: 0.5rem 1rem;
-            border-radius: 0.25rem;
-            color: $onSurface;
-            margin: 0.1rem;
-
-            &:hover {
-                background-color: rgba($primary, 0.1);
-            }
-
-            &:active {
-                background-color: rgba($primary, 0.2);
-            }
-
-            &:disabled {
-                color: $onSurfaceVariant;
-                opacity: 0.6;
-            }
-        }
-    }
-}
 .settings-page-box {
     background-color: darken($surfaceContainer, 10%);
-    font-family: "JetBrainsMono Nerd Font", monospace;
+    // font-family: "JetBrainsMono Nerd Font", monospace;
 }
 
 .settings-user-name {
@@ -210,9 +83,36 @@ popover.menu {
     background-color: darken($surfaceContainer, 10%);
 }
 
-.settings-group,
-.settings-row {
-    list {
+.settings-group {
+    all: unset;
+    background-color: darken($surfaceContainer, 10%);
+    min-width: 15rem;
+    
+    grid {
+        &[column-num="2"] {
+            column-gap: 1rem;
+            row-gap: 0.5rem;
+            
+            .settings-row {
+                min-width: 300px;
+                max-width: 500px;
+                flex: 1;
+                box-sizing: border-box;
+            }
+        }
+    }
+
+    .settings-row {
+        padding: 0.7rem 2.5rem;
         background-color: darken($surfaceContainer, 10%);
+
+        &:active {
+            background-color: darken($surfaceContainer, 10%);
+            // @if $darkmode == true {
+            //     background-color: rgba(255, 255, 255, 0.05);
+            // } @else {
+            //     background-color: rgba(0, 0, 0, 0.05);
+            // }
+        }
     }
 }

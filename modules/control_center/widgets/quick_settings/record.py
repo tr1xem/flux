@@ -44,13 +44,6 @@ class RecordMenu(Menu):
                     pixel_size=20,
                     style="margin-right: 0.75rem;",
                 ),
-                widgets.Label(
-                    label="Audio source",
-                    style="font-size: 1.1rem;",
-                    halign="start",
-                    hexpand=True,
-                ),
-                self._audio_dropdown,
             ],
         )
 
@@ -61,19 +54,19 @@ class RecordMenu(Menu):
         self._source_dropdown = widgets.DropDown(
             items=list(SOURCE_OPTIONS.keys()),
             selected="Portal",
-            css_classes=["record-dropdown"],
+            css_classes=["record-dropdown-m"],
         )
 
         self._quality_dropdown = widgets.DropDown(
             items=QUALITY_OPTIONS,
             selected="high",
-            css_classes=["record-dropdown"],
+            css_classes=["record-dropdown-m"],
         )
 
         self._codec_dropdown = widgets.DropDown(
             items=VIDEO_CODECS,
             selected="auto",
-            css_classes=["record-dropdown"],
+            css_classes=["record-dropdown-m"],
         )
 
         self._cursor_switch = widgets.Switch(
@@ -175,11 +168,17 @@ class RecordMenu(Menu):
                             pixel_size=20,
                             style="margin-right: 0.75rem;",
                         ),
-                        widgets.Label(
-                            label="Record audio",
-                            style="font-size: 1.1rem;",
-                            halign="start",
-                            hexpand=True,
+                        widgets.Box(
+                            vertical=True,
+                            child=[
+                                widgets.Label(
+                                    label="Record audio",
+                                    style="font-size: 1.1rem;",
+                                    halign="start",
+                                    hexpand=True,
+                                ),
+                                self._audio_dropdown,
+                            ],
                         ),
                         self._audio_switch,
                     ],

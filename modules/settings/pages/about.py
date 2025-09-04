@@ -183,28 +183,37 @@ class AboutEntry(SettingsEntry):
                     rows=[
                         widgets.Grid(
                             column_num=2,
-                            hexpand=True,
                             child=[
                                 SettingsRow(
-                                    label="󰣇  Operating System",
+                                    label="<span font='JetBrains Mono Nerd Font'>󰣇</span>  Operating System",
+                                    use_markup=True,
                                     sublabel=fetch.os_name,
                                 ),
                                 SettingsRow(
-                                    label="󰌢   Hostname",
+                                    label="<span font='JetBrains Mono Nerd Font'>󰌢</span>   Hostname",
+                                    use_markup=True,
                                     sublabel=fetch.hostname,
                                 ),
                                 SettingsRow(
-                                    label="󰘦   Ignis Version", sublabel=__version__
+                                    label="<span font='JetBrains Mono Nerd Font'>󰘦</span>   Ignis Version",
+                                    use_markup=True,
+                                    sublabel=__version__,
                                 ),
                                 SettingsRow(
-                                    label="󰍹   Session type",
+                                    label="<span font='JetBrains Mono Nerd Font'>󰍹</span>   Session type",
+                                    use_markup=True,
                                     sublabel=fetch.session_type,
                                 ),
                                 SettingsRow(
-                                    label="   Wayland compositor",
+                                    label="<span font='JetBrains Mono Nerd Font'></span>   Wayland compositor",
+                                    use_markup=True,
                                     sublabel=fetch.current_desktop,
                                 ),
-                                SettingsRow(label="  Kernel", sublabel=fetch.kernel),
+                                SettingsRow(
+                                    label="<span font='JetBrains Mono Nerd Font'></span>  Kernel",
+                                    use_markup=True,
+                                    sublabel=fetch.kernel,
+                                ),
                             ],
                         ),
                     ],
@@ -214,36 +223,45 @@ class AboutEntry(SettingsEntry):
                     rows=[
                         widgets.Grid(
                             column_num=2,
-                            hexpand=True,
                             child=[
                                 SettingsRow(
-                                    label="   CPU",
+                                    label="<span font='JetBrains Mono Nerd Font'></span>   CPU",
+                                    use_markup=True,
                                     sublabel=fetch.cpu,
                                 ),
                                 SettingsRow(
-                                    label="󰢮   GPU",
+                                    label="<span font='JetBrains Mono Nerd Font'>󰢮</span>   GPU",
+                                    use_markup=True,
                                     sublabel=get_gpu_info(),
                                 ),
                                 SettingsRow(
-                                    label="   RAM",
+                                    label="<span font='JetBrains Mono Nerd Font'></span>   RAM",
+                                    use_markup=True,
                                     sublabel=f"{fetch.mem_total / 1024 / 1024:.1f} GB",
                                 ),
                                 SettingsRow(
-                                    label="🖴  Root Partition",
+                                    label="<span font='JetBrains Mono Nerd Font'>🖴</span>  Root Partition",
+                                    use_markup=True,
                                     sublabel=f"{partition_size:.1f} GB",
                                 ),
                                 SettingsRow(
-                                    label="󰤨   Wifi Driver",
+                                    label="<span font='JetBrains Mono Nerd Font'>󰤨</span>   Wifi Driver",
+                                    use_markup=True,
                                     sublabel=get_wifi_driver_name(),
                                 ),
                                 SettingsRow(
-                                    label="   Motherboard", sublabel=fetch.board_vendor
+                                    label="<span font='JetBrains Mono Nerd Font'></span>   Motherboard",
+                                    use_markup=True,
+                                    sublabel=fetch.board_vendor,
                                 ),
                                 SettingsRow(
-                                    label="   UEFI Version", sublabel=fetch.board_name
+                                    label="<span font='JetBrains Mono Nerd Font'></span>   UEFI Version",
+                                    use_markup=True,
+                                    sublabel=fetch.board_name,
                                 ),
                                 SettingsRow(
-                                    label="   Secure Boot",
+                                    label="<span font='JetBrains Mono Nerd Font'></span>   Secure Boot",
+                                    use_markup=True,
                                     sublabel="Enabled"
                                     if is_secure_boot_enabled()
                                     else "Disabled",

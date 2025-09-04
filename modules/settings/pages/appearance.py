@@ -59,19 +59,19 @@ def create_color_scheme_dropdown() -> widgets.DropDown:
     """Create color scheme dropdown"""
     current_scheme = user_options.material.color_scheme
     selected_index = get_scheme_index(current_scheme)
-    
+
     dropdown = widgets.DropDown(
         items=COLOR_SCHEME_OPTIONS,
         selected=COLOR_SCHEME_OPTIONS[selected_index],
-        css_classes=["settings-dropdown"],
+        # css_classes=["settings-dropdown"],
     )
-    
+
     # Use a simpler approach - connect to the GObject signal directly
     def on_dropdown_changed(*args):
         selected_scheme = dropdown.selected
         if selected_scheme and selected_scheme != user_options.material.color_scheme:
             on_scheme_selected(selected_scheme)
-    
+
     # Try different signal connection approaches
     try:
         dropdown.connect("notify::selected", on_dropdown_changed)
@@ -81,7 +81,7 @@ def create_color_scheme_dropdown() -> widgets.DropDown:
         except:
             # Fallback: poll for changes
             pass
-    
+
     return dropdown
 
 

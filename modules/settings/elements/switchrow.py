@@ -13,7 +13,6 @@ class SwitchRow(SettingsRow):
         on_change: Callable | None = None,
         **kwargs,
     ):
-        super().__init__(**kwargs)
         self._switch = widgets.Switch(
             active=active,
             on_change=on_change,
@@ -21,7 +20,10 @@ class SwitchRow(SettingsRow):
             valign="center",
             hexpand=True,
         )
+        
+        # Pass the additional widget as part of initialization
+        super().__init__(additional_widgets=[self._switch], **kwargs)
+        
         self.on_activate = lambda x: self._switch.emit(
             "activate"
         )  # if set "active" property animation will not work
-        self.child.append(self._switch)

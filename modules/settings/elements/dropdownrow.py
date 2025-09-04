@@ -14,8 +14,6 @@ class DropdownRow(SettingsRow):
         on_selected: Callable | None = None,
         **kwargs,
     ):
-        super().__init__(**kwargs)
-        
         self._dropdown = widgets.DropDown(
             items=items,
             selected=selected,
@@ -25,4 +23,4 @@ class DropdownRow(SettingsRow):
             hexpand=True,
         )
         
-        self.child.append(self._dropdown)
+        super().__init__(additional_widgets=[self._dropdown], **kwargs)
