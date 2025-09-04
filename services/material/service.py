@@ -12,6 +12,14 @@ from materialyoucolor.dynamiccolor.material_dynamic_colors import MaterialDynami
 from materialyoucolor.hct import Hct
 from materialyoucolor.quantize import QuantizeCelebi
 from materialyoucolor.scheme.scheme_tonal_spot import SchemeTonalSpot
+from materialyoucolor.scheme.scheme_expressive import SchemeExpressive
+from materialyoucolor.scheme.scheme_neutral import SchemeNeutral
+from materialyoucolor.scheme.scheme_vibrant import SchemeVibrant
+from materialyoucolor.scheme.scheme_fidelity import SchemeFidelity
+from materialyoucolor.scheme.scheme_monochrome import SchemeMonochrome
+from materialyoucolor.scheme.scheme_content import SchemeContent
+from materialyoucolor.scheme.scheme_rainbow import SchemeRainbow
+from materialyoucolor.scheme.scheme_fruit_salad import SchemeFruitSalad
 from materialyoucolor.score.score import Score
 from PIL import Image
 
@@ -21,6 +29,19 @@ from .constants import MATERIAL_CACHE_DIR, SAMPLE_WALL, TEMPLATES
 from .util import calculate_optimal_size, rgba_to_hex
 
 css_manager = CssManager.get_default()
+
+# Color scheme mappings
+COLOR_SCHEMES = {
+    "Tonal Spot": SchemeTonalSpot,
+    "Expressive": SchemeExpressive,
+    "Neutral": SchemeNeutral,
+    "Vibrant": SchemeVibrant,
+    "Fidelity": SchemeFidelity,
+    "Monochrome": SchemeMonochrome,
+    "Content": SchemeContent,
+    "Rainbow": SchemeRainbow,
+    "Fruit Salad": SchemeFruitSalad,
+}
 
 
 class MaterialService(BaseService):
@@ -34,6 +55,9 @@ class MaterialService(BaseService):
 
         user_options.material.connect_option(
             "dark_mode", lambda: self.generate_colors(options.wallpaper.wallpaper_path)
+        )
+        user_options.material.connect_option(
+            "color_scheme", lambda: self.generate_colors(options.wallpaper.wallpaper_path)
         )
         user_options.material.connect_option(
             "blur_enabled", lambda: self.__handle_blur_change()
@@ -105,7 +129,11 @@ class MaterialService(BaseService):
         argb = Score.score(colors)[0]
 
         hct = Hct.from_int(argb)
-        scheme = SchemeTonalSpot(hct, dark_mode, 0.0)
+        
+        # Get the selected color scheme class
+        scheme_name = getattr(user_options.material, 'color_scheme', 'Tonal Spot')
+        scheme_class = COLOR_SCHEMES.get(scheme_name, SchemeTonalSpot)
+        scheme = scheme_class(hct, dark_mode, 0.0)
 
         material_colors = {}
         for color in vars(MaterialDynamicColors).keys():

@@ -69,6 +69,23 @@
     font-weight: normal;
     color: $onSurfaceVariant;
 }
+
+// Settings-specific dropdown styling
+.settings-row dropdown {
+    button {
+        font-size: 1rem;
+        min-width: 10rem;
+        background-color: rgba($surfaceContainer, 0.8);
+        
+        &:hover {
+            background-color: $surfaceContainer;
+        }
+    }
+    
+    popover contents {
+        min-width: 10rem;
+    }
+}
 .settings-page-box {
     background-color: darken($surfaceContainer, 10%);
     font-family: "JetBrainsMono Nerd Font", monospace;

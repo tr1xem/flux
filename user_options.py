@@ -46,6 +46,7 @@ class UserOptions(OptionsManager):
     class Material(OptionsGroup):
         dark_mode: bool = True
         blur_enabled: bool = True
+        color_scheme: str = "Tonal Spot"
         colors: dict[str, str] = {}
 
     class Default(OptionsGroup):
