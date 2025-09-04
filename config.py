@@ -5,7 +5,6 @@ from ignis.css_manager import CssInfoPath, CssManager
 from ignis.icon_manager import IconManager
 from ignis.options import options
 from ignis.services.wallpaper import WallpaperService
-
 from modules import (
     Bar,
     ControlCenter,
@@ -67,8 +66,6 @@ def patch_style_scss(path: str) -> str:
         + opacity_vars
         + contents
     )
-
-    print(utils.get_current_dir())
     return utils.sass_compile(
         string=string, extra_args=["--load-path", utils.get_current_dir()]
     )
@@ -210,88 +207,3 @@ for monitor in range(utils.get_n_monitors()):
 
 Settings()
 Powermenu()
-
-
-import threading
-import time
-import psutil
-from services.material import MaterialService
-
-
-def monitor_ignis_memory():
-    """Background memory monitor for ignis process"""
-    
-    # Wait for app to fully start
-    time.sleep(5)
-    
-    # Find ignis process PID
-    ignis_pid = None
-    for proc in psutil.process_iter(["pid", "name", "cmdline"]):
-        try:
-            cmdline = proc.info.get("cmdline")
-            if cmdline and "ignis" in " ".join(cmdline):
-                ignis_pid = proc.info["pid"]
-                break
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
-            pass
-
-    if not ignis_pid:
-        print("Ignis process not found!")
-        return
-
-    print(f"Monitoring ignis process (PID: {ignis_pid})")
-    print("-" * 60)
-    print("Time\t\tMemory(MB)\tHeap(MB)\tCaches")
-    print("-" * 60)
-
-    try:
-        # Get MaterialService instance
-        material = MaterialService.get_default()
-
-        while True:
-            try:
-                process = psutil.Process(ignis_pid)
-
-                # Get memory info
-                mem_info = process.memory_info()
-                memory_mb = mem_info.rss / 1024 / 1024
-
-                # Get heap memory (anonymous memory)
-                try:
-                    mem_maps = process.memory_maps()
-                    heap_mb = (
-                        sum(
-                            m.rss
-                            for m in mem_maps
-                            if "[heap]" in m.path or "[anon:" in m.path
-                        )
-                        / 1024
-                        / 1024
-                    )
-                except (psutil.AccessDenied, psutil.NoSuchProcess):
-                    heap_mb = 0
-
-                # Get cache stats
-                try:
-                    cache_stats = material.get_cache_stats()
-                    cache_text = f"C:{cache_stats['colors_cache_size']} T:{cache_stats['template_cache_size']}"
-                except Exception:
-                    cache_text = "Cache: --"
-
-                # Print stats
-                timestamp = time.strftime("%H:%M:%S")
-                print(f"{timestamp}\t{memory_mb:.1f}\t\t{heap_mb:.1f}\t\t{cache_text}")
-
-                time.sleep(3)
-
-            except (psutil.NoSuchProcess, psutil.AccessDenied):
-                print("Process ended or access denied")
-                break
-
-    except KeyboardInterrupt:
-        print("\nMonitoring stopped")
-
-
-# Start monitoring in background thread
-monitor_thread = threading.Thread(target=monitor_ignis_memory, daemon=True)
-monitor_thread.start()

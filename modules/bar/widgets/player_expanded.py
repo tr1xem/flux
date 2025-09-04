@@ -8,7 +8,6 @@ from ignis.services.applications import ApplicationsService
 from ignis.services.mpris import MprisPlayer, MprisService
 from ignis.window_manager import WindowManager
 from jinja2 import Template
-
 from services.material import MaterialService
 
 from .menu import opened_menu
