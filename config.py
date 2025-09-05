@@ -106,16 +106,16 @@ corner_size = (30, 30)
 
 def setup_datetime_widget():
     simple_datetime = widgets.Label(css_classes=["movable-datetime"], use_markup=True)
-    
+
     time_variable = Variable(
         value=utils.Poll(
             1000,
             lambda x: datetime.datetime.now().strftime("%I:%M"),
         ).bind("output")
     )
-    
+
     simple_datetime.label = time_variable.bind("value")
-    
+
     fix = Fixed(
         hexpand=True,
         vexpand=True,
@@ -127,7 +127,7 @@ def setup_datetime_widget():
         ],
         css_classes=["fixed-label"],
     )
-    
+
     datetime_window = widgets.Window(
         namespace="ignis_DATETIME",
         exclusivity="ignore",
@@ -136,7 +136,7 @@ def setup_datetime_widget():
         layer="bottom",
         child=fix,
     )
-    
+
     def move():
         fix.move(
             simple_datetime,
@@ -147,13 +147,15 @@ def setup_datetime_widget():
     def update_datetime_visibility():
         enabled = user_options.desktop_widgets.datetime_enabled
         datetime_window.set_visible(enabled)
-    
+
     user_options.datetime.connect("changed", lambda *_: move())
-    user_options.desktop_widgets.connect_option("datetime_enabled", lambda: update_datetime_visibility())
-    
+    user_options.desktop_widgets.connect_option(
+        "datetime_enabled", lambda: update_datetime_visibility()
+    )
+
     # Set initial visibility
     update_datetime_visibility()
-    
+
     return simple_datetime, fix
 
 
