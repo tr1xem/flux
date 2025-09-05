@@ -7,8 +7,8 @@ from .user import UserEntry
 
 __all__ = [
     "AboutEntry",
-    "AppearanceEntry", 
-    "draggables_page",
+    "AppearanceEntry",
+    "DraggablesEntry",
     "NotificationsEntry",
     "RecorderEntry",
     "UserEntry",
