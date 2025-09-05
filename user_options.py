@@ -54,6 +54,9 @@ class UserOptions(OptionsManager):
         x_position: int = 400
         y_position: int = 90
 
+    class DesktopWidgets(OptionsGroup):
+        datetime_enabled: bool = True
+
     class Wallpaper(OptionsGroup):
         depth_wall: str = ""
         depth_wall_enabled: bool = True
@@ -66,6 +69,7 @@ class UserOptions(OptionsManager):
     settings = Settings()
     material = Material()
     datetime = Datetime()
+    desktop_widgets = DesktopWidgets()
     wallpaper = Wallpaper()
 
 

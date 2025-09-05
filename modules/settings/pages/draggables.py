@@ -1,10 +1,18 @@
+import random
 from user_options import user_options
 
-from ..elements import SettingsEntry, SettingsGroup, SettingsPage, SpinRow
+from ..elements import SettingsEntry, SettingsGroup, SettingsPage, SpinRow, ButtonRow
 
 
 class DraggablesEntry(SettingsEntry):
     def __init__(self):
+        def randomize_position(*_):
+            # Generate random positions within screen bounds (with some margin)
+            random_x = random.randint(50, 1750)  # Leave margin from edges
+            random_y = random.randint(50, 900)   # Leave margin from edges
+            user_options.datetime.set_x_position(random_x)
+            user_options.datetime.set_y_position(random_y)
+        
         page = SettingsPage(
             name="DateTime Position",
             groups=[
@@ -36,6 +44,12 @@ class DraggablesEntry(SettingsEntry):
                                     int(value)
                                 )
                             ),
+                        ),
+                        ButtonRow(
+                            label="Random Position",
+                            sublabel="Set datetime widget to a random position on screen",
+                            button_label="Randomize",
+                            on_click=randomize_position,
                         ),
                     ],
                 ),
