@@ -23,6 +23,7 @@
     &:selected {
         @if $darkmode == true {
             background-color: lighten($primaryContainer, 10%);
+            color: $onPrimaryContainer;
         } @else {
             background-color: lighten($primaryContainer, 10%);
         }
@@ -96,4 +97,25 @@
 
 .settings-color-scheme {
     color: $onSurface;
+}
+
+.settings-button {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background-color: $primaryContainer;
+    color: $onPrimaryContainer;
+    font-weight: 500;
+    border: none;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: lighten($primaryContainer, 5%);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
 }

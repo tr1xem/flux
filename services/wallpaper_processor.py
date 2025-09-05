@@ -1,10 +1,11 @@
-import os
 import asyncio
 import hashlib
-from pathlib import Path
-from PIL import Image
-from ignis import utils, CACHE_DIR
+import os
+
+from ignis import CACHE_DIR, utils
 from ignis.options import options
+from PIL import Image
+
 from user_options import user_options
 
 
@@ -24,7 +25,7 @@ def get_monitor_size():
 def get_image_hash(image_path):
     """Get MD5 hash of an image file for caching purposes"""
     try:
-        with open(image_path, 'rb') as f:
+        with open(image_path, "rb") as f:
             return hashlib.md5(f.read()).hexdigest()
     except Exception:
         return ""
@@ -46,27 +47,16 @@ async def process_wallpaper_with_rembg_async(wallpaper_path):
     wallpaper_cache_dir = os.path.join(CACHE_DIR, "wallpapers")
     os.makedirs(wallpaper_cache_dir, exist_ok=True)
 
-    image_hash = await get_image_hash_async(wallpaper_path)
-    screen_width, screen_height = get_monitor_size()
-
-    output_filename = f"depth_wall_{image_hash}_{screen_width}x{screen_height}.png"
-    output_path = os.path.join(wallpaper_cache_dir, output_filename)
+    output_path = os.path.join(wallpaper_cache_dir, "wallpaper_depth.png")
+    temp_scaled_path = os.path.join(wallpaper_cache_dir, "temp_scaled.png")
 
     print(f"Processing wallpaper: {wallpaper_path} -> {output_path}")
-
-    if os.path.exists(output_path):
-        print(f"Using cached depth wall: {output_path}")
-        user_options.wallpaper.depth_wall = output_path
-        return output_path
-
-    temp_scaled_path = os.path.join(
-        wallpaper_cache_dir, f"temp_scaled_{image_hash}.png"
-    )
 
     try:
 
         def _downscale_wallpaper():
             print("Downscaling wallpaper before background removal...")
+            screen_width, screen_height = get_monitor_size()
             with Image.open(wallpaper_path) as img:
                 img_ratio = img.width / img.height
                 screen_ratio = screen_width / screen_height
@@ -82,30 +72,48 @@ async def process_wallpaper_with_rembg_async(wallpaper_path):
                     (new_width, new_height), Image.Resampling.LANCZOS
                 )
                 scaled_img.save(temp_scaled_path)
+                print(f"Temp file saved: {temp_scaled_path}")
             return True
 
-        async def _remove_background():
+        def _remove_background():
             print("Removing background from downscaled image...")
-            rem_script = os.path.join(utils.get_current_dir(), "rem.py")
-            cmd = f"python {rem_script} -m u2net {temp_scaled_path} {output_path}"
 
-            result = await utils.exec_sh_async(cmd)
-            print(f"Background removal completed: {result.stdout}")
-            return True
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            rem_script = os.path.join(script_dir, "rembg_processor.py")
+            cmd = f'python "{rem_script}" -m u2net "{temp_scaled_path}" "{output_path}"'
+            print(f"Running command: {cmd}")
+
+            result = utils.exec_sh(cmd)
+            print(f"Background removal result: {result.returncode}")
+            print(f"Background removal stdout: {result.stdout}")
+            print(f"Background removal stderr: {result.stderr}")
+            return result.returncode == 0
 
         loop = asyncio.get_event_loop()
 
-        # Downscale wallpaper first (much faster for background removal)
         await loop.run_in_executor(None, _downscale_wallpaper)
+        screen_width, screen_height = get_monitor_size()
         print(f"Wallpaper downscaled to {screen_width}x{screen_height}")
 
-        # Remove background from downscaled image
-        await _remove_background()
+        if not os.path.exists(temp_scaled_path):
+            print(f"Error: Temp file not found: {temp_scaled_path}")
+            return None
+
+        success = await loop.run_in_executor(None, _remove_background)
+
+        if not success:
+            print("Background removal failed")
+            return None
+
+        if not os.path.exists(output_path):
+            print(f"Error: Output file not created: {output_path}")
+            return None
+
         print("Background removal completed")
 
-        # Clean up temp scaled file
         if os.path.exists(temp_scaled_path):
             os.remove(temp_scaled_path)
+            print("Temp file cleaned up")
 
         user_options.wallpaper.depth_wall = output_path
         print(f"Processed wallpaper saved and set: {output_path}")
@@ -116,13 +124,12 @@ async def process_wallpaper_with_rembg_async(wallpaper_path):
         import traceback
 
         traceback.print_exc()
-        # Clean up temp file if it exists
+
         if os.path.exists(temp_scaled_path):
             os.remove(temp_scaled_path)
         return None
 
 
-# Track original wallpaper paths to avoid processing loops
 _original_wallpaper_path = None
 _processing_wallpaper = False
 
@@ -141,31 +148,19 @@ async def downscale_wallpaper_async(original_wallpaper_path):
     wallpaper_cache_dir = os.path.join(CACHE_DIR, "wallpapers")
     os.makedirs(wallpaper_cache_dir, exist_ok=True)
 
-    image_hash = await get_image_hash_async(original_wallpaper_path)
-    screen_width, screen_height = get_monitor_size()
-
-    output_filename = f"wallpaper_{image_hash}_{screen_width}x{screen_height}.png"
-    output_path = os.path.join(wallpaper_cache_dir, output_filename)
+    output_path = os.path.join(wallpaper_cache_dir, "wallpaper.png")
 
     print(f"Downscaling wallpaper: {original_wallpaper_path} -> {output_path}")
-
-    if os.path.exists(output_path):
-        print(f"Using cached downscaled wallpaper: {output_path}")
-        # Set the downscaled wallpaper as the active wallpaper
-        _processing_wallpaper = True
-        options.wallpaper.set_wallpaper_path(output_path)
-        _processing_wallpaper = False
-        return output_path
 
     try:
 
         def _downscale():
             print("Downscaling wallpaper to screen resolution...")
+            screen_width, screen_height = get_monitor_size()
             with Image.open(original_wallpaper_path) as img:
                 img_ratio = img.width / img.height
                 screen_ratio = screen_width / screen_height
 
-                # Only downscale if image is larger than screen resolution
                 if img.width > screen_width or img.height > screen_height:
                     if img_ratio > screen_ratio:
                         new_width = screen_width
@@ -180,7 +175,6 @@ async def downscale_wallpaper_async(original_wallpaper_path):
                     scaled_img.save(output_path)
                     print(f"Wallpaper downscaled to {new_width}x{new_height}")
                 else:
-                    # If image is already small enough, just copy it
                     img.save(output_path)
                     print("Wallpaper size is already optimal")
             return True
@@ -188,7 +182,6 @@ async def downscale_wallpaper_async(original_wallpaper_path):
         loop = asyncio.get_event_loop()
         await loop.run_in_executor(None, _downscale)
 
-        # Set the downscaled wallpaper as the active wallpaper
         _processing_wallpaper = True
         options.wallpaper.set_wallpaper_path(output_path)
         _processing_wallpaper = False
@@ -214,20 +207,17 @@ def on_wallpaper_change():
     try:
         wallpaper_path = options.wallpaper.wallpaper_path
         if wallpaper_path:
-            # Check if this is a new original wallpaper (not our processed version)
             if not wallpaper_path.startswith(CACHE_DIR):
                 _original_wallpaper_path = wallpaper_path
                 print(f"New wallpaper detected, processing: {wallpaper_path}")
-                # Downscale wallpaper for better performance
+
                 asyncio.create_task(downscale_wallpaper_async(wallpaper_path))
 
-            # Process for depth wall if enabled (use original path)
             if user_options.wallpaper.depth_wall_enabled and _original_wallpaper_path:
                 asyncio.create_task(
                     process_wallpaper_with_rembg_async(_original_wallpaper_path)
                 )
         else:
-            # Clear paths when no wallpaper
             _original_wallpaper_path = None
             user_options.wallpaper.depth_wall = ""
     except Exception as e:
@@ -237,15 +227,22 @@ def on_wallpaper_change():
 def on_depth_wall_toggle():
     try:
         if user_options.wallpaper.depth_wall_enabled:
-            # Process current wallpaper when enabled
-            wallpaper_path = options.wallpaper.wallpaper_path
-            if wallpaper_path:
-                print("Depth wall enabled, processing...")
-                asyncio.create_task(process_wallpaper_with_rembg_async(wallpaper_path))
-        else:
-            # Clear path when disabled
-            print("Depth wall disabled, clearing path...")
-            user_options.wallpaper.depth_wall = ""
+            wallpaper_cache_dir = os.path.join(CACHE_DIR, "wallpapers")
+            depth_path = os.path.join(wallpaper_cache_dir, "wallpaper_depth.png")
+
+            if os.path.exists(depth_path):
+                print(f"Using existing depth wall: {depth_path}")
+                user_options.wallpaper.depth_wall = depth_path
+            else:
+                wallpaper_path = options.wallpaper.wallpaper_path
+                if wallpaper_path:
+                    print("Depth wall enabled, processing...")
+                    asyncio.create_task(
+                        process_wallpaper_with_rembg_async(
+                            _original_wallpaper_path or wallpaper_path
+                        )
+                    )
+
     except Exception as e:
         print(f"Error toggling depth wall: {e}")
 
@@ -254,60 +251,51 @@ def process_wallpaper_with_rembg(wallpaper_path):
     """Synchronous version for backwards compatibility"""
     if not wallpaper_path or not os.path.exists(wallpaper_path):
         return None
-    
+
     wallpaper_cache_dir = os.path.join(CACHE_DIR, "wallpapers")
     os.makedirs(wallpaper_cache_dir, exist_ok=True)
-    
-    image_hash = get_image_hash(wallpaper_path)
-    screen_width, screen_height = get_monitor_size()
-    
-    output_filename = f"depth_wall_{image_hash}_{screen_width}x{screen_height}.png"
-    output_path = os.path.join(wallpaper_cache_dir, output_filename)
-    
-    if os.path.exists(output_path):
-        user_options.wallpaper.depth_wall = output_path
-        return output_path
-    
-    temp_scaled_path = os.path.join(wallpaper_cache_dir, f"temp_scaled_{image_hash}.png")
-    temp_rembg_path = os.path.join(wallpaper_cache_dir, f"temp_rembg_{image_hash}.png")
-    
+
+    output_path = os.path.join(wallpaper_cache_dir, "wallpaper_depth.png")
+    temp_scaled_path = os.path.join(wallpaper_cache_dir, "temp_scaled.png")
+    temp_rembg_path = os.path.join(wallpaper_cache_dir, "temp_rembg.png")
+
     try:
-        # First, downscale the wallpaper to screen resolution for faster processing
         print("Downscaling wallpaper...")
+        screen_width, screen_height = get_monitor_size()
         with Image.open(wallpaper_path) as img:
             img_ratio = img.width / img.height
             screen_ratio = screen_width / screen_height
-            
+
             if img_ratio > screen_ratio:
                 new_width = screen_width
                 new_height = int(screen_width / img_ratio)
             else:
                 new_height = screen_height
                 new_width = int(screen_height * img_ratio)
-            
+
             scaled_img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
             scaled_img.save(temp_scaled_path)
-        
+
         print("Downscaling completed, starting background removal...")
-        rem_script = os.path.join(utils.get_current_dir(), "rem.py")
+        rem_script = os.path.join(
+            utils.get_current_dir(), "services", "rembg_processor.py"
+        )
         cmd = f"python {rem_script} -m u2net {temp_scaled_path} {temp_rembg_path}"
-        
+
         result = utils.exec_sh(cmd)
         print(f"Background removal completed: {result.stdout}")
-        
-        # Move the processed image to final output path
+
         os.rename(temp_rembg_path, output_path)
-        
-        # Clean up temp scaled file
+
         os.remove(temp_scaled_path)
-        
+
         user_options.wallpaper.depth_wall = output_path
         print(f"Processed wallpaper saved: {output_path}")
         return output_path
-        
+
     except Exception as e:
         print(f"Error processing wallpaper: {e}")
-        # Clean up temp files
+
         for temp_file in [temp_scaled_path, temp_rembg_path]:
             if os.path.exists(temp_file):
                 os.remove(temp_file)

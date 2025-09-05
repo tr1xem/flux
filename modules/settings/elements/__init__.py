@@ -6,6 +6,7 @@ from .filerow import FileRow
 from .spinrow import SpinRow
 from .entryrow import EntryRow
 from .dropdownrow import DropdownRow
+from .buttonrow import ButtonRow
 from .entry import SettingsEntry
 
 __all__ = [
@@ -18,5 +19,6 @@ __all__ = [
     "SpinRow",
     "EntryRow",
     "DropdownRow",
+    "ButtonRow",
     "SettingsEntry",
 ]
