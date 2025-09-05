@@ -25,7 +25,7 @@
 <h2><sub><img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Camera%20with%20Flash.png" alt="Camera with Flash" width="25" height="25" /></sub> Screenshots</h2>
 <table align="center">
   <tr>
-    <td colspan="4"><img src="assets/screenshots/ss3.png"></td>
+    <td colspan="2"><img src="assets/screenshots/ss3.png"></td>
   </tr>
   <tr>
     <td colspan="1"><img src="assets/screenshots/ss2.png"></td>
@@ -53,8 +53,8 @@
 - [x] Power Profiles Support
 - [x] Idle Inhibition
 - [x] Recording Indicator
-- [ ] Desktop Widgets
-- [ ] Refactor Depth Wallpapers
+- [x] Desktop Widgets
+- [x] Depth Wallpapers
 - [x] Matugen Support (complete)
 - [ ] OTP Manager
 - [x] Multi-monitor Support
@@ -66,7 +66,7 @@
 - [Linkfrg](https://github.com/linkfrg/) for creation of [ignis](https://github.com/ignis-sh/ignis) without it this shell would'nt exists and his awesome [dotfiles](https://github.com/linkfrg/dotfiles)
 - [Tanish](https://github.com/randomboi404) for usefull snippets and ideas - [Veloria](https://github.com/randomboi404/veloria)
 
-* ignis means fire while flux means flow so basically its "flow of fire"
+_ignis means fire while flux means flow so basically its "flow of fire"_
 
 _A computer is like air conditioning - it becomes useless when you open Windows_ <br>
 ~ [_Linus Torvalds_](https://www.youtube.com/watch?v=mjqTDtEY8W)
