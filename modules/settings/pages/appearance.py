@@ -178,6 +178,12 @@ class AppearanceEntry(SettingsEntry):
                             on_change=lambda x,
                             state: user_options.material.set_blur_enabled(state),
                         ),
+                        SwitchRow(
+                            label="Depth wallpaper",
+                            active=user_options.wallpaper.bind("depth_wall_enabled"),
+                            on_change=lambda x,
+                            state: user_options.wallpaper.set_depth_wall_enabled(state),
+                        ),
                         FileRow(
                             label="Wallpaper path",
                             button_label=os.path.basename(

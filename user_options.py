@@ -50,6 +50,14 @@ class UserOptions(OptionsManager):
         color_scheme: str = "Tonal Spot"
         colors: dict[str, str] = {}
 
+    class Datetime(OptionsGroup):
+        x_position: int = 400
+        y_position: int = 90
+
+    class Wallpaper(OptionsGroup):
+        depth_wall: str = ""
+        depth_wall_enabled: bool = True
+
     class Default(OptionsGroup):
         screenshot_app: list[str] = TrackedList()
 
@@ -57,6 +65,8 @@ class UserOptions(OptionsManager):
     user = User()
     settings = Settings()
     material = Material()
+    datetime = Datetime()
+    wallpaper = Wallpaper()
 
 
 user_options = UserOptions()
