@@ -1,18 +1,16 @@
 import asyncio
 import os
 import sys
-import tempfile
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "..", "services"))
 from ignis import utils, widgets
 from ignis.css_manager import CssManager
 from ignis.options import options
-from PIL import Image
+from gi.repository import GdkPixbuf
 
 from services.material import MaterialService
 from user_options import user_options
 
-from services import image_processor
 from ..elements import FileRow, SettingsEntry, SettingsGroup, SettingsPage, SwitchRow
 
 material = MaterialService.get_default()
@@ -55,49 +53,6 @@ def get_scheme_index(scheme_name: str) -> int:
         return 0  # Default to "Tonal Spot"
 
 
-downscale_img: str = ""
-
-
-def downscale_image_to_preview_size(
-    image_path: str, target_width: int = 480, target_height: int = 270
-) -> str:
-    """
-    Downscale an image to match the appearance preview dimensions.
-    Default dimensions are 1920//4 x 1080//4 (480x270) to match the wallpaper preview.
-    Returns the path to the downscaled image, or the original path if scaling fails.
-    """
-    return image_processor.scale_for_preview(image_path, target_width, target_height)
-
-    try:
-        with Image.open(image_path) as img:
-            original_width, original_height = img.size
-
-            original_aspect = original_width / original_height
-            target_aspect = target_width / target_height
-
-            if original_aspect > target_aspect:
-                new_height = target_height
-                new_width = int(target_height * original_aspect)
-            else:
-                new_width = target_width
-                new_height = int(target_width / original_aspect)
-
-            if new_width < original_width or new_height < original_height:
-                resized = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
-                temp_fd, temp_path = tempfile.mkstemp(suffix=".png")
-                os.close(temp_fd)
-                resized.save(temp_path, "PNG", optimize=True)
-
-                downscale_img = temp_path
-                return temp_path
-            else:
-                downscale_img = image_path
-                return image_path
-
-    except Exception:
-        return image_path
-
-
 _color_scheme_buttons = []
 
 
@@ -134,11 +89,11 @@ class AppearanceEntry(SettingsEntry):
                             child=widgets.Picture(
                                 image=options.wallpaper.bind(
                                     "wallpaper_path",
-                                    transform=lambda path: downscale_image_to_preview_size(
-                                        path
-                                    )
-                                    if path
-                                    else None,
+                                    transform=lambda path: utils.crop_pixbuf(
+                                        GdkPixbuf.Pixbuf.new_from_file(path),
+                                        1920 // 4,
+                                        1080 // 4,
+                                    ),
                                 ),
                                 width=1920 // 4,
                                 height=1080 // 4,
@@ -203,7 +158,7 @@ class AppearanceEntry(SettingsEntry):
                                         )
                                     ),
                                 ),
-                                initial_path=options.wallpaper.bind("wallpaper_path"),
+                                initial_path=os.path.expanduser("~/Pictures"),
                                 filters=[
                                     widgets.FileFilter(
                                         mime_types=["image/jpeg", "image/png"],

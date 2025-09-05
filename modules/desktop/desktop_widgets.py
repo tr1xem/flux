@@ -147,6 +147,7 @@ class Depth(widgets.Window):
             image=user_options.wallpaper.bind("depth_wall"),
             hexpand=True,
             vexpand=True,
+            content_fit="cover",
             css_classes=["depth-wallpaper"],
         )
 
