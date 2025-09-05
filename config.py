@@ -38,7 +38,9 @@ css_manager = CssManager.get_default()
 
 
 WallpaperService.get_default()
-if options.wallpaper.wallpaper_path is None:
+if options.wallpaper.wallpaper_path is None or not os.path.exists(
+    options.wallpaper.wallpaper_path
+):
     options.wallpaper.set_wallpaper_path(
         os.path.curdir + "./assets/example_wallpapers/example-1.jpeg"
     )
