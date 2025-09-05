@@ -1,7 +1,9 @@
 import asyncio
 import os
+import sys
 import tempfile
 
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "..", "services"))
 from ignis import utils, widgets
 from ignis.css_manager import CssManager
 from ignis.options import options
@@ -10,10 +12,10 @@ from PIL import Image
 from services.material import MaterialService
 from user_options import user_options
 
+from ...shared_widgets import image_processor
 from ..elements import FileRow, SettingsEntry, SettingsGroup, SettingsPage, SwitchRow
 
 material = MaterialService.get_default()
-
 css_manager = CssManager.get_default()
 COLOR_SCHEME_OPTIONS = [
     "Tonal Spot",
@@ -64,8 +66,7 @@ def downscale_image_to_preview_size(
     Default dimensions are 1920//4 x 1080//4 (480x270) to match the wallpaper preview.
     Returns the path to the downscaled image, or the original path if scaling fails.
     """
-    if not image_path or not os.path.exists(image_path):
-        return image_path
+    return image_processor.scale_for_preview(image_path, target_width, target_height)
 
     try:
         with Image.open(image_path) as img:
