@@ -5,6 +5,7 @@ from .active_page import active_page
 from .pages import (
     AboutEntry,
     AppearanceEntry,
+    DraggablesEntry,
     NotificationsEntry,
     RecorderEntry,
     UserEntry,
@@ -57,6 +58,7 @@ class Settings(widgets.RegularWindow):
             NotificationsEntry(),
             RecorderEntry(),
             AppearanceEntry(),
+            DraggablesEntry(),
             UserEntry(),
             AboutEntry(),
         ]
