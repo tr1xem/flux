@@ -41,6 +41,7 @@ async def get_image_hash_async(image_path):
 
 
 async def process_wallpaper_with_rembg_async(wallpaper_path):
+    user_options.rembg.enabled = False
     if not wallpaper_path or not os.path.exists(wallpaper_path):
         return None
 
@@ -75,29 +76,31 @@ async def process_wallpaper_with_rembg_async(wallpaper_path):
         def _remove_background():
             script_dir = os.path.dirname(os.path.abspath(__file__))
             rem_script = os.path.join(script_dir, "rembg_processor.py")
-            
+
             # Use user options with defaults
-            model = getattr(user_options.rembg, 'model', 'u2net')
-            alpha_matting = getattr(user_options.rembg, 'alpha_matting', True)
-            fg_threshold = getattr(user_options.rembg, 'foreground_threshold', 240)
-            bg_threshold = getattr(user_options.rembg, 'background_threshold', 10)
-            erode_size = getattr(user_options.rembg, 'erode_size', 15)
-            
-            cmd_parts = [
-                'python', f'"{rem_script}"',
-                '-m', model
-            ]
-            
+            model = getattr(user_options.rembg, "model", "u2net")
+            alpha_matting = getattr(user_options.rembg, "alpha_matting", True)
+            fg_threshold = getattr(user_options.rembg, "foreground_threshold", 240)
+            bg_threshold = getattr(user_options.rembg, "background_threshold", 10)
+            erode_size = getattr(user_options.rembg, "erode_size", 15)
+
+            cmd_parts = ["python", f'"{rem_script}"', "-m", model]
+
             if alpha_matting:
-                cmd_parts.extend([
-                    '--alpha-matting',
-                    '-ft', str(fg_threshold),
-                    '-bt', str(bg_threshold), 
-                    '-e', str(erode_size)
-                ])
-            
+                cmd_parts.extend(
+                    [
+                        "--alpha-matting",
+                        "-ft",
+                        str(fg_threshold),
+                        "-bt",
+                        str(bg_threshold),
+                        "-e",
+                        str(erode_size),
+                    ]
+                )
+
             cmd_parts.extend([f'"{temp_scaled_path}"', f'"{output_path}"'])
-            cmd = ' '.join(cmd_parts)
+            cmd = " ".join(cmd_parts)
 
             result = utils.exec_sh(cmd)
 
@@ -123,6 +126,7 @@ async def process_wallpaper_with_rembg_async(wallpaper_path):
             os.remove(temp_scaled_path)
 
         user_options.wallpaper.depth_wall = output_path
+        user_options.rembg.enabled = True
 
         return output_path
 
@@ -206,7 +210,7 @@ def on_wallpaper_change():
                 asyncio.create_task(downscale_wallpaper_async(wallpaper_path))
 
             # Check if rembg is enabled
-            rembg_enabled = getattr(user_options.rembg, 'enabled', True)
+            rembg_enabled = getattr(user_options.rembg, "enabled", True)
 
             if rembg_enabled and _original_wallpaper_path:
                 asyncio.create_task(
@@ -222,7 +226,7 @@ def on_wallpaper_change():
 def on_depth_wall_toggle():
     try:
         # Check if rembg is enabled
-        rembg_enabled = getattr(user_options.rembg, 'enabled', True)
+        rembg_enabled = getattr(user_options.rembg, "enabled", True)
 
         if rembg_enabled:
             wallpaper_cache_dir = os.path.join(CACHE_DIR, "wallpapers")
@@ -241,3 +245,4 @@ def on_depth_wall_toggle():
 
     except Exception as e:
         print(e)
+
