@@ -329,4 +329,3 @@ class Weather(widgets.Box):
         self._label.label = text
         self._icon.set_image(icon_name)
         self._event_box.tooltip_markup = tooltip_text
-

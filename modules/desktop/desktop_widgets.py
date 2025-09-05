@@ -1,5 +1,6 @@
 from ignis import widgets, utils
 import datetime
+import os
 from ignis.variable import Variable
 from ..shared_widgets.fixed import Fixed
 from user_options import user_options
@@ -147,6 +148,10 @@ class Depth(widgets.Window):
             image=user_options.wallpaper.bind("depth_wall"),
             hexpand=True,
             vexpand=True,
+            visible=user_options.wallpaper.bind(
+                "depth_wall_enabled",
+                lambda x: False if x is None or not os.path.exists(x) else True,
+            ),
             content_fit="cover",
             css_classes=["depth-wallpaper"],
         )
