@@ -14,9 +14,6 @@ def process_image_rembg(
     background_threshold: int,
     erode_size: int,
 ):
-    """
-    يعالج صورة لإزالة الخلفية باستخدام rembg مع خيارات قابلة للتخصيص.
-    """
     input_path = Path(input_path_str)
     output_path = Path(output_path_str)
 
