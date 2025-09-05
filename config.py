@@ -1,5 +1,4 @@
 # Standard library imports
-import datetime
 import os
 import sys
 
@@ -9,12 +8,11 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 
 # Ignis imports
-from ignis import utils, widgets
+from ignis import utils
 from ignis.css_manager import CssInfoPath, CssManager
 from ignis.icon_manager import IconManager
 from ignis.options import options
 from ignis.services.wallpaper import WallpaperService
-from ignis.variable import Variable
 
 # Local module imports
 from modules import (
@@ -24,10 +22,12 @@ from modules import (
     Osd,
     Powermenu,
     Settings,
+    TimeWidget,
+    DateWidget,
+    Depth,
 )
 from modules.bar.widgets.player_expanded import ExpandedPlayerWindow
 from modules.shared_widgets import CornerAll
-from modules.shared_widgets.fixed import Fixed
 from services.wallpaper_processor import on_depth_wall_toggle, on_wallpaper_change
 from user_options import user_options
 
@@ -104,103 +104,11 @@ css_manager.apply_css(
 corner_size = (30, 30)
 
 
-def setup_datetime_widget():
-    simple_datetime = widgets.Label(css_classes=["movable-datetime"], use_markup=True)
-    
-    time_variable = Variable(
-        value=utils.Poll(
-            1000,
-            lambda x: datetime.datetime.now().strftime("%I:%M"),
-        ).bind("output")
-    )
-    
-    simple_datetime.label = time_variable.bind("value")
-    
-    fix = Fixed(
-        hexpand=True,
-        vexpand=True,
-        child=[
-            (
-                simple_datetime,
-                (user_options.datetime.x_position, user_options.datetime.y_position),
-            )
-        ],
-        css_classes=["fixed-label"],
-    )
-    
-    datetime_window = widgets.Window(
-        namespace="ignis_DATETIME",
-        exclusivity="ignore",
-        anchor=["top", "right", "bottom", "left"],
-        css_classes=["rec-unset"],
-        layer="bottom",
-        child=fix,
-    )
-    
-    def move():
-        fix.move(
-            simple_datetime,
-            user_options.datetime.x_position,
-            user_options.datetime.y_position,
-        )
-
-    def update_datetime_visibility():
-        enabled = user_options.desktop_widgets.datetime_enabled
-        datetime_window.set_visible(enabled)
-    
-    user_options.datetime.connect("changed", lambda *_: move())
-    user_options.desktop_widgets.connect_option("datetime_enabled", lambda: update_datetime_visibility())
-    
-    # Set initial visibility
-    update_datetime_visibility()
-    
-    return simple_datetime, fix
-
-
-def setup_depth_wall():
-    depth_picture = widgets.Picture(
-        image=user_options.wallpaper.bind("depth_wall"),
-        hexpand=True,
-        vexpand=True,
-        content_fit="cover",
-        css_classes=["depth-wallpaper"],
-    )
-
-    depth_window = widgets.Window(
-        namespace="ignis_fixed_d2",
-        exclusivity="ignore",
-        anchor=["top", "right", "bottom", "left"],
-        css_classes=["rec-unset"],
-        layer="bottom",
-        child=depth_picture,
-    )
-
-    def update_depth_window_visibility():
-        enabled = user_options.wallpaper.depth_wall_enabled
-        path = user_options.wallpaper.depth_wall
-
-        if enabled and path:
-            depth_window.set_visible(True)
-        else:
-            depth_window.set_visible(False)
-
-    user_options.wallpaper.connect_option(
-        "depth_wall", lambda: update_depth_window_visibility()
-    )
-    user_options.wallpaper.connect_option(
-        "depth_wall_enabled", lambda: update_depth_window_visibility()
-    )
-
-    update_depth_window_visibility()
-    return depth_window
-
-
-# Widget Setup
-simple_datetime, fix = setup_datetime_widget()
-depth_window = setup_depth_wall()
-
-# Widget Initialization
+# # Widget Initialization
 for monitor in range(utils.get_n_monitors()):
+    TimeWidget(monitor)
+    DateWidget(monitor)
+    Depth(monitor)
     ExpandedPlayerWindow(monitor)
     ControlCenter(monitor)
     Bar(monitor)

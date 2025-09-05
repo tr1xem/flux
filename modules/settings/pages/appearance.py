@@ -12,7 +12,7 @@ from PIL import Image
 from services.material import MaterialService
 from user_options import user_options
 
-from ...shared_widgets import image_processor
+from services import image_processor
 from ..elements import FileRow, SettingsEntry, SettingsGroup, SettingsPage, SwitchRow
 
 material = MaterialService.get_default()

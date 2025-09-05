@@ -142,8 +142,15 @@ filechooser {
         }
     }
 }
-.movable-datetime {
+.movable-time {
     font-size: 15rem;
+    font-weight: bold;
+    opacity: 0.8;
+    color: $onSurface;
+    font-family: "SF Pro Rounded";
+}
+.movable-date {
+    font-size: 7rem;
     font-weight: bold;
     opacity: 0.8;
     color: $onSurface;

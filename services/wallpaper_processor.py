@@ -7,6 +7,7 @@ from ignis.options import options
 from PIL import Image
 
 from user_options import user_options
+# NOTE: I m using external script for rembg, because in that way i dont have to care about handeling memory pro move btw
 
 
 def get_monitor_size():
@@ -80,7 +81,7 @@ async def process_wallpaper_with_rembg_async(wallpaper_path):
 
             script_dir = os.path.dirname(os.path.abspath(__file__))
             rem_script = os.path.join(script_dir, "rembg_processor.py")
-            cmd = f'python "{rem_script}" -m u2net "{temp_scaled_path}" "{output_path}"'
+            cmd = f'python "{rem_script}" -m u2net --alpha-matting "{temp_scaled_path}" "{output_path}"'
             print(f"Running command: {cmd}")
 
             result = utils.exec_sh(cmd)

@@ -50,12 +50,23 @@ class UserOptions(OptionsManager):
         color_scheme: str = "Tonal Spot"
         colors: dict[str, str] = {}
 
-    class Datetime(OptionsGroup):
+    class Time(OptionsGroup):
         x_position: int = 400
         y_position: int = 90
+        color: str = "#FFFFFF"
+        use_custom_color: bool = False
+        font_size: int = 24
+
+    class Date(OptionsGroup):
+        x_position: int = 400
+        y_position: int = 140
+        color: str = "#FFFFFF"
+        use_custom_color: bool = False
+        font_size: int = 18
 
     class DesktopWidgets(OptionsGroup):
-        datetime_enabled: bool = True
+        time_enabled: bool = True
+        date_enabled: bool = True
 
     class Wallpaper(OptionsGroup):
         depth_wall: str = ""
@@ -68,7 +79,8 @@ class UserOptions(OptionsManager):
     user = User()
     settings = Settings()
     material = Material()
-    datetime = Datetime()
+    time = Time()
+    date = Date()
     desktop_widgets = DesktopWidgets()
     wallpaper = Wallpaper()
 
