@@ -1,5 +1,6 @@
 from .about import AboutEntry
 from .appearance import AppearanceEntry
+from .depth_effect import DepthEffectEntry
 from .desktop_widgets import DesktopWidgetsEntry
 from .draggables import DraggablesEntry
 from .notifications import NotificationsEntry
@@ -8,7 +9,8 @@ from .user import UserEntry
 
 __all__ = [
     "AboutEntry",
-    "AppearanceEntry", 
+    "AppearanceEntry",
+    "DepthEffectEntry", 
     "DesktopWidgetsEntry",
     "DraggablesEntry",
     "NotificationsEntry",

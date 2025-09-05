@@ -70,7 +70,21 @@ class UserOptions(OptionsManager):
 
     class Wallpaper(OptionsGroup):
         depth_wall: str = ""
-        depth_wall_enabled: bool = True
+
+    class Rembg(OptionsGroup):
+        enabled: bool = True
+        model: str = "u2net"
+        alpha_matting: bool = True
+        foreground_threshold: int = 240
+        background_threshold: int = 10
+        erode_size: int = 15
+
+    class Rembg(OptionsGroup):
+        model: str = "u2net"
+        alpha_matting: bool = True
+        foreground_threshold: int = 240
+        background_threshold: int = 10
+        erode_size: int = 15
 
     class Default(OptionsGroup):
         screenshot_app: list[str] = TrackedList()
@@ -83,9 +97,24 @@ class UserOptions(OptionsManager):
     date = Date()
     desktop_widgets = DesktopWidgets()
     wallpaper = Wallpaper()
+    rembg = Rembg()
 
 
 user_options = UserOptions()
+
+# Initialize rembg options with default values if not present
+if not hasattr(user_options.rembg, 'enabled'):
+    user_options.rembg.enabled = True
+if not hasattr(user_options.rembg, 'model'):
+    user_options.rembg.model = "u2net"
+if not hasattr(user_options.rembg, 'alpha_matting'):
+    user_options.rembg.alpha_matting = True
+if not hasattr(user_options.rembg, 'foreground_threshold'):
+    user_options.rembg.foreground_threshold = 240
+if not hasattr(user_options.rembg, 'background_threshold'):
+    user_options.rembg.background_threshold = 10
+if not hasattr(user_options.rembg, 'erode_size'):
+    user_options.rembg.erode_size = 15
 for app in SCREENSHOT_APPS:
     if app not in user_options.default.screenshot_app:
         user_options.default.screenshot_app.append(app)

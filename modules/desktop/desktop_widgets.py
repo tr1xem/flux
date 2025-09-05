@@ -148,10 +148,6 @@ class Depth(widgets.Window):
             image=user_options.wallpaper.bind("depth_wall"),
             hexpand=True,
             vexpand=True,
-            visible=user_options.wallpaper.bind(
-                "depth_wall_enabled",
-                lambda x: False if x is None or not os.path.exists(x) else True,
-            ),
             content_fit="cover",
             css_classes=["depth-wallpaper"],
         )
@@ -167,10 +163,10 @@ class Depth(widgets.Window):
         )
 
         def update_visibility():
-            enabled = user_options.wallpaper.depth_wall_enabled
+            enabled = getattr(user_options.rembg, 'enabled', True)
             self.set_visible(enabled)
 
-        user_options.wallpaper.connect_option(
-            "depth_wall_enabled", lambda: update_visibility()
-        )
+        # Connect to rembg options
+        if hasattr(user_options, 'rembg'):
+            user_options.rembg.connect_option("enabled", lambda: update_visibility())
         update_visibility()

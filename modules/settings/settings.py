@@ -5,6 +5,7 @@ from .active_page import active_page
 from .pages import (
     AboutEntry,
     AppearanceEntry,
+    DepthEffectEntry,
     DesktopWidgetsEntry,
     DraggablesEntry,
     NotificationsEntry,
@@ -59,6 +60,7 @@ class Settings(widgets.RegularWindow):
             NotificationsEntry(),
             RecorderEntry(),
             AppearanceEntry(),
+            DepthEffectEntry(),
             DesktopWidgetsEntry(),
             DraggablesEntry(),
             UserEntry(),

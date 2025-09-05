@@ -47,9 +47,9 @@ if options.wallpaper.wallpaper_path is None or not os.path.exists(
 
 
 options.wallpaper.connect_option("wallpaper_path", lambda: on_wallpaper_change())
-user_options.wallpaper.connect_option(
-    "depth_wall_enabled", lambda: on_depth_wall_toggle()
-)
+# Connect to rembg options
+if hasattr(user_options, 'rembg'):
+    user_options.rembg.connect_option("enabled", lambda: on_depth_wall_toggle())
 
 
 def format_scss_var(name: str, val: str) -> str:
