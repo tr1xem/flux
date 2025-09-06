@@ -17,7 +17,7 @@ from ignis.services.wallpaper import WallpaperService
 # Local module imports
 from modules import (
     Bar,
-    ControlCenter,
+    get_control_center,
     NotificationPopup,
     Osd,
     Powermenu,
@@ -104,12 +104,12 @@ css_manager.apply_css(
 
 
 # # Widget Initialization
+ExpandedPlayerWindow()
+get_control_center()  # Initialize singleton control center
 for monitor in range(utils.get_n_monitors()):
     TimeWidget(monitor)
     DateWidget(monitor)
     Depth(monitor)
-    ExpandedPlayerWindow(monitor)
-    ControlCenter(monitor)
     Bar(monitor)
     NotificationPopup(monitor)
     CornerAll(monitor)

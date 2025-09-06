@@ -23,15 +23,8 @@ class Player(widgets.Box):
 
         self._players: List[MprisPlayer] = []
         self._current_player: Optional[MprisPlayer] = None
-        self._player_connections: dict = {}  # Track signal connections per player
-        self._current_bindings: list = []  # Track current player bindings
-        self._window = window_manager.get_window(f"ignis_MEDIA_{monitor_id}")
+        self._window = window_manager.get_window("ignis_MEDIA")
         self._monitor = 0
-        
-        # Cache for formatted strings to avoid repeated formatting
-        self._cached_title = ""
-        self._cached_artist = ""
-        self._cached_label = ""
 
         self.title_label = widgets.Label(
             valign="center",
@@ -51,7 +44,7 @@ class Player(widgets.Box):
                 image="play-symbolic",
                 pixel_size=16,
             ),
-            on_click=self._on_play_pause_click,
+            on_click=lambda x: self._play_pause(),
             sensitive=False,
         )
         self._progress_bar = CircularProgressBar(
@@ -72,7 +65,7 @@ class Player(widgets.Box):
         self.eventBox = widgets.EventBox(
             hexpand=True,
             vexpand=True,
-            on_click=self._on_event_box_click,
+            on_click=lambda x: self.__on_click(x),
             child=[self.title_label],
         )
 
@@ -81,67 +74,11 @@ class Player(widgets.Box):
         # self.append(self.play_pause_button)
         self.append(self.eventBox)
 
-        mpris.connect("player_added", self._on_player_added)
+        mpris.connect("player_added", lambda x, player: self._add_player(player))
 
         # Check if there's already an active player
         for player in mpris.players:
             self._add_player(player)
-
-    def _format_label(self, player: MprisPlayer) -> str:
-        """Format player title and artist - moved to class level to avoid function redefinition"""
-        title = player.title or "Unknown Title"
-        artist = player.artist
-        
-        # Cache check to avoid repeated string formatting
-        if self._cached_title == title and self._cached_artist == artist:
-            return self._cached_label
-        
-        # Update cache
-        self._cached_title = title
-        self._cached_artist = artist
-        self._cached_label = f"{title} • {artist}" if artist else title
-        
-        return self._cached_label
-
-    def _on_player_added(self, service, player):
-        """Handle player_added signal - method reference instead of lambda"""
-        self._add_player(player)
-
-    def _on_play_pause_click(self, button):
-        """Handle play/pause button click - method reference instead of lambda"""
-        self._play_pause()
-
-    def _on_event_box_click(self, event_box):
-        """Handle event box click - method reference instead of lambda"""
-        self.__on_click(event_box)
-
-    def _on_playback_changed(self, player, param=None):
-        """Handle playback status change - method reference instead of lambda"""
-        # Switch to this player if it just started playing
-        if player.playback_status == "Playing" and self._current_player != player:
-            self._switch_to_player(player)
-
-    def _on_player_closed(self, player):
-        """Handle player closed - method reference instead of lambda"""
-        self._remove_player(player)
-
-    def _on_length_changed(self, player, param=None):
-        """Handle length property change - method reference instead of lambda"""
-        if hasattr(self._progress_bar, '_max_value'):
-            self._progress_bar._max_value = player.length or 1
-
-    def _on_position_changed(self, player, param=None):
-        """Handle position property change - method reference instead of lambda"""
-        if hasattr(self._progress_bar, '_value'):
-            self._progress_bar._value = player.position or 0
-
-    def _on_title_changed(self, player, param=None):
-        """Handle title change - method reference instead of lambda"""
-        self.title_label.label = self._format_label(player)
-
-    def _on_artist_changed(self, player, param=None):
-        """Handle artist change - method reference instead of lambda"""
-        self.title_label.label = self._format_label(player)
 
     def _add_player(self, player: MprisPlayer) -> None:
         if player in self._players:
@@ -149,11 +86,13 @@ class Player(widgets.Box):
 
         self._players.append(player)
 
-        # Store signal connections for this player using method references
-        connections = []
-        connections.append(player.connect("notify::playback-status", self._on_playback_changed))
-        connections.append(player.connect("closed", self._on_player_closed))
-        self._player_connections[player] = connections
+        # Listen for playback status changes
+        player.connect(
+            "notify::playback-status", lambda p, _: self._on_playback_changed(p)
+        )
+
+        # Handle player removal when it closes
+        player.connect("closed", lambda p: self._remove_player(p))
 
         # Switch to this player if it's currently playing or if we have no current player
         if player.playback_status == "Playing" or self._current_player is None:
@@ -161,18 +100,9 @@ class Player(widgets.Box):
 
     def _remove_player(self, player: MprisPlayer) -> None:
         if player in self._players:
-            # Disconnect signal connections to prevent memory leaks
-            if player in self._player_connections:
-                for connection_id in self._player_connections[player]:
-                    player.disconnect(connection_id)
-                del self._player_connections[player]
-                
             self._players.remove(player)
 
             if self._current_player == player:
-                # Clear current bindings before switching
-                self._clear_current_bindings()
-                
                 # Find another playing player or fall back to any available player
                 next_player = self._find_playing_player() or (
                     self._players[0] if self._players else None
@@ -182,57 +112,48 @@ class Player(widgets.Box):
                 else:
                     self._clear_player()
 
+    def _on_playback_changed(self, player: MprisPlayer) -> None:
+        # Switch to this player if it just started playing
+        if player.playback_status == "Playing" and self._current_player != player:
+            self._switch_to_player(player)
+
     def _find_playing_player(self) -> Optional[MprisPlayer]:
         for player in self._players:
             if player.playback_status == "Playing":
                 return player
         return None
 
-    def _clear_current_bindings(self) -> None:
-        """Clear current player bindings to prevent memory leaks"""
-        # Properly destroy bindings instead of just clearing the list
-        for binding in self._current_bindings:
-            if hasattr(binding, 'destroy'):
-                binding.destroy()
-            elif hasattr(binding, 'disconnect'):
-                binding.disconnect()
-        self._current_bindings.clear()
-
     def _switch_to_player(self, player: MprisPlayer) -> None:
-        # Clear previous bindings first
-        self._clear_current_bindings()
-        
         self._current_player = player
 
-        # Store new bindings for cleanup later
-        max_value_binding = player.bind("length")
-        value_binding = player.bind("position") 
-        title_binding = player.bind("title", lambda _: self._format_label(player))
-        playback_binding = player.bind("playback_status", lambda status: "pause-symbolic" if status == "Playing" else "play-symbolic")
-        
-        self._current_bindings.extend([max_value_binding, value_binding, title_binding, playback_binding])
-        
-        # Add signal connections to existing player connections for proper cleanup
-        if player in self._player_connections:
-            self._player_connections[player].extend([
-                player.connect("notify::length", self._on_length_changed),
-                player.connect("notify::position", self._on_position_changed),
-                player.connect("notify::artist", self._on_artist_changed)
-            ])
+        self._progress_bar.max_value = player.bind("length")
+        self._progress_bar.value = player.bind("position")
 
-        # Set initial values
-        self.title_label.label = title_binding
-        self.play_pause_button.child.image = playback_binding
+        # Update title binding with artist
+        def format_label():
+            title = player.title or "Unknown Title"
+            artist = player.artist
+            return f"{title} • {artist}" if artist else title
+
+        self.title_label.label = player.bind("title", lambda _: format_label())
+        player.connect(
+            "notify::artist",
+            lambda *_: setattr(self.title_label, "label", format_label()),
+        )
+
+        # Update play/pause button
+        self.play_pause_button.child.image = player.bind(
+            "playback_status",
+            lambda status: "pause-symbolic" if status == "Playing" else "play-symbolic",
+        )
         self.play_pause_button.sensitive = True
 
     def _clear_player(self) -> None:
-        self._clear_current_bindings()
         self._current_player = None
         self.title_label.label = "No Media Playing"
         self.play_pause_button.child.image = "play-symbolic"
-        # Use property setters directly to avoid binding issues
-        self._progress_bar._value = 1
-        self._progress_bar._max_value = 1
+        self._progress_bar.value = 1
+        self._progress_bar.max_value = 1
         self.play_pause_button.sensitive = False
 
     def _play_pause(self) -> None:
@@ -240,9 +161,8 @@ class Player(widgets.Box):
             asyncio.create_task(self._current_player.play_pause_async())
 
     def __on_click(self, x) -> None:
-        # Simplified window handling
-        try:
-            window_manager.toggle_window(f"ignis_MEDIA_{self._monitor}")
-        except:
-            # Fallback if toggle is not available
-            pass
+        if self._window.monitor == self._monitor:
+            self._window.visible = not self._window.visible
+        else:
+            self._window.set_monitor(self._monitor)
+            self._window.visible = True

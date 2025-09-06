@@ -90,6 +90,17 @@ class DesktopWidgetsEntry(SettingsEntry):
                                 )
                             ),
                         ),
+                        SwitchRow(
+                            label="Time Positioning Mode",
+                            sublabel="Enable to move time widget to top layer for repositioning",
+                            active=user_options.desktop_widgets.bind("time_positioning_mode"),
+                            on_change=(
+                                lambda x,
+                                state: user_options.desktop_widgets.set_time_positioning_mode(
+                                    state
+                                )
+                            ),
+                        ),
                     ],
                 ),
                 SettingsGroup(
@@ -132,6 +143,33 @@ class DesktopWidgetsEntry(SettingsEntry):
                             on_change=(
                                 lambda x, value: user_options.date.set_font_size(
                                     int(value)
+                                )
+                            ),
+                        ),
+                        SwitchRow(
+                            label="Date Positioning Mode",
+                            sublabel="Enable to move date widget to top layer for repositioning",
+                            active=user_options.desktop_widgets.bind("date_positioning_mode"),
+                            on_change=(
+                                lambda x,
+                                state: user_options.desktop_widgets.set_date_positioning_mode(
+                                    state
+                                )
+                            ),
+                        ),
+                    ],
+                ),
+                SettingsGroup(
+                    name="Widget Positioning",
+                    rows=[
+                        SwitchRow(
+                            label="Change Position Mode",
+                            sublabel="Enable to move widgets to top layer for repositioning. Turn off when done to move back to desktop.",
+                            active=user_options.desktop_widgets.bind("positioning_mode"),
+                            on_change=(
+                                lambda x,
+                                state: user_options.desktop_widgets.set_positioning_mode(
+                                    state
                                 )
                             ),
                         ),

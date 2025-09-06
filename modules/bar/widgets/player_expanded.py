@@ -42,22 +42,22 @@ class Player(widgets.Revealer):
         self._player = player
         self._colors_path = f"{MEDIA_SCSS_CACHE_DIR}/{self.clean_desktop_entry()}.scss"
         self._signal_connections = []
-        
+
         # Initialize the widget first before doing anything else
         super().__init__(
             transition_type="slide_down",
             reveal_child=False,
             css_classes=[self.get_css("media")],
-            child=self._create_widget_content()
+            child=self._create_widget_content(),
         )
-        
+
         # Now set up signal connections after widget is initialized
         closed_id = player.connect("closed", self._on_closed)
         art_url_id = player.connect("notify::art-url", self._on_art_url_changed)
         self._signal_connections.extend([closed_id, art_url_id])
-        
+
         self.load_colors()
-    
+
     def _create_widget_content(self):
         """Create the widget content - separated to ensure proper initialization order"""
         return widgets.Overlay(
@@ -93,18 +93,14 @@ class Player(widgets.Revealer):
                                             label=self._player.bind("title"),
                                             max_width_chars=30,
                                             halign="start",
-                                            css_classes=[
-                                                self.get_css("media-title")
-                                            ],
+                                            css_classes=[self.get_css("media-title")],
                                         ),
                                         widgets.Label(
                                             label=self._player.bind("artist"),
                                             max_width_chars=30,
                                             ellipsize="end",
                                             halign="start",
-                                            css_classes=[
-                                                self.get_css("media-artist")
-                                            ],
+                                            css_classes=[self.get_css("media-artist")],
                                         ),
                                     ],
                                 ),
@@ -342,8 +338,8 @@ class Player(widgets.Revealer):
     def destroy(self) -> None:
         # Store references before clearing them
         player = self._player
-        
-        # Disconnect all signal connections to prevent memory leaks  
+
+        # Disconnect all signal connections to prevent memory leaks
         if player:
             for connection_id in self._signal_connections:
                 try:
@@ -351,22 +347,25 @@ class Player(widgets.Revealer):
                 except:
                     pass  # Connection might already be disconnected
         self._signal_connections.clear()
-        
+
         # Clean up CSS to prevent accumulation
         if player:
             css_name = self.clean_desktop_entry()
             if css_name in css_manager.list_css_info_names():
                 css_manager.remove_css(css_name)
-        
+
         # Clear any cached colors file
         if os.path.exists(self._colors_path):
             try:
                 os.remove(self._colors_path)
             except OSError:
                 pass
-                
+
         self.set_reveal_child(False)
-        utils.Timeout(self.transition_duration, lambda: self.unparent() if self.get_parent() else None)
+        utils.Timeout(
+            self.transition_duration,
+            lambda: self.unparent() if self.get_parent() else None,
+        )
 
     def get_css(self, class_name: str) -> str:
         return f"{class_name}-{self.clean_desktop_entry()}"
@@ -424,7 +423,7 @@ class Media(widgets.Box):
             css_classes=["rec-unset"],
         )
         self._player_widgets = {}  # Track player widgets for cleanup
-        
+
         # Connect to player_added event using method reference
         mpris.connect("player_added", self._on_player_added)
 
@@ -440,15 +439,15 @@ class Media(widgets.Box):
         # Check if we already have a widget for this player
         if obj in self._player_widgets:
             return
-            
+
         player = Player(obj)
         self._player_widgets[obj] = player
         self.append(player)
         player.set_reveal_child(True)
-        
+
         # Connect to player removal to clean up widget using method reference
         obj.connect("closed", self._on_media_player_closed)
-    
+
     def __remove_player(self, obj: MprisPlayer) -> None:
         if obj in self._player_widgets:
             player_widget = self._player_widgets[obj]
@@ -458,7 +457,7 @@ class Media(widgets.Box):
 
 
 class ExpandedPlayerWindow(widgets.RevealerWindow):
-    def __init__(self, monitor_id: int = 0):
+    def __init__(self):
         revealer = widgets.Revealer(
             transition_type="slide_down",
             child=widgets.Box(
@@ -482,17 +481,17 @@ class ExpandedPlayerWindow(widgets.RevealerWindow):
             vexpand=True,
             hexpand=True,
             css_classes=["unset"],
-            on_click=lambda x: window_manager.close_window(f"ignis_MEDIA_{monitor_id}"),
+            on_click=lambda x: window_manager.close_window("ignis_MEDIA"),
         )
         super().__init__(
             visible=False,
             popup=True,
-            monitor=monitor_id,
+            monitor=0,
             kb_mode="on_demand",
             layer="top",
             css_classes=["unset"],
             anchor=["top", "left", "bottom", "right"],
-            namespace=f"ignis_MEDIA_{monitor_id}",
+            namespace="ignis_MEDIA",
             child=widgets.CenterBox(
                 hexpand=True,
                 halign="fill",
@@ -502,9 +501,7 @@ class ExpandedPlayerWindow(widgets.RevealerWindow):
                     vexpand=True,
                     hexpand=True,
                     css_classes=["unset"],
-                    on_click=lambda x: window_manager.close_window(
-                        f"ignis_MEDIA_{monitor_id}"
-                    ),
+                    on_click=lambda x: window_manager.close_window("ignis_MEDIA"),
                 ),
                 center_widget=widgets.Box(
                     vertical=True, child=[revealer, self.closeButton]

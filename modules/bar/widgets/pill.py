@@ -13,6 +13,7 @@ from ignis.variable import Variable
 from ignis.window_manager import WindowManager
 
 from ..indicator_icon import IndicatorIcon, NetworkIndicatorIcon
+from ...control_center import get_control_center
 
 network = NetworkService.get_default()
 notifications = NotificationService.get_default()
@@ -163,7 +164,7 @@ class Battery(widgets.Box):
 class StatusPill(widgets.Button):
     def __init__(self, monitor: int):
         self._monitor = monitor
-        self._window = window_manager.get_window(f"ignis_CONTROL_CENTER_{monitor}")
+        self._control_center = get_control_center()
 
         super().__init__(
             child=widgets.Box(
@@ -180,17 +181,23 @@ class StatusPill(widgets.Button):
                 ],
             ),
             on_click=self.__on_click,
-            css_classes=self._window.bind(
-                "visible",
-                lambda value: ["status-pill", "status-active"]
-                if value
-                else ["status-pill"],
-            ),
+            css_classes=["status-pill"],
         )
 
-    def __on_click(self, x) -> None:
-        if self._window.monitor == self._monitor:
-            self._window.visible = not self._window.visible
+        # Connect to control center visibility changes to update styling
+        self._control_center.connect("notify::visible", self._on_visibility_changed)
+        self._update_classes()
+
+    def _on_visibility_changed(self, *args):
+        """Update CSS classes when control center visibility changes"""
+        self._update_classes()
+
+    def _update_classes(self):
+        """Update CSS classes based on control center visibility"""
+        if self._control_center.visible:
+            self.css_classes = ["status-pill", "status-active"]
         else:
-            self._window.set_monitor(self._monitor)
-            self._window.visible = True
+            self.css_classes = ["status-pill"]
+
+    def __on_click(self, x) -> None:
+        self._control_center.toggle_on_monitor(self._monitor)

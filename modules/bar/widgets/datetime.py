@@ -5,6 +5,8 @@ from gi.repository import GLib
 from ignis import utils, widgets
 from ignis.variable import Variable
 
+_calendar_popup_instance = None
+
 
 class CalendarWidget(widgets.Box):
     def __init__(self):
@@ -142,8 +144,7 @@ class CalendarWidget(widgets.Box):
 
 
 class CalendarPopup(widgets.Window):
-    def __init__(self, monitor_id: int = 0):
-        self.monitor_id = monitor_id
+    def __init__(self):
         self.revealer = widgets.Revealer(
             css_classes=["calendar-revealer"],
             transition_type="slide_down",
@@ -153,8 +154,8 @@ class CalendarPopup(widgets.Window):
         )
 
         super().__init__(
-            namespace=f"ignis_CALENDAR_{monitor_id}",
-            monitor=monitor_id,
+            namespace="ignis_CALENDAR",
+            monitor=0,
             css_classes=["calendar-popup"],
             anchor=["top", "left", "bottom", "right"],
             exclusivity="normal",
@@ -188,17 +189,33 @@ class CalendarPopup(widgets.Window):
             ),
         )
 
-    def toggle(self):
+    def show_on_monitor(self, monitor_id: int):
+        """Show the calendar on the specified monitor"""
+        if self.monitor != monitor_id:
+            self.set_monitor(monitor_id)
+        self.set_visible(True)
+        self.revealer.reveal_child = True
+
+    def toggle_on_monitor(self, monitor_id: int):
+        """Toggle the calendar on the specified monitor"""
         if not self.visible:
-            self.visible = True
-            self.revealer.reveal_child = True
-        else:
+            self.show_on_monitor(monitor_id)
+        elif self.monitor == monitor_id:
             self.close()
+        else:
+            self.show_on_monitor(monitor_id)
 
     def close(self):
         self.revealer.reveal_child = False
         # Hide window after animation completes
-        GLib.timeout_add(350, lambda: setattr(self, "visible", False) or False)
+        GLib.timeout_add(350, lambda: self.set_visible(False) or False)
+
+
+def get_calendar_popup():
+    global _calendar_popup_instance
+    if _calendar_popup_instance is None:
+        _calendar_popup_instance = CalendarPopup()
+    return _calendar_popup_instance
 
 
 class Datetime(widgets.Box):
@@ -207,7 +224,8 @@ class Datetime(widgets.Box):
             css_classes=["datetime"],
         )
 
-        self.calendar_popup = CalendarPopup(monitor_id)
+        self.monitor_id = monitor_id
+        self.calendar_popup = get_calendar_popup()
 
         # Cache datetime formatting to avoid repeated string operations
         self._last_formatted = ""
@@ -233,7 +251,7 @@ class Datetime(widgets.Box):
 
         self.time_button = widgets.EventBox(
             css_classes=["unset"],
-            on_click=lambda x: self.calendar_popup.toggle(),
+            on_click=lambda x: self.calendar_popup.toggle_on_monitor(self.monitor_id),
             child=[
                 widgets.Label(
                     label=self.current_time.bind("value"),

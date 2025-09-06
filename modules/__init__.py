@@ -1,5 +1,5 @@
 from .bar import Bar
-from .control_center import ControlCenter
+from .control_center import ControlCenter, get_control_center
 from .notification_popup import NotificationPopup
 from .osd import Osd
 from .powermenu import Powermenu
@@ -13,6 +13,7 @@ __all__ = [
     "Osd",
     "Corner",
     "ControlCenter",
+    "get_control_center",
     "Settings",
     "Powermenu",
     "TimeWidget",

@@ -67,6 +67,9 @@ class UserOptions(OptionsManager):
     class DesktopWidgets(OptionsGroup):
         time_enabled: bool = True
         date_enabled: bool = True
+        positioning_mode: bool = False  # When True, widgets move to top layer for repositioning
+        time_positioning_mode: bool = False  # When True, time widget moves to top layer for repositioning
+        date_positioning_mode: bool = False  # When True, date widget moves to top layer for repositioning
 
     class Wallpaper(OptionsGroup):
         depth_wall: str = ""
