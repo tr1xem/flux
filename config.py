@@ -114,6 +114,16 @@ for monitor in range(utils.get_n_monitors()):
     NotificationPopup(monitor)
     CornerAll(monitor)
     Osd(monitor)
+    
+    # Add audio visualizer if sounddevice is available
+    try:
+        import sounddevice as sd
+        from modules.desktop.python_visualizer import desktop_audio_visualizer
+        desktop_audio_visualizer(monitor)
+    except ImportError as e:
+        print(f"Audio visualizer not available: {e}")
+    except Exception as e:
+        print(f"Could not start audio visualizer: {e}")
 
 Settings()
 Powermenu()

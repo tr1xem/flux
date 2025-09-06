@@ -62,7 +62,7 @@ class TimeWidget(widgets.Window):
 
     def update_visibility(self):
         enabled = user_options.desktop_widgets.time_enabled
-        self.set_visible(enabled)
+        self.time_label.set_visible(enabled)
 
     def update_style(self):
         if user_options.time.use_custom_color:
@@ -131,7 +131,7 @@ class DateWidget(widgets.Window):
 
     def update_visibility(self):
         enabled = user_options.desktop_widgets.date_enabled
-        self.set_visible(enabled)
+        self.date_label.set_visible(enabled)
 
     def update_style(self):
         if user_options.date.use_custom_color:
@@ -165,7 +165,7 @@ class Depth(widgets.Window):
 
         def update_visibility():
             enabled = getattr(user_options.rembg, "enabled", True)
-            self.set_visible(enabled)
+            self.depth_picture.set_visible(enabled)
 
         # Connect to rembg options
         if hasattr(user_options, "rembg"):

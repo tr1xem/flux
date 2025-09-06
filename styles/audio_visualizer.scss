@@ -1,0 +1,60 @@
+/* Desktop Audio Visualizer Styling */
+.desktop-audio-visualizer {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    
+    /* Center vertically on screen with new height */
+    margin-top: 50vh;
+    margin-bottom: -150px; /* Half of new visualizer height (300/2) to center perfectly */
+}
+
+.desktop-audio-visualizer * {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.visualizer-container {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+/* Add subtle backdrop blur effect if supported */
+.desktop-audio-visualizer {
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+}
+
+/* Ensure full width expansion */
+.visualizer-container > * {
+    min-width: 100%;
+}
+
+/* Hide any unwanted borders or backgrounds */
+.desktop-audio-visualizer,
+.desktop-audio-visualizer *,
+.visualizer-container,
+.visualizer-container * {
+    outline: none;
+    border: none;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.audio-visualizer {
+    background: transparent;
+    min-height: 400px;
+    
+    .visualizer-bar {
+        background: white;
+        border-radius: 2px;
+        margin: 0 2px;
+        min-height: 2px;
+        transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);  /* Smoother, longer transition */
+        /* This will make bars grow from center */
+        align-self: center;
+    }
+}

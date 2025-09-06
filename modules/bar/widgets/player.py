@@ -194,8 +194,13 @@ class Player(widgets.Box):
         for binding in self._current_bindings:
             if hasattr(binding, 'destroy'):
                 binding.destroy()
-            elif hasattr(binding, 'disconnect'):
-                binding.disconnect()
+            elif hasattr(binding, 'disconnect') and callable(binding.disconnect):
+                try:
+                    # Try calling disconnect without arguments first (for some binding types)
+                    binding.disconnect()
+                except TypeError:
+                    # If that fails, it might be a GObject signal connection that needs an ID
+                    pass
         self._current_bindings.clear()
 
     def _switch_to_player(self, player: MprisPlayer) -> None:
