@@ -29,7 +29,6 @@ class CroppedPicture(widgets.Picture):
 
 class ScreenshotLayout(widgets.Box):
     def __init__(self, notification: Notification) -> None:
-        print(notification.icon)
         super().__init__(
             vertical=True,
             hexpand=True,
