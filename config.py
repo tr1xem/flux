@@ -28,6 +28,7 @@ from modules import (
     CornerAll,
 )
 from modules.bar.widgets.player_expanded import ExpandedPlayerWindow
+from modules.bar.widgets.datetime import CalendarPopup
 from services.wallpaper_processor import on_depth_wall_toggle, on_wallpaper_change
 from user_options import user_options
 
@@ -105,14 +106,15 @@ css_manager.apply_css(
 
 # # Widget Initialization
 # Single instance widgets (created only once on monitor 0)
-TimeWidget(0)  # Calendar popup - single instance
+CalendarPopup(0)  # Calendar popup - single instance
 ExpandedPlayerWindow(0)  # Media player popup - single instance
+ControlCenter(0)  # Control center - single instance
 
 # Per-monitor widgets
 for monitor in range(utils.get_n_monitors()):
     DateWidget(monitor)
+    TimeWidget(monitor)
     Depth(monitor)
-    ControlCenter(monitor)
     Bar(monitor)
     NotificationPopup(monitor)
     CornerAll(monitor)

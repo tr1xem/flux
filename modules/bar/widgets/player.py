@@ -6,6 +6,7 @@ from ignis.services.mpris import MprisPlayer, MprisService
 from ignis.window_manager import WindowManager
 
 from ...shared_widgets.circular_progress import CircularProgressBar
+from .player_expanded import toggle_expanded_player
 
 mpris = MprisService.get_default()
 window_manager = WindowManager.get_default()
@@ -181,4 +182,4 @@ class Player(widgets.Box):
             asyncio.create_task(self._current_player.play_pause_async())
 
     def __on_click(self, x) -> None:
-        toggle_media_window(self._monitor)
+        toggle_expanded_player(self._monitor)
