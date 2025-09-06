@@ -181,7 +181,7 @@ class CircularProgressBar(Gtk.DrawingArea, BaseWidget):
     ):
         progress_color = self.get_color()
 
-        track_color = RGBA(0.2, 0.2, 0.2, 1.0)  # pyright: ignore[reportAttributeAccessIssue]
+        track_color = RGBA(0.5, 0.5, 0.5, 1.0)  # pyright: ignore[reportAttributeAccessIssue]
 
         line_width = self._line_width
         center_x = width / 2

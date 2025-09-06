@@ -104,11 +104,14 @@ css_manager.apply_css(
 
 
 # # Widget Initialization
+# Single instance widgets (created only once on monitor 0)
+TimeWidget(0)  # Calendar popup - single instance
+ExpandedPlayerWindow(0)  # Media player popup - single instance
+
+# Per-monitor widgets
 for monitor in range(utils.get_n_monitors()):
-    TimeWidget(monitor)
     DateWidget(monitor)
     Depth(monitor)
-    ExpandedPlayerWindow(monitor)
     ControlCenter(monitor)
     Bar(monitor)
     NotificationPopup(monitor)

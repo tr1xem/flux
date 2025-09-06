@@ -8,8 +8,31 @@ from ignis.window_manager import WindowManager
 from ...shared_widgets.circular_progress import CircularProgressBar
 
 mpris = MprisService.get_default()
-
 window_manager = WindowManager.get_default()
+
+# Simple single instance manager for media player
+_media_manager = None
+
+def get_media_manager():
+    global _media_manager
+    if _media_manager is None:
+        _media_manager = {"current_monitor": 0}
+    return _media_manager
+
+def toggle_media_window(monitor: int):
+    """Toggle or switch the media window to the specified monitor"""
+    window_name = f"ignis_MEDIA_0"
+    window = window_manager.get_window(window_name)
+    
+    if window and hasattr(window, 'visible') and hasattr(window, 'monitor'):
+        if window.visible and window.monitor == monitor:
+            # Same monitor and visible - toggle off
+            window.visible = False
+        else:
+            # Different monitor or not visible - switch and show
+            if window.monitor != monitor:
+                window.set_monitor(monitor)
+            window.visible = True
 
 
 class Player(widgets.Box):
@@ -23,8 +46,7 @@ class Player(widgets.Box):
 
         self._players: List[MprisPlayer] = []
         self._current_player: Optional[MprisPlayer] = None
-        self._window = window_manager.get_window(f"ignis_MEDIA_{monitor_id}")
-        self._monitor = 0
+        self._monitor = monitor_id
 
         self.title_label = widgets.Label(
             valign="center",
@@ -70,8 +92,6 @@ class Player(widgets.Box):
         )
 
         self.append(widgets.Box(child=[self._progress_barOvelay]))
-        # self.append(self._progress_bar)
-        # self.append(self.play_pause_button)
         self.append(self.eventBox)
 
         mpris.connect("player_added", lambda x, player: self._add_player(player))
@@ -161,8 +181,4 @@ class Player(widgets.Box):
             asyncio.create_task(self._current_player.play_pause_async())
 
     def __on_click(self, x) -> None:
-        if self._window.monitor == self._monitor:
-            self._window.visible = not self._window.visible
-        else:
-            self._window.set_monitor(self._monitor)
-            self._window.visible = True
+        toggle_media_window(self._monitor)

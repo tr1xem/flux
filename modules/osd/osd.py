@@ -67,7 +67,7 @@ class OsdWindow(widgets.RevealerWindow):
         # Create corner widgets and set their size requests
         top_corner = Corner(orientation="bottom-right")
         top_corner.set_size_request(40, 40)
-        
+
         bottom_corner = Corner(orientation="top-right")
         bottom_corner.set_size_request(40, 40)
 

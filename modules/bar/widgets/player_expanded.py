@@ -21,6 +21,21 @@ material = MaterialService.get_default()
 
 window_manager = WindowManager.get_default()
 
+def toggle_expanded_player(monitor: int):
+    """Toggle or switch the expanded player window to the specified monitor"""
+    window_name = "ignis_MEDIA_0"
+    window = window_manager.get_window(window_name)
+    
+    if window and hasattr(window, 'visible') and hasattr(window, 'monitor'):
+        if window.visible and window.monitor == monitor:
+            # Same monitor and visible - toggle off
+            window.visible = False
+        else:
+            # Different monitor or not visible - switch and show
+            if window.monitor != monitor:
+                window.set_monitor(monitor)
+            window.visible = True
+
 MEDIA_TEMPLATE = utils.get_current_dir() + "/media.scss"
 MEDIA_SCSS_CACHE_DIR = ignis.CACHE_DIR + "/media"  # type: ignore
 MEDIA_ART_FALLBACK = (
@@ -459,6 +474,9 @@ class Media(widgets.Box):
 
 class ExpandedPlayerWindow(widgets.RevealerWindow):
     def __init__(self, monitor_id: int = 0):
+        # Always use monitor 0 for single instance, but store requested monitor
+        self.requested_monitor = monitor_id
+        
         revealer = widgets.Revealer(
             transition_type="slide_down",
             child=widgets.Box(
@@ -482,17 +500,18 @@ class ExpandedPlayerWindow(widgets.RevealerWindow):
             vexpand=True,
             hexpand=True,
             css_classes=["unset"],
-            on_click=lambda x: window_manager.close_window(f"ignis_MEDIA_{monitor_id}"),
+            on_click=lambda x: window_manager.close_window("ignis_MEDIA_0"),
         )
+        
         super().__init__(
             visible=False,
             popup=True,
-            monitor=monitor_id,
+            monitor=0,  # Always start on monitor 0 for single instance
             kb_mode="on_demand",
             layer="top",
             css_classes=["unset"],
             anchor=["top", "left", "bottom", "right"],
-            namespace=f"ignis_MEDIA_{monitor_id}",
+            namespace="ignis_MEDIA_0",  # Always use 0 for single instance
             child=widgets.CenterBox(
                 hexpand=True,
                 halign="fill",
@@ -502,9 +521,7 @@ class ExpandedPlayerWindow(widgets.RevealerWindow):
                     vexpand=True,
                     hexpand=True,
                     css_classes=["unset"],
-                    on_click=lambda x: window_manager.close_window(
-                        f"ignis_MEDIA_{monitor_id}"
-                    ),
+                    on_click=lambda x: window_manager.close_window("ignis_MEDIA_0"),
                 ),
                 center_widget=widgets.Box(
                     vertical=True, child=[revealer, self.closeButton]
@@ -513,9 +530,7 @@ class ExpandedPlayerWindow(widgets.RevealerWindow):
                     vexpand=True,
                     hexpand=True,
                     css_classes=["unset"],
-                    on_click=lambda x: window_manager.close_window(
-                        f"ignis_MEDIA_{monitor_id}"
-                    ),
+                    on_click=lambda x: window_manager.close_window("ignis_MEDIA_0"),
                 ),
             ),
             setup=lambda self: self.connect(

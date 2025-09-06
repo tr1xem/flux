@@ -13,6 +13,9 @@ from ignis.variable import Variable
 from ignis.window_manager import WindowManager
 
 from ..indicator_icon import IndicatorIcon, NetworkIndicatorIcon
+from .player_expanded import toggle_expanded_player
+from .datetime import toggle_calendar_window  
+from ...control_center.control_center import toggle_control_center
 
 network = NetworkService.get_default()
 notifications = NotificationService.get_default()
@@ -163,7 +166,19 @@ class Battery(widgets.Box):
 class StatusPill(widgets.Button):
     def __init__(self, monitor: int):
         self._monitor = monitor
-        self._window = window_manager.get_window(f"ignis_CONTROL_CENTER_{monitor}")
+        # Get the single instance window (always on monitor 0)
+        self._window = window_manager.get_window("ignis_CONTROL_CENTER_0")
+
+        # Set up CSS classes based on window visibility
+        if self._window:
+            css_classes = self._window.bind(
+                "visible",
+                lambda value: ["status-pill", "status-active"]
+                if value
+                else ["status-pill"],
+            )
+        else:
+            css_classes = ["status-pill"]
 
         super().__init__(
             child=widgets.Box(
@@ -180,17 +195,8 @@ class StatusPill(widgets.Button):
                 ],
             ),
             on_click=self.__on_click,
-            css_classes=self._window.bind(
-                "visible",
-                lambda value: ["status-pill", "status-active"]
-                if value
-                else ["status-pill"],
-            ),
+            css_classes=css_classes,
         )
 
     def __on_click(self, x) -> None:
-        if self._window.monitor == self._monitor:
-            self._window.visible = not self._window.visible
-        else:
-            self._window.set_monitor(self._monitor)
-            self._window.visible = True
+        toggle_control_center(self._monitor)

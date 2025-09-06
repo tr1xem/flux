@@ -4,6 +4,27 @@ import datetime
 from gi.repository import GLib
 from ignis import utils, widgets
 from ignis.variable import Variable
+from ignis.window_manager import WindowManager
+
+window_manager = WindowManager.get_default()
+
+def toggle_calendar_window(monitor: int):
+    """Toggle or switch the calendar window to the specified monitor"""
+    window_name = f"ignis_CALENDAR_0"
+    window = window_manager.get_window(window_name)
+    
+    if window and hasattr(window, 'visible') and hasattr(window, 'monitor'):
+        if window.visible and window.monitor == monitor:
+            # Same monitor and visible - toggle off
+            window.close() if hasattr(window, 'close') else setattr(window, 'visible', False)
+        else:
+            # Different monitor or not visible - switch and show
+            if window.monitor != monitor:
+                window.set_monitor(monitor)
+            if hasattr(window, 'toggle'):
+                window.toggle()
+            else:
+                window.visible = True
 
 
 class CalendarWidget(widgets.Box):
@@ -153,8 +174,8 @@ class CalendarPopup(widgets.Window):
         )
 
         super().__init__(
-            namespace=f"ignis_CALENDAR_{monitor_id}",
-            monitor=monitor_id,
+            namespace=f"ignis_CALENDAR_0",  # Always use monitor 0 for single instance
+            monitor=0,  # Start on monitor 0, will be switched as needed
             css_classes=["calendar-popup"],
             anchor=["top", "left", "bottom", "right"],
             exclusivity="normal",
@@ -207,7 +228,7 @@ class Datetime(widgets.Box):
             css_classes=["datetime"],
         )
 
-        self.calendar_popup = CalendarPopup(monitor_id)
+        self._monitor_id = monitor_id
 
         # Cache datetime formatting to avoid repeated string operations
         self._last_formatted = ""
@@ -233,7 +254,7 @@ class Datetime(widgets.Box):
 
         self.time_button = widgets.EventBox(
             css_classes=["unset"],
-            on_click=lambda x: self.calendar_popup.toggle(),
+            on_click=lambda x: toggle_calendar_window(self._monitor_id),
             child=[
                 widgets.Label(
                     label=self.current_time.bind("value"),
