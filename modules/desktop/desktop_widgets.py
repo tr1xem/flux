@@ -1,8 +1,7 @@
 from ignis import widgets, utils
 import datetime
-import os
 from ignis.variable import Variable
-from ..shared_widgets.fixed import Fixed
+from ..shared_widgets.fixed import Fixed, FixedChild
 from user_options import user_options
 
 
@@ -23,9 +22,10 @@ class TimeWidget(widgets.Window):
             hexpand=True,
             vexpand=True,
             child=[
-                (
+                FixedChild(
                     self.time_label,
-                    (user_options.time.x_position, user_options.time.y_position),
+                    user_options.time.x_position,
+                    user_options.time.y_position,
                 ),
             ],
             css_classes=["fixed-label"],
@@ -91,9 +91,10 @@ class DateWidget(widgets.Window):
             hexpand=True,
             vexpand=True,
             child=[
-                (
+                FixedChild(
                     self.date_label,
-                    (user_options.date.x_position, user_options.date.y_position),
+                    user_options.date.x_position,
+                    user_options.date.y_position,
                 ),
             ],
             css_classes=["fixed-label"],
@@ -163,10 +164,10 @@ class Depth(widgets.Window):
         )
 
         def update_visibility():
-            enabled = getattr(user_options.rembg, 'enabled', True)
+            enabled = getattr(user_options.rembg, "enabled", True)
             self.set_visible(enabled)
 
         # Connect to rembg options
-        if hasattr(user_options, 'rembg'):
+        if hasattr(user_options, "rembg"):
             user_options.rembg.connect_option("enabled", lambda: update_visibility())
         update_visibility()

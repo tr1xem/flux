@@ -64,6 +64,13 @@ class OsdWindow(widgets.RevealerWindow):
             # css_classes=["osd-content", state["name"]],
         )
 
+        # Create corner widgets and set their size requests
+        top_corner = Corner(orientation="bottom-right")
+        top_corner.set_size_request(40, 40)
+        
+        bottom_corner = Corner(orientation="top-right")
+        bottom_corner.set_size_request(40, 40)
+
         # Create revealer with content - start hidden
         self.content_revealer = widgets.Revealer(
             transition_type="slide_left",
@@ -72,12 +79,12 @@ class OsdWindow(widgets.RevealerWindow):
                 child=[
                     widgets.Box(
                         css_classes=["osd-corner-up"],
-                        child=[Corner(orientation="bottom-right", size=(40, 40))],
+                        child=[top_corner],
                     ),
                     content,
                     widgets.Box(
                         css_classes=["osd-corner-down"],
-                        child=[Corner(orientation="top-right", size=(40, 40))],
+                        child=[bottom_corner],
                     ),
                 ],
             ),

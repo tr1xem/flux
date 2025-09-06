@@ -5,7 +5,7 @@ from .osd import Osd
 from .powermenu import Powermenu
 from .settings import Settings
 from .shared_widgets import Corner
-from .desktop import TimeWidget, DateWidget, Depth
+from .desktop import TimeWidget, DateWidget, Depth, CornerAll
 
 __all__ = [
     "Bar",
@@ -18,4 +18,5 @@ __all__ = [
     "TimeWidget",
     "DateWidget",
     "Depth",
+    "CornerAll",
 ]

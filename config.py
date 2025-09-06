@@ -25,9 +25,9 @@ from modules import (
     TimeWidget,
     DateWidget,
     Depth,
+    CornerAll,
 )
 from modules.bar.widgets.player_expanded import ExpandedPlayerWindow
-from modules.shared_widgets import CornerAll
 from services.wallpaper_processor import on_depth_wall_toggle, on_wallpaper_change
 from user_options import user_options
 
@@ -48,7 +48,7 @@ if options.wallpaper.wallpaper_path is None or not os.path.exists(
 
 options.wallpaper.connect_option("wallpaper_path", lambda: on_wallpaper_change())
 # Connect to rembg options
-if hasattr(user_options, 'rembg'):
+if hasattr(user_options, "rembg"):
     user_options.rembg.connect_option("enabled", lambda: on_depth_wall_toggle())
 
 
@@ -101,9 +101,6 @@ css_manager.apply_css(
         # priority="user",
     )
 )
-
-
-corner_size = (30, 30)
 
 
 # # Widget Initialization

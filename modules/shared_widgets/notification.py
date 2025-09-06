@@ -1,14 +1,14 @@
 import os
 import sys
-import tempfile
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "services"))
 import image_processor
 
-from ignis import widgets
+from ignis import widgets, utils
 from ignis.services.notifications import Notification
 
 from user_options import user_options
+from gi.repository import GdkPixbuf
 
 
 def crop_to_square(image_path: str) -> str:
@@ -29,6 +29,7 @@ class CroppedPicture(widgets.Picture):
 
 class ScreenshotLayout(widgets.Box):
     def __init__(self, notification: Notification) -> None:
+        print(notification.icon)
         super().__init__(
             vertical=True,
             hexpand=True,
@@ -39,8 +40,12 @@ class ScreenshotLayout(widgets.Box):
                     vertical=True,
                     child=[
                         widgets.Overlay(
-                            child=CroppedPicture(
-                                image=notification.icon,
+                            child=widgets.Picture(
+                                image=utils.crop_pixbuf(
+                                    GdkPixbuf.Pixbuf.new_from_file(notification.icon),
+                                    1920 // 4,
+                                    1080 // 4,
+                                ),
                                 css_classes=["notification-icon"],
                                 width=1920 // 7,
                                 height=1080 // 7,

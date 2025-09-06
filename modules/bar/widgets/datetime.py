@@ -209,10 +209,25 @@ class Datetime(widgets.Box):
 
         self.calendar_popup = CalendarPopup(monitor_id)
 
+        # Cache datetime formatting to avoid repeated string operations
+        self._last_formatted = ""
+        self._last_minute = -1
+        
+        def get_formatted_time():
+            now = datetime.datetime.now()
+            current_minute = now.minute
+            
+            # Only update formatting if minute changed to save CPU
+            if current_minute != self._last_minute:
+                self._last_formatted = now.strftime("<b>%I:%M</b> • %A, %-d %b")
+                self._last_minute = current_minute
+            
+            return self._last_formatted
+
         self.current_time = Variable(
             value=utils.Poll(
                 1000,
-                lambda x: datetime.datetime.now().strftime("<b>%I:%M</b> • %A, %-d %b"),
+                lambda x: get_formatted_time(),
             ).bind("output")
         )
 

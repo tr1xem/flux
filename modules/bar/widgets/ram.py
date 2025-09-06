@@ -26,7 +26,8 @@ class RamUsage(widgets.Box):
             max_value=fetch.mem_total,
             value=0,
         )
-        Poll(1000, lambda x: self._ram_progress.set_value(fetch.mem_used))
+        # Reduce polling frequency to save memory and CPU
+        Poll(2000, lambda x: self._ram_progress.set_value(fetch.mem_used))
 
         self._ram_icon = widgets.Label(
             css_classes=["ram-icon"],
@@ -47,8 +48,9 @@ class RamUsage(widgets.Box):
             halign="start",
             css_classes=["ram-label"],
         )
+        # Reduce polling frequency to save memory and CPU  
         Poll(
-            1000,
+            2000,
             lambda x: setattr(
                 self._ram_label,
                 "label",

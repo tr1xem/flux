@@ -44,6 +44,11 @@ COLOR_SCHEMES = {
 class MaterialService(BaseService):
     def __init__(self):
         super().__init__()
+        self._colors_cache = {}  # Cache for processed colors
+        self._last_wallpaper_path = None
+        self._last_scheme = None  
+        self._last_dark_mode = None
+        
         if not options.wallpaper.wallpaper_path:
             self.__on_colors_not_found()
         elif user_options.material.colors == {}:
@@ -128,6 +133,14 @@ class MaterialService(BaseService):
 
     def get_colors_from_img(self, path: str, dark_mode: bool) -> dict[str, str]:
         """Get colors from image with caching for performance"""
+        # Create cache key
+        scheme_name = getattr(user_options.material, "color_scheme", "Tonal Spot")
+        cache_key = f"{path}_{dark_mode}_{scheme_name}"
+        
+        # Return cached result if available
+        if cache_key in self._colors_cache:
+            return self._colors_cache[cache_key]
+            
         try:
             image = Image.open(path)
             wsize, hsize = image.size
@@ -145,7 +158,6 @@ class MaterialService(BaseService):
             hct = Hct.from_int(argb)
 
             # Get the selected color scheme class
-            scheme_name = getattr(user_options.material, "color_scheme", "Tonal Spot")
             scheme_class = COLOR_SCHEMES.get(scheme_name, SchemeTonalSpot)
             scheme = scheme_class(hct, dark_mode, 0.0)
 
@@ -156,7 +168,21 @@ class MaterialService(BaseService):
                     rgba = color_name.get_hct(scheme).to_rgba()
                     material_colors[color] = rgba_to_hex(rgba)
 
+            # Properly close and clean up image
             image.close()
+            del image_data
+            del pixel_array
+            
+            # Cache the result before returning
+            self._colors_cache[cache_key] = material_colors
+            
+            # Limit cache size to prevent memory bloat
+            if len(self._colors_cache) > 50:
+                # Remove oldest entries
+                oldest_keys = list(self._colors_cache.keys())[:-25]
+                for key in oldest_keys:
+                    del self._colors_cache[key]
+            
             return material_colors
         except Exception as e:
             print(f"Error generating colors from {path}: {e}")

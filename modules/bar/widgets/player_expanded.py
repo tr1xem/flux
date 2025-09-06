@@ -41,9 +41,165 @@ class Player(widgets.Revealer):
     def __init__(self, player: MprisPlayer) -> None:
         self._player = player
         self._colors_path = f"{MEDIA_SCSS_CACHE_DIR}/{self.clean_desktop_entry()}.scss"
-        player.connect("closed", lambda x: self.destroy())
-        player.connect("notify::art-url", lambda x, y: self.load_colors())
+        self._signal_connections = []
+        
+        # Initialize the widget first before doing anything else
+        super().__init__(
+            transition_type="slide_down",
+            reveal_child=False,
+            css_classes=[self.get_css("media")],
+            child=self._create_widget_content()
+        )
+        
+        # Now set up signal connections after widget is initialized
+        closed_id = player.connect("closed", self._on_closed)
+        art_url_id = player.connect("notify::art-url", self._on_art_url_changed)
+        self._signal_connections.extend([closed_id, art_url_id])
+        
         self.load_colors()
+    
+    def _create_widget_content(self):
+        """Create the widget content - separated to ensure proper initialization order"""
+        return widgets.Overlay(
+            child=widgets.Box(css_classes=[self.get_css("media-image")]),
+            overlays=[
+                widgets.Box(
+                    hexpand=True,
+                    vexpand=True,
+                    css_classes=[self.get_css("media-image-gradient")],
+                ),
+                widgets.Icon(
+                    icon_name=self.get_player_icon(),
+                    pixel_size=22,
+                    halign="start",
+                    valign="start",
+                    css_classes=[self.get_css("media-player-icon")],
+                ),
+                widgets.Box(
+                    vertical=True,
+                    hexpand=True,
+                    css_classes=[self.get_css("media-content")],
+                    child=[
+                        widgets.Box(
+                            vexpand=True,
+                            valign="center",
+                            child=[
+                                widgets.Box(
+                                    hexpand=True,
+                                    vertical=True,
+                                    child=[
+                                        widgets.Label(
+                                            ellipsize="end",
+                                            label=self._player.bind("title"),
+                                            max_width_chars=30,
+                                            halign="start",
+                                            css_classes=[
+                                                self.get_css("media-title")
+                                            ],
+                                        ),
+                                        widgets.Label(
+                                            label=self._player.bind("artist"),
+                                            max_width_chars=30,
+                                            ellipsize="end",
+                                            halign="start",
+                                            css_classes=[
+                                                self.get_css("media-artist")
+                                            ],
+                                        ),
+                                    ],
+                                ),
+                                widgets.Button(
+                                    child=widgets.Icon(
+                                        image=self._player.bind(
+                                            "playback_status",
+                                            lambda value: "pause-symbolic"
+                                            if value == "Playing"
+                                            else "play-symbolic",
+                                        ),
+                                        pixel_size=18,
+                                    ),
+                                    on_click=self._on_play_pause_clicked,
+                                    visible=self._player.bind("can_play"),
+                                    css_classes=self._player.bind(
+                                        "playback_status",
+                                        lambda value: [
+                                            self.get_css("media-playback-button"),
+                                            "playing",
+                                        ]
+                                        if value == "Playing"
+                                        else [
+                                            self.get_css("media-playback-button"),
+                                            "paused",
+                                        ],
+                                    ),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+                widgets.Box(
+                    vexpand=True,
+                    valign="end",
+                    style="padding: 1rem;",
+                    child=[
+                        widgets.Scale(
+                            value=self._player.bind("position"),
+                            max=self._player.bind("length"),
+                            hexpand=True,
+                            css_classes=[self.get_css("media-scale")],
+                            on_change=self._on_scale_changed,
+                            visible=self._player.bind(
+                                "position", lambda value: value != -1
+                            ),
+                        ),
+                        widgets.Button(
+                            child=widgets.Icon(
+                                image="rewind-symbolic",
+                                pixel_size=20,
+                            ),
+                            css_classes=[self.get_css("media-skip-button")],
+                            on_click=self._on_previous_clicked,
+                            visible=self._player.bind("can_go_previous"),
+                            style="margin-left: 1rem;",
+                        ),
+                        widgets.Button(
+                            child=widgets.Icon(
+                                image="fwd-symbolic",
+                                pixel_size=20,
+                            ),
+                            css_classes=[self.get_css("media-skip-button")],
+                            on_click=self._on_next_clicked,
+                            visible=self._player.bind("can_go_next"),
+                            style="margin-left: 1rem;",
+                        ),
+                    ],
+                ),
+            ],
+        )
+
+    def _on_closed(self, player):
+        """Handle player closed signal - method reference instead of lambda"""
+        self.destroy()
+
+    def _on_art_url_changed(self, player, param):
+        """Handle art URL change - method reference instead of lambda"""
+        self.load_colors()
+
+    def _on_play_pause_clicked(self, button):
+        """Handle play/pause button click - method reference instead of lambda"""
+        asyncio.create_task(self._player.play_pause_async())
+
+    def _on_scale_changed(self, scale):
+        """Handle scale position change - method reference instead of lambda"""
+        asyncio.create_task(self._player.set_position_async(scale.value))
+
+    def _on_previous_clicked(self, button):
+        """Handle previous button click - method reference instead of lambda"""
+        asyncio.create_task(self._player.previous_async())
+
+    def _on_next_clicked(self, button):
+        """Handle next button click - method reference instead of lambda"""
+        asyncio.create_task(self._player.next_async())
 
         super().__init__(
             transition_type="slide_down",
@@ -79,7 +235,7 @@ class Player(widgets.Revealer):
                                         child=[
                                             widgets.Label(
                                                 ellipsize="end",
-                                                label=player.bind("title"),
+                                                label=self._player.bind("title"),
                                                 max_width_chars=30,
                                                 halign="start",
                                                 css_classes=[
@@ -87,7 +243,7 @@ class Player(widgets.Revealer):
                                                 ],
                                             ),
                                             widgets.Label(
-                                                label=player.bind("artist"),
+                                                label=self._player.bind("artist"),
                                                 max_width_chars=30,
                                                 ellipsize="end",
                                                 halign="start",
@@ -99,7 +255,7 @@ class Player(widgets.Revealer):
                                     ),
                                     widgets.Button(
                                         child=widgets.Icon(
-                                            image=player.bind(
+                                            image=self._player.bind(
                                                 "playback_status",
                                                 lambda value: "pause-symbolic"
                                                 if value == "Playing"
@@ -107,11 +263,9 @@ class Player(widgets.Revealer):
                                             ),
                                             pixel_size=18,
                                         ),
-                                        on_click=lambda x: asyncio.create_task(
-                                            player.play_pause_async()
-                                        ),
-                                        visible=player.bind("can_play"),
-                                        css_classes=player.bind(
+                                        on_click=self._on_play_pause_clicked,
+                                        visible=self._player.bind("can_play"),
+                                        css_classes=self._player.bind(
                                             "playback_status",
                                             lambda value: [
                                                 self.get_css("media-playback-button"),
@@ -134,14 +288,12 @@ class Player(widgets.Revealer):
                         style="padding: 1rem;",
                         child=[
                             widgets.Scale(
-                                value=player.bind("position"),
-                                max=player.bind("length"),
+                                value=self._player.bind("position"),
+                                max=self._player.bind("length"),
                                 hexpand=True,
                                 css_classes=[self.get_css("media-scale")],
-                                on_change=lambda x: asyncio.create_task(
-                                    self._player.set_position_async(x.value)
-                                ),
-                                visible=player.bind(
+                                on_change=self._on_scale_changed,
+                                visible=self._player.bind(
                                     "position", lambda value: value != -1
                                 ),
                             ),
@@ -151,10 +303,8 @@ class Player(widgets.Revealer):
                                     pixel_size=20,
                                 ),
                                 css_classes=[self.get_css("media-skip-button")],
-                                on_click=lambda x: asyncio.create_task(
-                                    player.previous_async()
-                                ),
-                                visible=player.bind("can_go_previous"),
+                                on_click=self._on_previous_clicked,
+                                visible=self._player.bind("can_go_previous"),
                                 style="margin-left: 1rem;",
                             ),
                             widgets.Button(
@@ -163,10 +313,8 @@ class Player(widgets.Revealer):
                                     pixel_size=20,
                                 ),
                                 css_classes=[self.get_css("media-skip-button")],
-                                on_click=lambda x: asyncio.create_task(
-                                    player.next_async()
-                                ),
-                                visible=player.bind("can_go_next"),
+                                on_click=self._on_next_clicked,
+                                visible=self._player.bind("can_go_next"),
                                 style="margin-left: 1rem;",
                             ),
                         ],
@@ -192,8 +340,33 @@ class Player(widgets.Revealer):
             return "folder-music-symbolic"
 
     def destroy(self) -> None:
+        # Store references before clearing them
+        player = self._player
+        
+        # Disconnect all signal connections to prevent memory leaks  
+        if player:
+            for connection_id in self._signal_connections:
+                try:
+                    player.disconnect(connection_id)
+                except:
+                    pass  # Connection might already be disconnected
+        self._signal_connections.clear()
+        
+        # Clean up CSS to prevent accumulation
+        if player:
+            css_name = self.clean_desktop_entry()
+            if css_name in css_manager.list_css_info_names():
+                css_manager.remove_css(css_name)
+        
+        # Clear any cached colors file
+        if os.path.exists(self._colors_path):
+            try:
+                os.remove(self._colors_path)
+            except OSError:
+                pass
+                
         self.set_reveal_child(False)
-        utils.Timeout(self.transition_duration, super().unparent)
+        utils.Timeout(self.transition_duration, lambda: self.unparent() if self.get_parent() else None)
 
     def get_css(self, class_name: str) -> str:
         return f"{class_name}-{self.clean_desktop_entry()}"
@@ -211,12 +384,14 @@ class Player(widgets.Revealer):
         with open(MEDIA_TEMPLATE) as file:
             template_rendered = Template(file.read()).render(colors)
 
-        if self._player.desktop_entry in css_manager.list_css_info_names():
-            css_manager.remove_css(self.clean_desktop_entry())
+        css_name = self.clean_desktop_entry()
+        # Always remove existing CSS before applying new one to prevent accumulation
+        if css_name in css_manager.list_css_info_names():
+            css_manager.remove_css(css_name)
 
         css_manager.apply_css(
             CssInfoString(
-                name=self.clean_desktop_entry(),
+                name=css_name,
                 compiler_function=lambda string: utils.sass_compile(string=string),
                 string=template_rendered,
             )
@@ -246,16 +421,40 @@ class Media(widgets.Box):
     def __init__(self):
         super().__init__(
             vertical=True,
-            setup=lambda self: mpris.connect(
-                "player_added", lambda x, player: self.__add_player(player)
-            ),
             css_classes=["rec-unset"],
         )
+        self._player_widgets = {}  # Track player widgets for cleanup
+        
+        # Connect to player_added event using method reference
+        mpris.connect("player_added", self._on_player_added)
+
+    def _on_player_added(self, service, player):
+        """Handle player_added signal - method reference instead of lambda"""
+        self.__add_player(player)
+
+    def _on_media_player_closed(self, player):
+        """Handle player closed signal - method reference instead of lambda"""
+        self.__remove_player(player)
 
     def __add_player(self, obj: MprisPlayer) -> None:
+        # Check if we already have a widget for this player
+        if obj in self._player_widgets:
+            return
+            
         player = Player(obj)
+        self._player_widgets[obj] = player
         self.append(player)
         player.set_reveal_child(True)
+        
+        # Connect to player removal to clean up widget using method reference
+        obj.connect("closed", self._on_media_player_closed)
+    
+    def __remove_player(self, obj: MprisPlayer) -> None:
+        if obj in self._player_widgets:
+            player_widget = self._player_widgets[obj]
+            # The Player widget's destroy method will handle cleanup
+            player_widget.destroy()
+            del self._player_widgets[obj]
 
 
 class ExpandedPlayerWindow(widgets.RevealerWindow):
