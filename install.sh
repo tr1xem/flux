@@ -189,7 +189,8 @@ else
         success "Flux config already in hyprland.conf"
     fi
 fi
-
+step "Setting up viciane..."
+systemctl enable --user --now vicinae.service || warn "vicinae service failed to start"
 # Start Flux
 step "Starting Flux..."
 ignis init > /dev/null 2>&1 &
