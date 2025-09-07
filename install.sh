@@ -90,13 +90,18 @@ fi
 #     kill -0 "$$" || exit
 # done 2>/dev/null &
 #
-# Confirm installation
-echo -e "\nThis will install Flux and the following packages:"
-printf "%s\n" "${PACKAGES[@]}"
-read -rp "$(echo -e "${YELLOW}""Proceed? (y/N): ""${RESET}")" confirm
-if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
-    warn "Installation cancelled."
-    exit 0
+# Confirm installation (skip if running from pipe)
+if [[ -t 0 ]]; then
+    echo -e "\nThis will install Flux and the following packages:"
+    printf "%s\n" "${PACKAGES[@]}"
+    read -rp "$(echo -e "${YELLOW}""Proceed? (y/N): ""${RESET}")" confirm
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+        warn "Installation cancelled."
+        exit 0
+    fi
+else
+    echo -e "\nInstalling Flux and the following packages:"
+    printf "%s\n" "${PACKAGES[@]}"
 fi
 
 aur_helper="yay"
