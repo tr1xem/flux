@@ -174,6 +174,17 @@ isnet_pid=$!
 wait $u2net_pid && success "u2net model downloaded" || warn "u2net model download failed"
 wait $isnet_pid && success "isnet-general-use model downloaded" || warn "isnet-general-use model download failed"
 
+# Copy fonts to ~/.fonts
+step "Installing fonts..."
+mkdir -p ~/.fonts
+if [ -d "$INSTALL_DIR/fonts" ]; then
+    cp -r "$INSTALL_DIR/fonts/"* ~/.fonts/
+    fc-cache -f ~/.fonts
+    success "Fonts installed and cache updated"
+else
+    warn "Fonts directory not found in $INSTALL_DIR/fonts"
+fi
+
 # Add source line to hyprland config
 step "Adding flux config to hyprland..."
 mkdir -p ~/.config/hypr
