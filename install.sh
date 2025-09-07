@@ -26,10 +26,13 @@ INSTALL_DIR="$HOME/.config/ignis"
 PACKAGES=(
     python-ignis-git
     ignis-gvc
+    vicinae-bin
     gnome-bluetooth-3.0
     dart-sass
     python-numpy
     python-materialyoucolor
+    python-pip
+    git
     upower
     gpu-screen-recorder
     networkmanager
@@ -63,6 +66,17 @@ echo -e "${GREEN}=================================="
 echo "   Flux Installer for Arch Linux"
 echo -e "==================================${RESET}"
 
+echo -e "${CYAN}"
+echo "  /$$$$$$$$ /$$       /$$   /$$ /$$   /$$"
+echo " | $$_____/| $$      | $$  | $$| $$  / $$"
+echo " | $$      | $$      | $$  | $$|  $$/ $$/"
+echo " | $$$$$   | $$      | $$  | $$ \  $$$$/"
+echo " | $$__/   | $$      | $$  | $$  >$$  $$"
+echo " | $$      | $$      | $$  | $$ /$$/\  $$"
+echo " | $$      | $$$$$$$$|  $$$$$$/| $$  \ $$"
+echo " |__/      |________/ \______/ |__/  |__/"
+echo -e "${RESET}"
+
 # OS check
 if ! grep -qi "arch" /etc/os-release; then
     error "This script is designed for Arch Linux or Arch-based distro."
@@ -75,21 +89,6 @@ if [ "$(id -u)" -eq 0 ]; then
     exit 1
 fi
 
-# Warn about sudo
-# echo -e "\n${YELLOW}Some packages require root privileges (e.g., glace-git).${RESET}"
-# echo "You will be prompted for your sudo password now so the installation runs smoothly."
-# sudo -v || {
-#     error "Sudo authentication failed."
-#     exit 1
-# }
-
-# Keep sudo alive until script finishes
-# while true; do
-#     sudo -n true
-#     sleep 60
-#     kill -0 "$$" || exit
-# done 2>/dev/null &
-#
 # Confirm installation (skip if running from pipe)
 if [[ -t 0 ]]; then
     echo -e "\nThis will install Flux and the following packages:"
@@ -119,12 +118,13 @@ fi
 
 # Clone or update repo
 if [ -d "$INSTALL_DIR" ]; then
-    step "Updating Flux repository..."
-    git -C "$INSTALL_DIR" pull --rebase
-else
-    step "Cloning Flux repository..."
-    git clone "$REPO_URL" "$INSTALL_DIR"
+    step "Backing up existing installation..."
+    mv "$INSTALL_DIR" "${INSTALL_DIR}_bak"
+    success "Existing installation backed up to ${INSTALL_DIR}_bak"
 fi
+
+step "Cloning Flux repository..."
+git clone "$REPO_URL" "$INSTALL_DIR"
 success "Repository ready."
 
 # Install packages
@@ -148,14 +148,68 @@ else
     success "All packages are up-to-date."
 fi
 
-#  Run config
-# step "Running configuration..."
-# python "$INSTALL_DIR/config/config.py"
+# Install rembg package
+step "Installing rembg package..."
+pip install rembg --break-system-packages || warn "rembg installation failed."
+success "rembg installed successfully."
 
-# Start Modus
+# Install onnxruntime package
+step "Installing onnxruntime package..."
+pip install onnxruntime --break-system-packages || warn "onnxruntime installation failed."
+success "onnxruntime installed successfully."
+
+# Download models in parallel
+step "Downloading AI models..."
+mkdir -p ~/.u2net
+
+# Download both models in parallel with progress
+curl -# -L "https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net.onnx" -o ~/.u2net/u2net.onnx &
+u2net_pid=$!
+
+curl -# -L "https://github.com/danielgatis/rembg/releases/download/v0.0.0/isnet-general-use.onnx" -o ~/.u2net/isnet-general-use.onnx &
+isnet_pid=$!
+
+# Wait for both downloads to complete
+wait $u2net_pid && success "u2net model downloaded" || warn "u2net model download failed"
+wait $isnet_pid && success "isnet-general-use model downloaded" || warn "isnet-general-use model download failed"
+
+# Add source line to hyprland config
+step "Adding flux config to hyprland..."
+mkdir -p ~/.config/hypr
+
+# Verify flux.conf exists
+if [ ! -f "$INSTALL_DIR/assets/hypr/flux.conf" ]; then
+    warn "flux.conf not found in assets/hypr, skipping hyprland config"
+else
+    if ! grep -q "source=~/.config/ignis/assets/hypr/flux.conf" ~/.config/hypr/hyprland.conf 2>/dev/null; then
+        echo "source=~/.config/ignis/assets/hypr/flux.conf" >> ~/.config/hypr/hyprland.conf
+        success "Added flux config to hyprland.conf"
+    else
+        success "Flux config already in hyprland.conf"
+    fi
+fi
+
+# Start Flux
 step "Starting Flux..."
-ignis init &
+ignis init > /dev/null 2>&1 &
 disown
 success "Flux started successfully."
 
-echo -e "\n${GREEN}Installation complete!${RESET}"
+echo -e "\n${GREEN}═══════════════════════════════════${RESET}"
+echo -e "${GREEN}        Installation Complete!${RESET}"
+echo -e "${GREEN}═══════════════════════════════════${RESET}"
+
+echo -e "\n${CYAN}📦 What was installed:${RESET}"
+echo -e "  • Flux Shell"
+echo -e "  • Vicinae as run menu"
+echo -e "  • AI background removal models"
+
+echo -e "\n${CYAN}🚀 Next Steps:${RESET}"
+echo -e "  • Restart Hyprland or reload config: ${YELLOW}hyprctl reload${RESET}"
+echo -e "  • Access settings: ${YELLOW}Super + I${RESET}"
+echo -e "  • Toggle Vicinae: ${YELLOW}Super + Space${RESET}"
+echo -e "  • Reload Flux: ${YELLOW}Super + Alt + B${RESET}"
+
+echo -e "\n${GREEN}✨ Enjoy your new Flux desktop! ✨${RESET}"
+echo -e "${CYAN}Report issues: https://github.com/tr1xem/flux/issues${RESET}\n"
+echo -e "${CYAN}For Support Join: https://discord.gg/tRFxkbQ3Zq${RESET}\n"

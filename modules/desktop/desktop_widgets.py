@@ -1,6 +1,6 @@
 from ignis import widgets, utils
-import datetime
 import os
+import datetime
 from ignis.variable import Variable
 from ..shared_widgets.fixed import Fixed
 from user_options import user_options
@@ -148,6 +148,12 @@ class Depth(widgets.Window):
             image=user_options.wallpaper.bind("depth_wall"),
             hexpand=True,
             vexpand=True,
+            visible=user_options.wallpaper.bind(
+                "depth_wall",
+                lambda x: True
+                if user_options.rembg.enabled and os.path.exists(x)
+                else False,
+            ),
             content_fit="cover",
             css_classes=["depth-wallpaper"],
         )
@@ -163,10 +169,10 @@ class Depth(widgets.Window):
         )
 
         def update_visibility():
-            enabled = getattr(user_options.rembg, 'enabled', True)
+            enabled = getattr(user_options.rembg, "enabled", True)
             self.set_visible(enabled)
 
         # Connect to rembg options
-        if hasattr(user_options, 'rembg'):
+        if hasattr(user_options, "rembg"):
             user_options.rembg.connect_option("enabled", lambda: update_visibility())
         update_visibility()
