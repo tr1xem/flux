@@ -5,7 +5,9 @@
 }
 
 .settings-sidebar-label {
+    font-weight: bold;
     font-size: 2rem;
+    padding-bottom: 1rem;
     margin-left: 1rem;
     margin-bottom: 0.5rem;
     margin-top: 2rem;
@@ -33,6 +35,7 @@
 .settings-page-name {
     font-size: 2rem;
     margin-left: 2.5rem;
+    font-weight: bold;
     color: $onSurface;
     margin-bottom: 2rem;
     margin-top: 2rem;
@@ -44,18 +47,18 @@
 
 .settings-group-name {
     margin-left: 2.5rem;
-    color: $primary;
+    color: $onSurface;
 }
 
-// .settings-row {
-//     // all: unset;
-//     padding: 0.7rem 2.5rem;
-//     // transition: 0.2s;
-//     color: $onSurface;
-//     min-width: 15rem;
-//
-//     background-color: darken($surfaceContainer, 10%);
-// }
+.settings-row {
+    //     // all: unset;
+    //     padding: 0.7rem 2.5rem;
+    //     // transition: 0.2s;
+    //     color: $onSurface;
+    min-width: 17rem;
+    //
+    //     background-color: darken($surfaceContainer, 10%);
+}
 
 .settings-row-label {
     font-size: 1.2rem;
@@ -95,6 +98,14 @@
     }
 }
 
+.settings-group-name {
+    font-size: 1.5rem;
+    padding: 2.7rem 0rem 0.5rem 0rem;
+    font-weight: bold;
+    &:first-child {
+        padding: 0.2rem 0rem 0.5rem 0rem;
+    }
+}
 .settings-color-scheme {
     color: $onSurface;
 }

@@ -12,6 +12,7 @@ class SettingsRow(widgets.Box):
         **kwargs,
     ):
         self._label_box = widgets.Box(
+            css_classes=["settings-row"],
             vertical=True,
             spacing=5,
             child=[
@@ -37,17 +38,16 @@ class SettingsRow(widgets.Box):
                 ),
             ],
         )
-        
+
         children = [self._label_box]
         if additional_widgets:
             children.extend(additional_widgets)
-        
+
         init_kwargs = {
-            "css_classes": ["settings-row"],
             "child": children,
             **kwargs,
         }
         if style is not None:
             init_kwargs["style"] = style
-        
+
         super().__init__(**init_kwargs)

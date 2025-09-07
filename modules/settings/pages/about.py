@@ -205,39 +205,14 @@ class AboutEntry(SettingsEntry):
                                     sublabel=fetch.session_type or "Unknown",
                                 ),
                                 SettingsRow(
-                                    label="<span font='JetBrains Mono Nerd Font'></span>   Wayland compositor",
+                                    label="<span font='JetBrains Mono Nerd Font'></span>   Wayland compositor",
                                     use_markup=True,
                                     sublabel=fetch.current_desktop or "Unknown",
                                 ),
                                 SettingsRow(
-                                    label="<span font='JetBrains Mono Nerd Font'></span>  Kernel",
-                                    use_markup=True,
-                                    sublabel=fetch.kernel or "Unknown",
-                                ),
-                                SettingsRow(
-                                    label="<span font='JetBrains Mono Nerd Font'>󰌢</span>   Hostname",
-                                    use_markup=True,
-                                    sublabel=fetch.hostname,
-                                ),
-                                SettingsRow(
-                                    label="<span font='JetBrains Mono Nerd Font'>󰘦</span>   Ignis Version",
-                                    use_markup=True,
-                                    sublabel=__version__,
-                                ),
-                                SettingsRow(
-                                    label="<span font='JetBrains Mono Nerd Font'>󰍹</span>   Session type",
-                                    use_markup=True,
-                                    sublabel=fetch.session_type,
-                                ),
-                                SettingsRow(
-                                    label="<span font='JetBrains Mono Nerd Font'></span>   Wayland compositor",
-                                    use_markup=True,
-                                    sublabel=fetch.current_desktop,
-                                ),
-                                SettingsRow(
                                     label="<span font='JetBrains Mono Nerd Font'></span>  Kernel",
                                     use_markup=True,
-                                    sublabel=fetch.kernel,
+                                    sublabel=fetch.kernel or "Unknown",
                                 ),
                             ],
                         ),
@@ -250,39 +225,9 @@ class AboutEntry(SettingsEntry):
                             column_num=2,
                             child=[
                                 SettingsRow(
-                                    label="<span font='JetBrains Mono Nerd Font'></span>   CPU",
+                                    label="<span font='JetBrains Mono Nerd Font'></span>   CPU",
                                     use_markup=True,
                                     sublabel=fetch.cpu or "Unknown",
-                                ),
-                                SettingsRow(
-                                    label="<span font='JetBrains Mono Nerd Font'>󰢮</span>   GPU",
-                                    use_markup=True,
-                                    sublabel=get_gpu_info(),
-                                ),
-                                SettingsRow(
-                                    label="<span font='JetBrains Mono Nerd Font'></span>   RAM",
-                                    use_markup=True,
-                                    sublabel=f"{fetch.mem_total / 1024 / 1024:.1f} GB" if fetch.mem_total else "Unknown",
-                                ),
-                                SettingsRow(
-                                    label="<span font='JetBrains Mono Nerd Font'>🖴</span>  Root Partition",
-                                    use_markup=True,
-                                    sublabel=f"{partition_size:.1f} GB",
-                                ),
-                                SettingsRow(
-                                    label="<span font='JetBrains Mono Nerd Font'>󰤨</span>   Wifi Driver",
-                                    use_markup=True,
-                                    sublabel=get_wifi_driver_name() or "Unknown",
-                                ),
-                                SettingsRow(
-                                    label="<span font='JetBrains Mono Nerd Font'></span>   Motherboard",
-                                    use_markup=True,
-                                    sublabel=fetch.board_vendor or "Unknown",
-                                ),
-                                SettingsRow(
-                                    label="<span font='JetBrains Mono Nerd Font'></span>   UEFI Version",
-                                    use_markup=True,
-                                    sublabel=fetch.board_name or "Unknown",
                                 ),
                                 SettingsRow(
                                     label="<span font='JetBrains Mono Nerd Font'>󰢮</span>   GPU",
@@ -307,12 +252,12 @@ class AboutEntry(SettingsEntry):
                                 SettingsRow(
                                     label="<span font='JetBrains Mono Nerd Font'></span>   Motherboard",
                                     use_markup=True,
-                                    sublabel=fetch.board_vendor,
+                                    sublabel=fetch.board_vendor or "Unknown",
                                 ),
                                 SettingsRow(
                                     label="<span font='JetBrains Mono Nerd Font'></span>   UEFI Version",
                                     use_markup=True,
-                                    sublabel=fetch.board_name,
+                                    sublabel=fetch.board_name or "Unknown",
                                 ),
                                 SettingsRow(
                                     label="<span font='JetBrains Mono Nerd Font'></span>   Secure Boot",
