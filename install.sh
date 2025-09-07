@@ -32,6 +32,7 @@ PACKAGES=(
     python-numpy
     python-materialyoucolor
     python-pip
+    hyprsunset
     git
     upower
     gpu-screen-recorder
@@ -70,8 +71,8 @@ echo -e "${CYAN}"
 echo "  /$$$$$$$$ /$$       /$$   /$$ /$$   /$$"
 echo " | $$_____/| $$      | $$  | $$| $$  / $$"
 echo " | $$      | $$      | $$  | $$|  $$/ $$/"
-echo " | $$$$$   | $$      | $$  | $$ \  $$$$/"
-echo " | $$__/   | $$      | $$  | $$  >$$  $$"
+echo " | $$$$$   | $$      | $$  | $$ \  $$$$/ "
+echo " | $$__/   | $$      | $$  | $$  >$$  $$ "
 echo " | $$      | $$      | $$  | $$ /$$/\  $$"
 echo " | $$      | $$$$$$$$|  $$$$$$/| $$  \ $$"
 echo " |__/      |________/ \______/ |__/  |__/"
@@ -160,13 +161,13 @@ success "onnxruntime installed successfully."
 
 # Download models in parallel
 step "Downloading AI models..."
-mkdir -p ~/.u2net
+mkdir -p ~/.local/share/.u2net
 
 # Download both models in parallel with progress
-curl -# -L "https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net.onnx" -o ~/.u2net/u2net.onnx &
+curl -# -L "https://github.com/danielgatis/rembg/releases/download/v0.0.0/u2net.onnx" -o ~/.local/share/.u2net/u2net.onnx &
 u2net_pid=$!
 
-curl -# -L "https://github.com/danielgatis/rembg/releases/download/v0.0.0/isnet-general-use.onnx" -o ~/.u2net/isnet-general-use.onnx &
+curl -# -L "https://github.com/danielgatis/rembg/releases/download/v0.0.0/isnet-general-use.onnx" -o ~/.local/share/.u2net/isnet-general-use.onnx &
 isnet_pid=$!
 
 # Wait for both downloads to complete

@@ -72,9 +72,9 @@ class UserOptions(OptionsManager):
         depth_wall: str = ""
 
     class Rembg(OptionsGroup):
-        enabled: bool = True
+        enabled: bool = False
         model: str = "u2net"
-        alpha_matting: bool = True
+        alpha_matting: bool = False
         foreground_threshold: int = 240
         background_threshold: int = 10
         erode_size: int = 15
