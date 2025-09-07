@@ -33,6 +33,17 @@
   </tr>
 </table>
 
+# Installation
+
+> [!CAUTION]
+>
+> - Base Hyprland Installation is required
+> - Basic Knowledge of Linux is required
+
+```
+curl https://raw.githubusercontent.com/tr1xem/flux/refs/heads/main/install.sh | sh
+```
+
 # TODO
 
 - [x] Bar Skeleton
