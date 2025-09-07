@@ -37,7 +37,6 @@ icon_manager.add_icons(os.path.join(utils.get_current_dir(), "assets", "icons"))
 css_manager = CssManager.get_default()
 
 
-WallpaperService.get_default()
 if options.wallpaper.wallpaper_path is None or not os.path.exists(
     options.wallpaper.wallpaper_path
 ):
@@ -45,6 +44,7 @@ if options.wallpaper.wallpaper_path is None or not os.path.exists(
         os.path.curdir + "./assets/example_wallpapers/example-1.jpeg"
     )
 
+WallpaperService.get_default()
 
 options.wallpaper.connect_option("wallpaper_path", lambda: on_wallpaper_change())
 # Connect to rembg options
