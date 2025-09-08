@@ -43,6 +43,7 @@
 
 .settings-page {
     background-color: darken($surfaceContainer, 10%);
+    min-width: 30rem;
 }
 
 .settings-group-name {
@@ -52,7 +53,7 @@
 
 .settings-row {
     //     // all: unset;
-    //     padding: 0.7rem 2.5rem;
+    padding: 0.7rem 2.5rem;
     //     // transition: 0.2s;
     //     color: $onSurface;
     min-width: 17rem;

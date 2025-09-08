@@ -6,7 +6,7 @@ from ignis.services.backlight import BacklightService
 from ignis.variable import Variable
 from ignis.window_manager import WindowManager
 
-from ..shared_widgets import Corner
+from modules.shared_widgets.corner import Corner
 
 window_manager = WindowManager.get_default()
 
@@ -72,12 +72,12 @@ class OsdWindow(widgets.RevealerWindow):
                 child=[
                     widgets.Box(
                         css_classes=["osd-corner-up"],
-                        child=[Corner(orientation="bottom-right", size=(40, 40))],
+                        child=[Corner(orientation="bottom-right", width_request=40, height_request=40)],
                     ),
                     content,
                     widgets.Box(
                         css_classes=["osd-corner-down"],
-                        child=[Corner(orientation="top-right", size=(40, 40))],
+                        child=[Corner(orientation="top-right", width_request=40, height_request=40)],
                     ),
                 ],
             ),

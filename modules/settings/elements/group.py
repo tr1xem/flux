@@ -10,6 +10,7 @@ class SettingsGroup(widgets.Box):
     ):
         super().__init__(
             vertical=True,
+            spacing=10,
             css_classes=["settings-group"],
             child=[
                 widgets.Label(
