@@ -23,8 +23,8 @@ class Player(widgets.Box):
 
         self._players: List[MprisPlayer] = []
         self._current_player: Optional[MprisPlayer] = None
-        self._window = window_manager.get_window(f"ignis_MEDIA_{monitor_id}")
-        self._monitor = 0
+        self._window = window_manager.get_window("ignis_MEDIA")
+        self._monitor = monitor_id
 
         self.title_label = widgets.Label(
             valign="center",

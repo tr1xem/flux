@@ -12,7 +12,7 @@ window_manager = WindowManager.get_default()
 
 
 class OsdWindow(widgets.RevealerWindow):
-    def __init__(self, state: dict, monitor_id: int = 0):
+    def __init__(self, state: dict):
         self.state = state
 
         # Create percentage label
@@ -72,12 +72,24 @@ class OsdWindow(widgets.RevealerWindow):
                 child=[
                     widgets.Box(
                         css_classes=["osd-corner-up"],
-                        child=[Corner(orientation="bottom-right", width_request=40, height_request=40)],
+                        child=[
+                            Corner(
+                                orientation="bottom-right",
+                                width_request=40,
+                                height_request=40,
+                            )
+                        ],
                     ),
                     content,
                     widgets.Box(
                         css_classes=["osd-corner-down"],
-                        child=[Corner(orientation="top-right", width_request=40, height_request=40)],
+                        child=[
+                            Corner(
+                                orientation="top-right",
+                                width_request=40,
+                                height_request=40,
+                            )
+                        ],
                     ),
                 ],
             ),
@@ -110,7 +122,7 @@ class OsdWindow(widgets.RevealerWindow):
             layer="overlay",
             css_classes=["osd-window"],
             anchor=["top", "bottom", "right"],
-            namespace=f"ignis_OSD_{state['name']}_{monitor_id}",
+            namespace=f"ignis_OSD_{state['name']}",
             child=widgets.CenterBox(
                 hexpand=True,
                 halign="fill",
@@ -143,9 +155,8 @@ class OsdWindow(widgets.RevealerWindow):
 
 
 class Osd:
-    def __init__(self, monitor_id: int = 0):
+    def __init__(self):
         self.service_inits()
-        self.monitor_id = monitor_id
 
         # Backlight
         self.brightness_multiplier = 9
@@ -245,5 +256,5 @@ class Osd:
         self.vol_state["visible"].value = False
 
     def popup(self, state: dict):
-        osd_window = OsdWindow(state, self.monitor_id)
+        osd_window = OsdWindow(state)
         self.osd_windows[state["name"]] = osd_window

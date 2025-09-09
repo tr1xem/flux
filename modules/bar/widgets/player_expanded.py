@@ -259,7 +259,7 @@ class Media(widgets.Box):
 
 
 class ExpandedPlayerWindow(widgets.RevealerWindow):
-    def __init__(self, monitor_id: int = 0):
+    def __init__(self):
         revealer = widgets.Revealer(
             transition_type="slide_down",
             child=widgets.Box(
@@ -283,17 +283,16 @@ class ExpandedPlayerWindow(widgets.RevealerWindow):
             vexpand=True,
             hexpand=True,
             css_classes=["unset"],
-            on_click=lambda x: window_manager.close_window(f"ignis_MEDIA_{monitor_id}"),
+            on_click=lambda x: window_manager.close_window("ignis_MEDIA"),
         )
         super().__init__(
             visible=False,
             popup=True,
-            monitor=monitor_id,
             kb_mode="on_demand",
             layer="top",
             css_classes=["unset"],
             anchor=["top", "left", "bottom", "right"],
-            namespace=f"ignis_MEDIA_{monitor_id}",
+            namespace="ignis_MEDIA",
             child=widgets.CenterBox(
                 hexpand=True,
                 halign="fill",
@@ -303,9 +302,7 @@ class ExpandedPlayerWindow(widgets.RevealerWindow):
                     vexpand=True,
                     hexpand=True,
                     css_classes=["unset"],
-                    on_click=lambda x: window_manager.close_window(
-                        f"ignis_MEDIA_{monitor_id}"
-                    ),
+                    on_click=lambda x: window_manager.close_window("ignis_MEDIA"),
                 ),
                 center_widget=widgets.Box(
                     vertical=True, child=[revealer, self.closeButton]
@@ -314,9 +311,7 @@ class ExpandedPlayerWindow(widgets.RevealerWindow):
                     vexpand=True,
                     hexpand=True,
                     css_classes=["unset"],
-                    on_click=lambda x: window_manager.close_window(
-                        f"ignis_MEDIA_{monitor_id}"
-                    ),
+                    on_click=lambda x: window_manager.close_window("ignis_MEDIA"),
                 ),
             ),
             setup=lambda self: self.connect(

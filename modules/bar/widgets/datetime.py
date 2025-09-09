@@ -4,6 +4,9 @@ import datetime
 from gi.repository import GLib
 from ignis import utils, widgets
 from ignis.variable import Variable
+from ignis.window_manager import WindowManager
+
+window_manager = WindowManager.get_default()
 
 
 class CalendarWidget(widgets.Box):
@@ -142,8 +145,7 @@ class CalendarWidget(widgets.Box):
 
 
 class CalendarPopup(widgets.Window):
-    def __init__(self, monitor_id: int = 0):
-        self.monitor_id = monitor_id
+    def __init__(self):
         self.revealer = widgets.Revealer(
             css_classes=["calendar-revealer"],
             transition_type="slide_down",
@@ -153,8 +155,7 @@ class CalendarPopup(widgets.Window):
         )
 
         super().__init__(
-            namespace=f"ignis_CALENDAR_{monitor_id}",
-            monitor=monitor_id,
+            namespace="ignis_CALENDAR",
             css_classes=["calendar-popup"],
             anchor=["top", "left", "bottom", "right"],
             exclusivity="normal",
@@ -206,8 +207,8 @@ class Datetime(widgets.Box):
         super().__init__(
             css_classes=["datetime"],
         )
-
-        self.calendar_popup = CalendarPopup(monitor_id)
+        self._window = window_manager.get_window("ignis_CALENDAR")
+        self._monitor = monitor_id
 
         self.current_time = Variable(
             value=utils.Poll(
@@ -218,7 +219,7 @@ class Datetime(widgets.Box):
 
         self.time_button = widgets.EventBox(
             css_classes=["unset"],
-            on_click=lambda x: self.calendar_popup.toggle(),
+            on_click=self.__on_click,
             child=[
                 widgets.Label(
                     label=self.current_time.bind("value"),
@@ -229,3 +230,11 @@ class Datetime(widgets.Box):
 
         self.append(self.time_button)
 
+    def __on_click(self, x) -> None:
+        if self._window.monitor == self._monitor:
+            self._window.visible = not self._window.visible
+            self._window.revealer.reveal_child = not self._window.revealer.reveal_child
+        else:
+            self._window.set_monitor(self._monitor)
+            self._window.visible = True
+            self._window.revealer.reveal_child = True

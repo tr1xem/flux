@@ -1,20 +1,11 @@
-# Standard library imports
 import os
-import sys
 
-# Third party imports
-
-# Setup path for local imports
-sys.path.insert(0, os.path.dirname(__file__))
-
-# Ignis imports
 from ignis import utils
 from ignis.css_manager import CssInfoPath, CssManager
 from ignis.icon_manager import IconManager
 from ignis.options import options
 from ignis.services.wallpaper import WallpaperService
 
-# Local module imports
 from modules import (
     Bar,
     ControlCenter,
@@ -28,6 +19,7 @@ from modules import (
     CornerAll,
 )
 from modules.bar.widgets.player_expanded import ExpandedPlayerWindow
+from modules.bar.widgets.datetime import CalendarPopup
 from services.wallpaper_processor import on_depth_wall_toggle, on_wallpaper_change
 from user_options import user_options
 
@@ -106,17 +98,18 @@ css_manager.apply_css(
 corner_size = (30, 30)
 
 
+ControlCenter()
+ExpandedPlayerWindow()
+Osd()
+CalendarPopup()
 # # Widget Initialization
 for monitor in range(utils.get_n_monitors()):
     TimeWidget(monitor)
     DateWidget(monitor)
     Depth(monitor)
-    ExpandedPlayerWindow(monitor)
-    ControlCenter(monitor)
     Bar(monitor)
     NotificationPopup(monitor)
     CornerAll(monitor)
-    Osd(monitor)
 
 Settings()
 Powermenu()
