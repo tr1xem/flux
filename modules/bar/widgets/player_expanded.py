@@ -214,13 +214,16 @@ class Player(widgets.Revealer):
         if self._player.desktop_entry in css_manager.list_css_info_names():
             css_manager.remove_css(self.clean_desktop_entry())
 
-        css_manager.apply_css(
-            CssInfoString(
-                name=self.clean_desktop_entry(),
-                compiler_function=lambda string: utils.sass_compile(string=string),
-                string=template_rendered,
+        try:
+            css_manager.apply_css(
+                CssInfoString(
+                    name=self.clean_desktop_entry(),
+                    compiler_function=lambda string: utils.sass_compile(string=string),
+                    string=template_rendered,
+                )
             )
-        )
+        except Exception as e:
+            print(e)
 
     def clean_desktop_entry(self) -> str:
         desktop_entry = self._player.desktop_entry

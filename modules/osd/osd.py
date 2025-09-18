@@ -5,8 +5,8 @@ from ignis.services.audio import AudioService
 from ignis.services.backlight import BacklightService
 from ignis.variable import Variable
 from ignis.window_manager import WindowManager
+from ignis.widgets import Corner
 
-from modules.shared_widgets.corner import Corner
 
 window_manager = WindowManager.get_default()
 

@@ -127,37 +127,60 @@ class MaterialService(BaseService):
         asyncio.create_task(utils.exec_sh_async("hyprctl reload"))
 
     def get_colors_from_img(self, path: str, dark_mode: bool) -> dict[str, str]:
-        """Get colors from image with caching for performance"""
+        """Get colors from image with optimized processing for performance"""
         try:
-            image = Image.open(path)
-            wsize, hsize = image.size
-            wsize_new, hsize_new = calculate_optimal_size(wsize, hsize, 128)
-            if wsize_new < wsize or hsize_new < hsize:
-                image = image.resize((wsize_new, hsize_new), Image.Resampling.BICUBIC)  # type: ignore
+            with Image.open(path) as image:
+                # Get original dimensions
+                original_width, original_height = image.size
+                pixel_count = original_width * original_height
+                
+                # Memory-aware processing based on image size
+                if pixel_count > 4000000:  # 4MP+ images (e.g., 4K wallpapers)
+                    target_size = 96  # More aggressive downsampling for huge images
+                elif pixel_count > 2000000:  # 2MP+ images
+                    target_size = 128  # Standard downsampling
+                else:
+                    target_size = min(256, max(original_width, original_height))  # Keep smaller images larger
+                
+                # Calculate optimal size and use thumbnail for memory efficiency
+                target_width, target_height = calculate_optimal_size(
+                    original_width, original_height, target_size
+                )
+                
+                # Use thumbnail() instead of resize() - modifies in-place, saves memory
+                if target_width < original_width or target_height < original_height:
+                    image.thumbnail((target_width, target_height), Image.Resampling.BICUBIC)
+                
+                # Optimized pixel sampling for large images
+                pixel_len = image.width * image.height
+                image_data = image.getdata()
+                
+                # Smart sampling: for very large processed images, sample every nth pixel
+                if pixel_len > 16384:  # If still large after downsizing
+                    step = max(1, pixel_len // 8192)  # Limit to 8K samples max
+                    pixel_array = [image_data[i] for i in range(0, pixel_len, step)]
+                else:
+                    pixel_array = [image_data[i] for i in range(pixel_len)]
 
-            pixel_len = image.width * image.height
-            image_data = image.getdata()
-            pixel_array = [image_data[_] for _ in range(0, pixel_len, 1)]
+                colors = QuantizeCelebi(pixel_array, 128)
+                argb = Score.score(colors)[0]
 
-            colors = QuantizeCelebi(pixel_array, 128)
-            argb = Score.score(colors)[0]
+                hct = Hct.from_int(argb)
 
-            hct = Hct.from_int(argb)
+                # Get the selected color scheme class
+                scheme_name = getattr(user_options.material, "color_scheme", "Tonal Spot")
+                scheme_class = COLOR_SCHEMES.get(scheme_name, SchemeTonalSpot)
+                scheme = scheme_class(hct, dark_mode, 0.0)
 
-            # Get the selected color scheme class
-            scheme_name = getattr(user_options.material, "color_scheme", "Tonal Spot")
-            scheme_class = COLOR_SCHEMES.get(scheme_name, SchemeTonalSpot)
-            scheme = scheme_class(hct, dark_mode, 0.0)
+                material_colors = {}
+                for color in vars(MaterialDynamicColors).keys():
+                    color_name = getattr(MaterialDynamicColors, color)
+                    if hasattr(color_name, "get_hct"):
+                        rgba = color_name.get_hct(scheme).to_rgba()
+                        material_colors[color] = rgba_to_hex(rgba)
 
-            material_colors = {}
-            for color in vars(MaterialDynamicColors).keys():
-                color_name = getattr(MaterialDynamicColors, color)
-                if hasattr(color_name, "get_hct"):
-                    rgba = color_name.get_hct(scheme).to_rgba()
-                    material_colors[color] = rgba_to_hex(rgba)
-
-            image.close()
-            return material_colors
+                return material_colors
+                
         except Exception as e:
             print(f"Error generating colors from {path}: {e}")
             self.__on_colors_not_found()

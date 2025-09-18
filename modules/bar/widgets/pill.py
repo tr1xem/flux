@@ -62,7 +62,7 @@ def check_recording_processes(*args) -> bool:
 
 
 recording_status = Variable(
-    value=utils.Poll(1000, check_recording_processes).bind("output")
+    value=utils.Poll(2000, check_recording_processes).bind("output")
 )
 
 

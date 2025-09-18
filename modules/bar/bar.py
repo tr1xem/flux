@@ -1,7 +1,4 @@
-import datetime
-
-from ignis import utils, widgets
-from ignis.variable import Variable
+from ignis import widgets
 
 from .widgets import (
     CpuUsage,

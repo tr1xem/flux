@@ -23,21 +23,36 @@ def get_monitor_size():
         return 1920, 1080
 
 
-def get_image_hash(image_path):
-    """Get MD5 hash of an image file for caching purposes"""
-    try:
-        with open(image_path, "rb") as f:
-            return hashlib.md5(f.read()).hexdigest()
-    except Exception:
-        return ""
+async def resize_wallpaper_for_screen(image_path, output_path):
+    """Resize wallpaper to screen resolution, returns success status"""
+    def _resize():
+        try:
+            screen_width, screen_height = get_monitor_size()
+            with Image.open(image_path) as img:
+                img_ratio = img.width / img.height
+                screen_ratio = screen_width / screen_height
 
+                if img.width > screen_width or img.height > screen_height:
+                    if img_ratio > screen_ratio:
+                        new_width = screen_width
+                        new_height = int(screen_width / img_ratio)
+                    else:
+                        new_height = screen_height
+                        new_width = int(screen_height * img_ratio)
 
-async def get_image_hash_async(image_path):
-    def _get_hash():
-        return get_image_hash(image_path)
+                    scaled_img = img.resize(
+                        (new_width, new_height), Image.Resampling.LANCZOS
+                    )
+                    scaled_img.save(output_path)
+                    scaled_img.close()
+                else:
+                    img.save(output_path)
+            return True
+        except Exception:
+            return False
 
     loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(None, _get_hash)
+    return await loop.run_in_executor(None, _resize)
 
 
 async def process_wallpaper_with_rembg_async(wallpaper_path):
@@ -52,27 +67,12 @@ async def process_wallpaper_with_rembg_async(wallpaper_path):
     temp_scaled_path = os.path.join(wallpaper_cache_dir, "temp_scaled.png")
 
     try:
+        # First resize the wallpaper for screen resolution
+        success = await resize_wallpaper_for_screen(wallpaper_path, temp_scaled_path)
+        if not success or not os.path.exists(temp_scaled_path):
+            return None
 
-        def _downscale_wallpaper():
-            screen_width, screen_height = get_monitor_size()
-            with Image.open(wallpaper_path) as img:
-                img_ratio = img.width / img.height
-                screen_ratio = screen_width / screen_height
-
-                if img_ratio > screen_ratio:
-                    new_width = screen_width
-                    new_height = int(screen_width / img_ratio)
-                else:
-                    new_height = screen_height
-                    new_width = int(screen_height * img_ratio)
-
-                scaled_img = img.resize(
-                    (new_width, new_height), Image.Resampling.LANCZOS
-                )
-                scaled_img.save(temp_scaled_path)
-
-            return True
-
+        # Now run rembg on the already resized image
         def _remove_background():
             script_dir = os.path.dirname(os.path.abspath(__file__))
             rem_script = os.path.join(script_dir, "rembg_processor.py")
@@ -103,27 +103,23 @@ async def process_wallpaper_with_rembg_async(wallpaper_path):
             cmd = " ".join(cmd_parts)
 
             result = utils.exec_sh(cmd)
-
             return result.returncode == 0
 
         loop = asyncio.get_event_loop()
-
-        await loop.run_in_executor(None, _downscale_wallpaper)
-        screen_width, screen_height = get_monitor_size()
-
-        if not os.path.exists(temp_scaled_path):
-            return None
-
         success = await loop.run_in_executor(None, _remove_background)
 
-        if not success:
+        if not success or not os.path.exists(output_path):
             return None
 
-        if not os.path.exists(output_path):
-            return None
+        # Clean up temp file
+        def _cleanup():
+            try:
+                if os.path.exists(temp_scaled_path):
+                    os.remove(temp_scaled_path)
+            except Exception:
+                pass
 
-        if os.path.exists(temp_scaled_path):
-            os.remove(temp_scaled_path)
+        await loop.run_in_executor(None, _cleanup)
 
         user_options.wallpaper.depth_wall = output_path
         user_options.rembg.enabled = True
@@ -131,8 +127,16 @@ async def process_wallpaper_with_rembg_async(wallpaper_path):
         return output_path
 
     except Exception:
-        if os.path.exists(temp_scaled_path):
-            os.remove(temp_scaled_path)
+        # Clean up on error
+        def _cleanup_on_error():
+            try:
+                if os.path.exists(temp_scaled_path):
+                    os.remove(temp_scaled_path)
+            except Exception:
+                pass
+
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(None, _cleanup_on_error)
         return None
 
 
@@ -151,44 +155,26 @@ async def downscale_wallpaper_async(original_wallpaper_path):
         return None
 
     wallpaper_cache_dir = os.path.join(CACHE_DIR, "wallpapers")
-    os.makedirs(wallpaper_cache_dir, exist_ok=True)
+    
+    def _create_cache_dir():
+        os.makedirs(wallpaper_cache_dir, exist_ok=True)
+    
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(None, _create_cache_dir)
 
     output_path = os.path.join(wallpaper_cache_dir, "wallpaper.png")
 
     try:
-
-        def _downscale():
-            screen_width, screen_height = get_monitor_size()
-            with Image.open(original_wallpaper_path) as img:
-                img_ratio = img.width / img.height
-                screen_ratio = screen_width / screen_height
-
-                if img.width > screen_width or img.height > screen_height:
-                    if img_ratio > screen_ratio:
-                        new_width = screen_width
-                        new_height = int(screen_width / img_ratio)
-                    else:
-                        new_height = screen_height
-                        new_width = int(screen_height * img_ratio)
-
-                    scaled_img = img.resize(
-                        (new_width, new_height), Image.Resampling.LANCZOS
-                    )
-                    scaled_img.save(output_path)
-
-                else:
-                    img.save(output_path)
-
-            return True
-
-        loop = asyncio.get_event_loop()
-        await loop.run_in_executor(None, _downscale)
-
         _processing_wallpaper = True
-        options.wallpaper.set_wallpaper_path(output_path)
-        _processing_wallpaper = False
-
-        return output_path
+        success = await resize_wallpaper_for_screen(original_wallpaper_path, output_path)
+        
+        if success:
+            options.wallpaper.set_wallpaper_path(output_path)
+            _processing_wallpaper = False
+            return output_path
+        else:
+            _processing_wallpaper = False
+            return None
 
     except Exception:
         _processing_wallpaper = False
@@ -206,7 +192,6 @@ def on_wallpaper_change():
         if wallpaper_path:
             if not wallpaper_path.startswith(CACHE_DIR):
                 _original_wallpaper_path = wallpaper_path
-
                 asyncio.create_task(downscale_wallpaper_async(wallpaper_path))
 
             # Check if rembg is enabled

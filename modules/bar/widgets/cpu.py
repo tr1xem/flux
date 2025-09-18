@@ -16,7 +16,7 @@ class CpuUsage(widgets.Box):
             hexpand=True,
         )
 
-        Poll(5000, lambda _: self.set_tooltip_text(f"CPU Temp: {fetch.cpu_temp}°C"))
+        Poll(10000, lambda _: self.set_tooltip_text(f"CPU Temp: {fetch.cpu_temp}°C"))
         self._cpu_progress = CircularProgressBar(
             line_width=2,
             size=(23, 23),

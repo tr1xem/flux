@@ -1,5 +1,5 @@
 from ignis import widgets
-from modules.shared_widgets.corner import Corner
+from ignis.widgets import Corner
 
 
 class CornerAll(widgets.Window):

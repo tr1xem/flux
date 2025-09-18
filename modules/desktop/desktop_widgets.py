@@ -2,7 +2,7 @@ from ignis import widgets, utils
 import os
 import datetime
 from ignis.variable import Variable
-from ..shared_widgets.fixed import Fixed
+from ignis.widgets import Fixed
 from user_options import user_options
 
 
@@ -23,9 +23,10 @@ class TimeWidget(widgets.Window):
             hexpand=True,
             vexpand=True,
             child=[
-                (
+                widgets.FixedChild(
                     self.time_label,
-                    (user_options.time.x_position, user_options.time.y_position),
+                    user_options.time.x_position,
+                    user_options.time.y_position,
                 ),
             ],
             css_classes=["fixed-label"],
@@ -91,9 +92,10 @@ class DateWidget(widgets.Window):
             hexpand=True,
             vexpand=True,
             child=[
-                (
+                widgets.FixedChild(
                     self.date_label,
-                    (user_options.date.x_position, user_options.date.y_position),
+                    user_options.date.x_position,
+                    user_options.date.y_position,
                 ),
             ],
             css_classes=["fixed-label"],

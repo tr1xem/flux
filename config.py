@@ -95,9 +95,6 @@ css_manager.apply_css(
 )
 
 
-corner_size = (30, 30)
-
-
 ControlCenter()
 ExpandedPlayerWindow()
 Osd()

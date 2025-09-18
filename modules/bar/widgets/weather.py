@@ -8,7 +8,7 @@ from typing import Dict, Optional, Tuple
 from ignis import utils, widgets
 
 
-CACHE_DURATION, STALE_CACHE_MAX, UPDATE_INTERVAL = 600, 1800, 300
+CACHE_DURATION, STALE_CACHE_MAX, UPDATE_INTERVAL = 600, 1800, 600
 TEMP_DIR = Path.home() / ".cache" / "ignis"
 TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
