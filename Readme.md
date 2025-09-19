@@ -75,7 +75,7 @@ curl https://raw.githubusercontent.com/tr1xem/flux/refs/heads/main/install.sh | 
 # Credits
 
 - [Linkfrg](https://github.com/linkfrg/) for creation of [ignis](https://github.com/ignis-sh/ignis) without it this shell would'nt exists and his awesome [dotfiles](https://github.com/linkfrg/dotfiles)
-- [Tanish](https://github.com/randomboi404) for usefull snippets and ideas - [Veloria](https://github.com/randomboi404/veloria)
+- [Tanish](https://github.com/randomboi404) for useful snippets and ideas - [Veloria Shell](https://github.com/randomboi404/veloria)
 
 _ignis means fire while flux means flow so basically its "flow of fire"_
 
