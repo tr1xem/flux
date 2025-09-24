@@ -67,10 +67,9 @@ curl https://raw.githubusercontent.com/tr1xem/flux/refs/heads/main/install.sh | 
 - [x] Desktop Widgets
 - [x] Depth Wallpapers
 - [x] Matugen Support (complete)
-- [ ] OTP Manager
 - [x] Multi-monitor Support
-- [ ] Extensive Configuration Support
-- [ ] Installer
+- [x] Extensive Configuration Support
+- [x] Installer
 
 # Credits
 
