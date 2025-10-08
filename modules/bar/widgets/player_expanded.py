@@ -87,7 +87,9 @@ class Player(widgets.Revealer):
                                                 ],
                                             ),
                                             widgets.Label(
-                                                label=player.bind("artist"),
+                                                label=player.bind(
+                                                    "artist", lambda x: x[:10]
+                                                ),
                                                 max_width_chars=30,
                                                 ellipsize="end",
                                                 halign="start",

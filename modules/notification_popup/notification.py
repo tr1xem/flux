@@ -31,11 +31,11 @@ class Popup(widgets.Box):
 
         def outer_close():
             self._outer.reveal_child = False
-            utils.Timeout(self._outer.transition_duration, box_destroy)
+            utils.Timeout(self._outer.transition_duration + 80, box_destroy)
 
-        self._inner.transition_type = "slide_right"
+        # self._inner.transition_type = "slide_right"
         self._inner.reveal_child = False
-        utils.Timeout(self._outer.transition_duration, outer_close)
+        utils.Timeout(self._outer.transition_duration - 50, outer_close)
 
 
 class PopupBox(widgets.Box):

@@ -53,7 +53,7 @@ class SuspendButton(PowermenuButton):
 
     def __invoke(self, *args) -> None:
         window_manager.close_window("ignis_POWERMENU")
-        create_exec_task("hyprlock && systemctl suspend")
+        create_exec_task("systemctl suspend")
 
 
 class HyprlandExitButton(PowermenuButton):
@@ -61,7 +61,7 @@ class HyprlandExitButton(PowermenuButton):
         super().__init__(
             label="Sign out",
             icon_name="system-log-out-symbolic",
-            on_click=lambda *args: create_exec_task("hyprctl dispatch exit 0"),
+            on_click=lambda *args: create_exec_task('loginctl terminate-user ""'),
         )
 
 

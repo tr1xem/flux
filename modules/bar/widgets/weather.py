@@ -1,3 +1,4 @@
+import asyncio
 import json
 import threading
 import time
@@ -263,10 +264,43 @@ class Weather(widgets.Box):
         self._weather_cache = Cache(TEMP_DIR / "weather_cache.json", STALE_CACHE_MAX)
         self._location_cache = Cache(TEMP_DIR / "location_cache.json", 24 * 3600)
 
-        utils.ThreadTask(self._fetch_weather_data, self._update_display).run()
+        asyncio.create_task(self._async_fetch_initial_data())
         self._poll = utils.Poll(
             UPDATE_INTERVAL * 1000, lambda _: self._periodic_update()
         )
+
+    async def _async_fetch_initial_data(self) -> None:
+        """Async initial weather fetch that doesn't block startup"""
+        try:
+            # Try to load from cache first for immediate display
+            cached_weather = self._weather_cache.get(allow_stale=True)
+            cached_location = self._location_cache.get(allow_stale=True)
+            
+            if cached_weather and cached_location:
+                try:
+                    result = self._process_cached_data(cached_weather, cached_location)
+                    self._update_display(result)
+                except Exception:
+                    pass
+            
+            # Then fetch fresh data in background
+            loop = asyncio.get_event_loop()
+            result = await loop.run_in_executor(None, self._fetch_weather_data)
+            self._update_display(result)
+        except Exception:
+            # Fallback to showing error state
+            self._update_display(("Error", "weather-clear-symbolic", "Weather unavailable"))
+
+    def _process_cached_data(self, weather_data: dict, location_data: dict) -> Tuple[str, str, str]:
+        """Process cached data to display immediately"""
+        try:
+            current = weather_data["current"]
+            temp = current["temperature_2m"]
+            _, icon_name, _ = get_weather_info(current["weather_code"])
+            tooltip = create_tooltip(weather_data, location_data)
+            return f"{temp:.1f}°C", icon_name, tooltip
+        except Exception as e:
+            return "Cache Error", "weather-clear-symbolic", f"Cache error: {str(e)}"
 
     def _fetch_weather_data(self) -> Tuple[str, str, str]:
         """Fetch weather data - returns (text, icon_name, tooltip_text)"""

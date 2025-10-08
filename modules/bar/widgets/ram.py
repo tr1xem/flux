@@ -4,8 +4,6 @@ from ignis.utils import Poll
 
 from ...shared_widgets.circular_progress import CircularProgressBar
 
-fetch = FetchService.get_default()
-
 
 class RamUsage(widgets.Box):
     def __init__(self) -> None:
@@ -16,6 +14,8 @@ class RamUsage(widgets.Box):
             hexpand=True,
         )
 
+        self.fetch = FetchService.get_default()
+        
         self._ram_progress = CircularProgressBar(
             line_width=2,
             size=(23, 23),
@@ -23,10 +23,10 @@ class RamUsage(widgets.Box):
             pie=True,
             end_angle=630,
             css_classes=["progress-ram"],
-            max_value=fetch.mem_total,
+            max_value=self.fetch.mem_total,
             value=0,
         )
-        Poll(1000, lambda x: self._ram_progress.set_value(fetch.mem_used))
+        Poll(1000, lambda x: self._ram_progress.set_value(self.fetch.mem_used))
 
         self._ram_icon = widgets.Label(
             css_classes=["ram-icon"],
@@ -52,7 +52,7 @@ class RamUsage(widgets.Box):
             lambda x: setattr(
                 self._ram_label,
                 "label",
-                f"{fetch.mem_used / 1024 / 1024:.1f}/{fetch.mem_total / 1024 / 1024:.1f} GB",
+                f"{self.fetch.mem_used / 1024 / 1024:.1f}/{self.fetch.mem_total / 1024 / 1024:.1f} GB",
             ),
         )
 

@@ -4,8 +4,6 @@ from ignis.utils import Poll
 
 from ...shared_widgets.circular_progress import CircularProgressBar
 
-fetch = FetchService.get_default()
-
 
 class CpuUsage(widgets.Box):
     def __init__(self) -> None:
@@ -16,7 +14,8 @@ class CpuUsage(widgets.Box):
             hexpand=True,
         )
 
-        Poll(10000, lambda _: self.set_tooltip_text(f"CPU Temp: {fetch.cpu_temp}°C"))
+        self.fetch = FetchService.get_default()
+        Poll(10000, lambda _: self.set_tooltip_text(f"CPU Temp: {self.fetch.cpu_temp}°C"))
         self._cpu_progress = CircularProgressBar(
             line_width=2,
             size=(23, 23),
@@ -55,6 +54,9 @@ class CpuUsage(widgets.Box):
         # Track previous CPU stats for calculation
         self._prev_idle = 0
         self._prev_total = 0
+        
+        # Take initial measurement so first poll shows real data
+        self._prev_idle, self._prev_total = self._get_cpu_stats()
 
         # Poll CPU usage every 2 seconds
         self._poll = Poll(

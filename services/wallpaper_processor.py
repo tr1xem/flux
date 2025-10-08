@@ -1,5 +1,4 @@
 import asyncio
-import hashlib
 import os
 
 from ignis import CACHE_DIR, utils
@@ -25,6 +24,7 @@ def get_monitor_size():
 
 async def resize_wallpaper_for_screen(image_path, output_path):
     """Resize wallpaper to screen resolution, returns success status"""
+
     def _resize():
         try:
             screen_width, screen_height = get_monitor_size()
@@ -155,10 +155,10 @@ async def downscale_wallpaper_async(original_wallpaper_path):
         return None
 
     wallpaper_cache_dir = os.path.join(CACHE_DIR, "wallpapers")
-    
+
     def _create_cache_dir():
         os.makedirs(wallpaper_cache_dir, exist_ok=True)
-    
+
     loop = asyncio.get_event_loop()
     await loop.run_in_executor(None, _create_cache_dir)
 
@@ -166,8 +166,10 @@ async def downscale_wallpaper_async(original_wallpaper_path):
 
     try:
         _processing_wallpaper = True
-        success = await resize_wallpaper_for_screen(original_wallpaper_path, output_path)
-        
+        success = await resize_wallpaper_for_screen(
+            original_wallpaper_path, output_path
+        )
+
         if success:
             options.wallpaper.set_wallpaper_path(output_path)
             _processing_wallpaper = False
@@ -184,23 +186,40 @@ async def downscale_wallpaper_async(original_wallpaper_path):
 def on_wallpaper_change():
     global _original_wallpaper_path, _processing_wallpaper
 
+    utils.exec_sh(f"swww img {_original_wallpaper_path}")
     if _processing_wallpaper:
         return
+
+    async def process_wallpaper_pipeline(wallpaper_path: str):
+        try:
+            # Downscale first
+            await downscale_wallpaper_async(wallpaper_path)
+
+            # Then rembg if enabled
+            rembg_enabled = getattr(user_options.rembg, "enabled", True)
+            if rembg_enabled and _original_wallpaper_path:
+                await process_wallpaper_with_rembg_async(
+                    options.wallpaper.wallpaper_path
+                )
+        except Exception as e:
+            print("Error in wallpaper pipeline:", e)
 
     try:
         wallpaper_path = options.wallpaper.wallpaper_path
         if wallpaper_path:
             if not wallpaper_path.startswith(CACHE_DIR):
                 _original_wallpaper_path = wallpaper_path
-                asyncio.create_task(downscale_wallpaper_async(wallpaper_path))
-
-            # Check if rembg is enabled
-            rembg_enabled = getattr(user_options.rembg, "enabled", True)
-
-            if rembg_enabled and _original_wallpaper_path:
-                asyncio.create_task(
-                    process_wallpaper_with_rembg_async(_original_wallpaper_path)
-                )
+                # Run the full pipeline as a background task
+                asyncio.create_task(process_wallpaper_pipeline(wallpaper_path))
+            else:
+                # If already cached, just do rembg directly
+                rembg_enabled = getattr(user_options.rembg, "enabled", True)
+                if rembg_enabled and _original_wallpaper_path:
+                    asyncio.create_task(
+                        process_wallpaper_with_rembg_async(
+                            options.wallpaper.wallpaper_path
+                        )
+                    )
         else:
             _original_wallpaper_path = None
             user_options.wallpaper.depth_wall = ""
@@ -230,4 +249,3 @@ def on_depth_wall_toggle():
 
     except Exception as e:
         print(e)
-

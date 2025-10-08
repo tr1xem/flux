@@ -133,7 +133,7 @@ class Player(widgets.Box):
         def format_label():
             title = player.title or "Unknown Title"
             artist = player.artist
-            return f"{title} • {artist}" if artist else title
+            return f"{title} • {artist[0:10]}" if artist else title
 
         self.title_label.label = player.bind("title", lambda _: format_label())
         player.connect(
