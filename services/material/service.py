@@ -133,28 +133,32 @@ class MaterialService(BaseService):
                 # Get original dimensions
                 original_width, original_height = image.size
                 pixel_count = original_width * original_height
-                
+
                 # Memory-aware processing based on image size
                 if pixel_count > 4000000:  # 4MP+ images (e.g., 4K wallpapers)
                     target_size = 96  # More aggressive downsampling for huge images
                 elif pixel_count > 2000000:  # 2MP+ images
                     target_size = 128  # Standard downsampling
                 else:
-                    target_size = min(256, max(original_width, original_height))  # Keep smaller images larger
-                
+                    target_size = min(
+                        256, max(original_width, original_height)
+                    )  # Keep smaller images larger
+
                 # Calculate optimal size and use thumbnail for memory efficiency
                 target_width, target_height = calculate_optimal_size(
                     original_width, original_height, target_size
                 )
-                
+
                 # Use thumbnail() instead of resize() - modifies in-place, saves memory
                 if target_width < original_width or target_height < original_height:
-                    image.thumbnail((target_width, target_height), Image.Resampling.BICUBIC)
-                
+                    image.thumbnail(
+                        (target_width, target_height), Image.Resampling.BICUBIC
+                    )
+
                 # Optimized pixel sampling for large images
                 pixel_len = image.width * image.height
                 image_data = image.getdata()
-                
+
                 # Smart sampling: for very large processed images, sample every nth pixel
                 if pixel_len > 16384:  # If still large after downsizing
                     step = max(1, pixel_len // 8192)  # Limit to 8K samples max
@@ -168,7 +172,9 @@ class MaterialService(BaseService):
                 hct = Hct.from_int(argb)
 
                 # Get the selected color scheme class
-                scheme_name = getattr(user_options.material, "color_scheme", "Tonal Spot")
+                scheme_name = getattr(
+                    user_options.material, "color_scheme", "Tonal Spot"
+                )
                 scheme_class = COLOR_SCHEMES.get(scheme_name, SchemeTonalSpot)
                 scheme = scheme_class(hct, dark_mode, 0.0)
 
@@ -180,7 +186,7 @@ class MaterialService(BaseService):
                         material_colors[color] = rgba_to_hex(rgba)
 
                 return material_colors
-                
+
         except Exception as e:
             print(f"Error generating colors from {path}: {e}")
             self.__on_colors_not_found()

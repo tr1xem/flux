@@ -116,10 +116,12 @@
 
 .corner-top {
     // all: unset;
-    background: unset;
-    color: rgba($surface, $opacity-medium);
+    color: color-mix(in srgb, transparent 10%, $surface 63%);
+    // background: unset;
+    // color: rgba($surface, $opacity-medium);
 }
 .corner {
+    // color: color-mix(in srgb, transparent 40%, #1e1e1e 70%);
     color: black;
 }
 

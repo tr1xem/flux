@@ -37,8 +37,6 @@ def check_recording_processes(*args) -> bool:
         "wl-screenrec",
         "gpu-screen-recorder",
         "obs",
-        "ffmpeg",
-        "grim",
     ]
 
     try:

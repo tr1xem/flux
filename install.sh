@@ -40,7 +40,7 @@ PACKAGES=(
     python-j2cli
     power-profiles-daemon
     ttf-jetbrains-mono-nerd
-    swww
+    awww
 )
 
 # Colors

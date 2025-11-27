@@ -1,6 +1,5 @@
 import os
 import sys
-import tempfile
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "services"))
 import image_processor
@@ -239,6 +238,8 @@ class NotificationWidget(widgets.Box):
             and notification.icon
         ):
             layout = ScreenshotLayout(notification)
+        # elif notification.app_name == "Curd":
+        #     pass
         else:
             layout = NormalLayout(notification)
 
