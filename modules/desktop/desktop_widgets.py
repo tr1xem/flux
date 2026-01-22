@@ -210,7 +210,19 @@ class CountdownBox(widgets.Box):
                 ),
             ],
         )
-        daysleft = (eventTime - datetime.datetime.now()).days
+        self.currentDate = Variable(
+            value=utils.Poll(
+                1000,
+                lambda x: datetime.datetime.now(),
+            ).bind("output")
+        )
+
+        self.daysLeft = Variable(
+            value=utils.Poll(
+                1000, lambda x: str((eventTime - datetime.datetime.now()).days)
+            ).bind("output")
+        )
+
         self.mainBox = widgets.Box(
             name="mainBox",
             css_classes=["mainBox"],
@@ -220,7 +232,7 @@ class CountdownBox(widgets.Box):
             vexpand=True,
             child=[
                 widgets.Label(
-                    label=f"{daysleft}",
+                    label=self.daysLeft.bind("value"),
                     css_classes=["countdown-box-daysleft"],
                     halign="start",
                 ),
