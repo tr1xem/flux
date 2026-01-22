@@ -158,3 +158,38 @@ filechooser {
     color: $onSurface;
     font-family: "SF Pro Rounded";
 }
+
+.countdown-window {
+    margin-top: 5px;
+    margin-left: 10px;
+}
+.countdown-box {
+    font-size: 1rem;
+    min-width: 150px;
+    min-height: 150px;
+    border-radius: 10%;
+    background-color: $primaryContainer;
+    font-weight: bold;
+    font-family: "SF Pro Rounded";
+    padding: 16px;
+}
+
+.countdown-box-title {
+    font-size: 1.5rem;
+    margin-top: -5px;
+}
+
+.countdown-box-daysleft {
+    font-size: 4rem;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+
+.countdown-box-eventname {
+    font-size: 1.5rem;
+}
+// .mainBox {
+//     label {
+//         margin-right: 30px;
+//     }
+// }

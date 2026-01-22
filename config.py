@@ -16,6 +16,7 @@ from modules import (
     DateWidget,
     Depth,
     CornerAll,
+    CountdownWidget,
 )
 from modules.bar.widgets.player_expanded import ExpandedPlayerWindow
 from modules.bar.widgets.datetime import CalendarPopup
@@ -101,6 +102,7 @@ CalendarPopup()
 # # Widget Initialization
 for monitor in range(utils.get_n_monitors()):
     TimeWidget(monitor)
+    CountdownWidget(monitor)
     DateWidget(monitor)
     Depth(monitor)
     Bar(monitor)

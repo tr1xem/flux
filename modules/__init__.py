@@ -4,7 +4,7 @@ from .notification_popup import NotificationPopup
 from .osd import Osd
 from .powermenu import Powermenu
 from .settings import Settings
-from .desktop import TimeWidget, DateWidget, Depth, CornerAll
+from .desktop import TimeWidget, DateWidget, Depth, CornerAll, CountdownWidget
 
 __all__ = [
     "Bar",
@@ -17,4 +17,5 @@ __all__ = [
     "DateWidget",
     "Depth",
     "CornerAll",
+    "CountdownWidget",
 ]
