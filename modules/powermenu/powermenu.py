@@ -61,7 +61,7 @@ class HyprlandExitButton(PowermenuButton):
         super().__init__(
             label="Sign out",
             icon_name="system-log-out-symbolic",
-            on_click=lambda *args: create_exec_task('loginctl terminate-user ""'),
+            on_click=lambda *args: create_exec_task("uwsm stop"),
         )
 
 
