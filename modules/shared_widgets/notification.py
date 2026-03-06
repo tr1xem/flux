@@ -183,7 +183,7 @@ class NormalLayout(widgets.Box):
                             child=[
                                 widgets.Label(
                                     ellipsize="end",
-                                    label=f"{notification.summary} | <span color={"'#999'" if user_options.material.dark_mode else "'#111'"}>{notification.app_name}</span>",
+                                    label=f"{notification.summary} | {notification.app_name}",
                                     use_markup=True,
                                     halign="start",
                                     visible=notification.summary != "",

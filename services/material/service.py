@@ -254,6 +254,6 @@ class MaterialService(BaseService):
     async def __set_matugen_scheme(self) -> None:
         asyncio.create_task(
             utils.exec_sh_async(
-                f"/usr/bin/matugen image -t {user_options.material.color_scheme} {options.wallpaper.wallpaper_path}"
+                f"/usr/bin/matugen image -t {user_options.material.color_scheme} {options.wallpaper.wallpaper_path} --source-color-index 0"
             )
         )
