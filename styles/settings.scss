@@ -45,6 +45,13 @@
     background-color: darken($surfaceContainer, 10%);
     min-width: 30rem;
 }
+.settings-group-rows {
+    // background-color: red;
+    padding-right: 2rem;
+    &:last-child {
+        padding-bottom: 2rem;
+    }
+}
 
 .settings-group-name {
     margin-left: 2.5rem;
