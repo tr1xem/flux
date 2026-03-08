@@ -70,6 +70,7 @@ class UserOptions(OptionsManager):
 
     class Wallpaper(OptionsGroup):
         depth_wall: str = ""
+        depth_processing: bool = False
 
     class Rembg(OptionsGroup):
         enabled: bool = False
