@@ -57,7 +57,9 @@ class WifiMenu(Menu):
                 widgets.Separator(),
                 widgets.Button(
                     css_classes=["network-item", "unset"],
-                    on_click=lambda x: asyncio.create_task(utils.exec_sh_async("nm-connection-editor")),
+                    on_click=lambda x: asyncio.create_task(
+                        utils.exec_sh_async("nm-connection-editor")
+                    ),
                     style="margin-bottom: 0;",
                     child=widgets.Box(
                         child=[
@@ -78,16 +80,14 @@ class WifiButton(QSButton):
         menu = WifiMenu(device)
 
         def get_label(ssid: str) -> str:
-            if ssid:
-                return ssid
-            else:
+            if not network.wifi.enabled:
                 return "Wi-Fi"
+            return ssid if ssid else "Wi-Fi"
 
         def get_icon(icon_name: str) -> str:
             if device.ap.is_connected:
                 return icon_name
-            else:
-                return "network-wireless-symbolic"
+            return "network-wireless-symbolic"
 
         def toggle_list(x) -> None:
             asyncio.create_task(device.scan())

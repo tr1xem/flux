@@ -1,5 +1,5 @@
-import os
 import sys
+import os
 
 # Add the project root to Python path to import from services
 sys.path.insert(
@@ -9,9 +9,8 @@ sys.path.insert(
     ),
 )
 
-from services.idle_inhibitor import IdleInhibitorService
-
 from ...qs_button import QSButton
+from services.idle_inhibitor import IdleInhibitorService
 
 idle_inhibitor = IdleInhibitorService.get_default()
 
