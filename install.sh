@@ -33,6 +33,7 @@ PACKAGES=(
     python-materialyoucolor
     python-pip
     hyprsunset
+    power-profiles-daemon
     git
     upower
     gpu-screen-recorder
