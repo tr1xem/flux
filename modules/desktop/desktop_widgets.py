@@ -152,9 +152,13 @@ class Depth(widgets.Window):
             vexpand=True,
             visible=user_options.wallpaper.bind(
                 "depth_wall",
-                lambda x: True
-                if user_options.rembg.enabled and os.path.exists(x)
-                else False,
+                lambda x: (
+                    True
+                    if user_options.rembg.enabled
+                    and os.path.exists(x)
+                    and user_options.wallpaper.depth_processing
+                    else False
+                ),
             ),
             content_fit="cover",
             css_classes=["depth-wallpaper"],

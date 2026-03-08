@@ -154,7 +154,7 @@ class AppearanceEntry(SettingsEntry):
                                         )
                                     ),
                                 ),
-                                initial_path=os.path.expanduser("~/Pictures"),
+                                initial_path=options.wallpaper.bind("wallpaper_path"),
                                 filters=[
                                     widgets.FileFilter(
                                         mime_types=["image/jpeg", "image/png"],
