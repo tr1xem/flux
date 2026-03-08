@@ -7,9 +7,9 @@ class Info(widgets.CenterBox):
         super().__init__(
             css_classes=["info-box"],
         )
-        
+
         self.fetch = FetchService.get_default()
-        
+
         self.osLogo = widgets.Picture(
             image=self.fetch.os_logo,
             css_classes=["os-logo"],
@@ -42,7 +42,9 @@ class Info(widgets.CenterBox):
 
         utils.Poll(
             1000,
-            lambda _: self.ramUsage.set_value(self.fetch.mem_used / self.fetch.mem_total * 100),
+            lambda _: self.ramUsage.set_value(
+                self.fetch.mem_used / self.fetch.mem_total * 100
+            ),
         )
 
         self.start_widget = widgets.Box(

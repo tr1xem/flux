@@ -101,9 +101,11 @@ class Player(widgets.Revealer):
                                         child=widgets.Icon(
                                             image=player.bind(
                                                 "playback_status",
-                                                lambda value: "pause-symbolic"
-                                                if value == "Playing"
-                                                else "play-symbolic",
+                                                lambda value: (
+                                                    "pause-symbolic"
+                                                    if value == "Playing"
+                                                    else "play-symbolic"
+                                                ),
                                             ),
                                             pixel_size=18,
                                         ),
@@ -113,15 +115,21 @@ class Player(widgets.Revealer):
                                         visible=player.bind("can_play"),
                                         css_classes=player.bind(
                                             "playback_status",
-                                            lambda value: [
-                                                self.get_css("media-playback-button"),
-                                                "playing",
-                                            ]
-                                            if value == "Playing"
-                                            else [
-                                                self.get_css("media-playback-button"),
-                                                "paused",
-                                            ],
+                                            lambda value: (
+                                                [
+                                                    self.get_css(
+                                                        "media-playback-button"
+                                                    ),
+                                                    "playing",
+                                                ]
+                                                if value == "Playing"
+                                                else [
+                                                    self.get_css(
+                                                        "media-playback-button"
+                                                    ),
+                                                    "paused",
+                                                ]
+                                            ),
                                         ),
                                     ),
                                 ],
@@ -275,7 +283,6 @@ class ExpandedPlayerWindow(widgets.RevealerWindow):
                             Media(),
                         ],
                     ),
-                    # NotificationCenter(),
                 ],
             ),
             transition_duration=500,
