@@ -9,10 +9,10 @@ from ignis.base_service import BaseService
 class IdleInhibitorService(BaseService):
     """
     Service for managing idle inhibition using wlinhibit or systemd-inhibit.
-    
+
     Prevents the system from going idle/sleeping when activated.
     """
-    
+
     def __init__(self):
         super().__init__()
         self._is_inhibiting = False
@@ -31,18 +31,20 @@ class IdleInhibitorService(BaseService):
         """Detect which idle inhibition method is available"""
         # Try wlinhibit first (best for Wayland)
         try:
-            subprocess.run(['wlinhibit', '--help'], capture_output=True, check=True)
-            return 'wlinhibit'
+            subprocess.run(["wlinhibit", "--help"], capture_output=True, check=True)
+            return "wlinhibit"
         except (subprocess.CalledProcessError, FileNotFoundError):
             pass
-            
+
         # Try systemd-inhibit as fallback
         try:
-            subprocess.run(['systemd-inhibit', '--help'], capture_output=True, check=True)
-            return 'systemd-inhibit'
+            subprocess.run(
+                ["systemd-inhibit", "--help"], capture_output=True, check=True
+            )
+            return "systemd-inhibit"
         except (subprocess.CalledProcessError, FileNotFoundError):
             pass
-            
+
         return None
 
     @GObject.Property(type=bool, default=False)
@@ -58,32 +60,36 @@ class IdleInhibitorService(BaseService):
     def start_inhibiting(self) -> bool:
         """
         Start inhibiting idle/sleep
-        
+
         Returns:
             bool: True if inhibition started successfully
         """
         if not self._available or self._is_inhibiting:
             return False
-            
+
         try:
-            if self._inhibit_method == 'wlinhibit':
+            if self._inhibit_method == "wlinhibit":
                 # Start wlinhibit as a background process
                 self._inhibit_process = subprocess.Popen(
-                    ['wlinhibit'],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL
+                    ["wlinhibit"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
                 )
-            elif self._inhibit_method == 'systemd-inhibit':
+            elif self._inhibit_method == "systemd-inhibit":
                 # Use systemd-inhibit to prevent idle and sleep
                 self._inhibit_process = subprocess.Popen(
-                    ['systemd-inhibit', '--what=idle:sleep', '--who=ignis', 
-                     '--why=User requested idle inhibition', 'sleep', 'infinity'],
+                    [
+                        "systemd-inhibit",
+                        "--what=idle:sleep",
+                        "--who=ignis",
+                        "--why=User requested idle inhibition",
+                        "sleep",
+                        "infinity",
+                    ],
                     stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL
+                    stderr=subprocess.DEVNULL,
                 )
             else:
                 return False
-                
+
             self._is_inhibiting = True
             self.notify("is_inhibiting")
             return True
@@ -93,13 +99,13 @@ class IdleInhibitorService(BaseService):
     def stop_inhibiting(self) -> bool:
         """
         Stop inhibiting idle/sleep
-        
+
         Returns:
             bool: True if inhibition stopped successfully
         """
         if not self._is_inhibiting or self._inhibit_process is None:
             return False
-            
+
         try:
             self._inhibit_process.terminate()
             self._inhibit_process.wait(timeout=2)
@@ -122,7 +128,7 @@ class IdleInhibitorService(BaseService):
     def toggle(self) -> bool:
         """
         Toggle idle inhibition state
-        
+
         Returns:
             bool: New inhibition state
         """

@@ -157,7 +157,7 @@ class MaterialService(BaseService):
 
                 # Optimized pixel sampling for large images
                 pixel_len = image.width * image.height
-                image_data = image.getdata()
+                image_data = image.get_flattened_data()
 
                 # Smart sampling: for very large processed images, sample every nth pixel
                 if pixel_len > 16384:  # If still large after downsizing
