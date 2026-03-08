@@ -20,6 +20,8 @@ class SettingsGroup(widgets.Box):
                     visible=True if name else False,
                 ),
                 widgets.Box(
+                    css_classes=["settings-group-rows"],
+                    spacing=3,
                     vertical=True,
                     child=[*rows],
                 ),

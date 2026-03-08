@@ -67,7 +67,7 @@ def create_color_scheme_dropdown() -> widgets.DropDown:
         selected=COLOR_SCHEME_OPTIONS[selected_index],
     )
 
-    def on_dropdown_changed(*args):
+    def on_dropdown_changed():
         selected_scheme = dropdown.selected
         user_options.material.set_color_scheme(selected_scheme)
 
@@ -124,15 +124,17 @@ class AppearanceEntry(SettingsEntry):
                         SwitchRow(
                             label="Dark mode",
                             active=user_options.material.bind("dark_mode"),
-                            on_change=lambda x,
-                            state: user_options.material.set_dark_mode(state),
+                            on_change=lambda x, state: (
+                                user_options.material.set_dark_mode(state)
+                            ),
                             style="margin-top: 1rem;",
                         ),
                         SwitchRow(
                             label="Blur effects",
                             active=user_options.material.bind("blur_enabled"),
-                            on_change=lambda x,
-                            state: user_options.material.set_blur_enabled(state),
+                            on_change=lambda x, state: (
+                                user_options.material.set_blur_enabled(state)
+                            ),
                         ),
                         FileRow(
                             label="Wallpaper path",
@@ -148,7 +150,7 @@ class AppearanceEntry(SettingsEntry):
                                     ),
                                     asyncio.create_task(
                                         utils.exec_sh_async(
-                                            f"/usr/bin/matugen image -t {get_matugen_scheme_type(user_options.material.color_scheme)} {file.get_path()}"
+                                            f"/usr/bin/matugen image -t {get_matugen_scheme_type(user_options.material.color_scheme)} {file.get_path()} --source-color-index 0"
                                         )
                                     ),
                                 ),
